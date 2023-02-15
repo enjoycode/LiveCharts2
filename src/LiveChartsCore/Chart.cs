@@ -328,7 +328,7 @@ public abstract class Chart<TDrawingContext> : IChart
         Canvas.Dispose();
     }
 
-    internal void ClearTooltipData()
+    public void ClearTooltipData()
     {
         foreach (var point in _activePoints.Keys.ToArray())
         {
@@ -365,7 +365,7 @@ public abstract class Chart<TDrawingContext> : IChart
         View.OnVisualElementPointerDown(iterableVisualElements, point);
     }
 
-    internal virtual void InvokePointerMove(LvcPoint point)
+    public virtual void InvokePointerMove(LvcPoint point)
     {
         PointerMove?.Invoke(point);
     }
@@ -375,7 +375,7 @@ public abstract class Chart<TDrawingContext> : IChart
         PointerUp?.Invoke(point);
     }
 
-    internal void InvokePointerLeft()
+    public void InvokePointerLeft()
     {
         PointerLeft?.Invoke();
     }

@@ -81,7 +81,7 @@ public abstract class ChartElement<TDrawingContext> : IChartElement<TDrawingCont
     /// Gets the paint tasks registered by the <see cref="ChartElement{TDrawingContext}"/>.
     /// </summary>
     /// <returns></returns>
-    internal abstract IPaint<TDrawingContext>?[] GetPaintTasks();
+    protected internal abstract IPaint<TDrawingContext>?[] GetPaintTasks();
 
     /// <summary>
     /// Sets a property value and handles the paints in the canvas.

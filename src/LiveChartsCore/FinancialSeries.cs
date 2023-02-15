@@ -37,7 +37,7 @@ namespace LiveChartsCore;
 /// <typeparam name="TModel">The type of the model.</typeparam>
 /// <typeparam name="TVisual">The type of the visual.</typeparam>
 /// <typeparam name="TLabel">The type of the label.</typeparam>
-/// <typeparam name="TMiniatureGeometry">The type of the miniature geometry, used in tool tips and legends.</typeparam> 
+/// <typeparam name="TMiniatureGeometry">The type of the miniature geometry, used in tool tips and legends.</typeparam>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="CartesianSeries{TModel, TVisual, TLabel, TDrawingContext}" />
 /// <seealso cref="ICartesianSeries{TDrawingContext}" />
@@ -438,7 +438,7 @@ public abstract class FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometr
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    internal override IPaint<TDrawingContext>?[] GetPaintTasks()
+    protected internal override IPaint<TDrawingContext>?[] GetPaintTasks()
     {
         return new[] { _upFill, _upStroke, _downFill, _downStroke, DataLabelsPaint, hoverPaint };
     }

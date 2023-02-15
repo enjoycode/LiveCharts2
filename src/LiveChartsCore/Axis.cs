@@ -259,13 +259,13 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     public bool CrosshairSnapEnabled { get => _crosshairSnapEnabled; set => SetProperty(ref _crosshairSnapEnabled, value); }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     [Obsolete("Renamed to LabelsPaint")]
     public IPaint<TDrawingContext>? TextBrush { get => LabelsPaint; set => LabelsPaint = value; }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     [Obsolete("Renamed to SeparatorsPaint")]
     public IPaint<TDrawingContext>? SeparatorsBrush { get => SeparatorsPaint; set => SeparatorsPaint = value; }
@@ -906,7 +906,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     /// Gets the paint tasks.
     /// </summary>
     /// <returns></returns>
-    internal override IPaint<TDrawingContext>?[] GetPaintTasks()
+    protected internal override IPaint<TDrawingContext>?[] GetPaintTasks()
     {
         return new[] { _separatorsPaint, _labelsPaint, _namePaint, _zeroPaint, _ticksPaint, _subticksPaint, _subseparatorsPaint };
     }

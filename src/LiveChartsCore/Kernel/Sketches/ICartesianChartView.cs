@@ -108,16 +108,6 @@ public interface ICartesianChartView<TDrawingContext> : IChartView<TDrawingConte
     double ZoomingSpeed { get; set; }
 
     /// <summary>
-    /// Scales a UI point to the chart values scale.
-    /// </summary>
-    /// <param name="point">The point.</param>
-    /// <param name="xAxisIndex">Index of the x axis.</param>
-    /// <param name="yAxisIndex">Index of the y axis.</param>
-    /// <returns></returns>
-    [Obsolete($"Use {nameof(ScalePixelsToData)} instead.")]
-    double[] ScaleUIPoint(LvcPoint point, int xAxisIndex = 0, int yAxisIndex = 0);
-
-    /// <summary>
     /// Scales a point in pixels to the chart data scale.
     /// </summary>
     /// <param name="point">The point.</param>

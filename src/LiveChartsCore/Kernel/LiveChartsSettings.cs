@@ -173,7 +173,7 @@ public class LiveChartsSettings
             : (Action<TModel, ChartPoint>)mapper;
     }
 
-    internal LiveChartsSettings HasProvider<TDrawingContext>(ChartEngine<TDrawingContext> factory)
+    public LiveChartsSettings HasProvider<TDrawingContext>(ChartEngine<TDrawingContext> factory)
         where TDrawingContext : DrawingContext
     {
         _currentProvider = factory;

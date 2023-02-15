@@ -891,7 +891,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
         base.InvokePointerDown(point, isSecondaryAction);
     }
 
-    internal override void InvokePointerMove(LvcPoint point)
+    public override void InvokePointerMove(LvcPoint point)
     {
         foreach (var axis in _crosshair)
         {

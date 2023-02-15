@@ -114,7 +114,7 @@ public abstract class Section<TDrawingContext> : ChartElement<TDrawingContext>, 
     public double? Yj { get => _yj; set => SetProperty(ref _yj, value); }
 
     /// <summary>
-    /// Gets or sets the axis index where the section is scaled in the X plane, the index must exist 
+    /// Gets or sets the axis index where the section is scaled in the X plane, the index must exist
     /// in the <see cref="ICartesianChartView{TDrawingContext}.XAxes"/> collection.
     /// </summary>
     /// <value>
@@ -123,7 +123,7 @@ public abstract class Section<TDrawingContext> : ChartElement<TDrawingContext>, 
     public int ScalesXAt { get => _scalesXAt; set => SetProperty(ref _scalesXAt, value); }
 
     /// <summary>
-    /// Gets or sets the axis index where the section is scaled in the Y plane, the index must exist 
+    /// Gets or sets the axis index where the section is scaled in the Y plane, the index must exist
     /// in the <see cref="ICartesianChartView{TDrawingContext}.YAxes"/> collection.
     /// </summary>
     /// <value>
@@ -149,7 +149,7 @@ public abstract class Section<TDrawingContext> : ChartElement<TDrawingContext>, 
     /// Gets the paint tasks.
     /// </summary>
     /// <returns></returns>
-    internal override IPaint<TDrawingContext>?[] GetPaintTasks()
+    protected internal override IPaint<TDrawingContext>?[] GetPaintTasks()
     {
         return new[] { _stroke, _fill };
     }

@@ -93,7 +93,7 @@ public class RelativePanel<TDrawingContext> : VisualElement<TDrawingContext>
         }
     }
 
-    internal override IPaint<TDrawingContext>?[] GetPaintTasks()
+    protected internal override IPaint<TDrawingContext>?[] GetPaintTasks()
     {
         return Array.Empty<IPaint<TDrawingContext>>();
     }

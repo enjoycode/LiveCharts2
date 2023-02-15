@@ -39,8 +39,8 @@ public abstract class VisualElement<TDrawingContext> : ChartElement<TDrawingCont
 {
     internal double _x;
     internal double _y;
-    internal float _xc;
-    internal float _yc;
+    protected internal float _xc;
+    protected internal float _yc;
     internal ISizedGeometry<TDrawingContext>? _parent;
     private int _scalesXAt;
     private int _scalesYAt;
@@ -61,7 +61,7 @@ public abstract class VisualElement<TDrawingContext> : ChartElement<TDrawingCont
     public MeasureUnit LocationUnit { get; set; } = MeasureUnit.Pixels;
 
     /// <summary>
-    /// Gets or sets the axis index where the series is scaled in the X plane, the index must exist 
+    /// Gets or sets the axis index where the series is scaled in the X plane, the index must exist
     /// in the <see cref="ICartesianChartView{TDrawingContext}.YAxes"/> collection.
     /// </summary>
     /// <value>
@@ -70,7 +70,7 @@ public abstract class VisualElement<TDrawingContext> : ChartElement<TDrawingCont
     public int ScalesXAt { get => _scalesXAt; set { _scalesXAt = value; OnPropertyChanged(); } }
 
     /// <summary>
-    /// Gets or sets the axis index where the series is scaled in the Y plane, the index must exist 
+    /// Gets or sets the axis index where the series is scaled in the Y plane, the index must exist
     /// in the <see cref="ICartesianChartView{TDrawingContext}.YAxes"/> collection.
     /// </summary>
     /// <value>
@@ -209,7 +209,7 @@ public abstract class VisualElement<TDrawingContext> : ChartElement<TDrawingCont
         return new LvcPoint(parentX + X, parentY + Y);
     }
 
-    internal virtual IEnumerable<VisualElement<TDrawingContext>> IsHitBy(IChart chart, LvcPoint point)
+    public virtual IEnumerable<VisualElement<TDrawingContext>> IsHitBy(IChart chart, LvcPoint point)
     {
         var motionCanvas = (MotionCanvas<TDrawingContext>)chart.Canvas;
         if (motionCanvas.StartPoint is not null)
@@ -227,7 +227,7 @@ public abstract class VisualElement<TDrawingContext> : ChartElement<TDrawingCont
             yield return this;
     }
 
-    internal virtual void AlignToTopLeftCorner()
+    protected internal virtual void AlignToTopLeftCorner()
     {
         // just a workaround to align labels as the rest of the geometries.
     }

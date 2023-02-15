@@ -212,7 +212,7 @@ public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDr
         }
     }
 
-    internal override IPaint<TDrawingContext>?[] GetPaintTasks()
+    protected internal override IPaint<TDrawingContext>?[] GetPaintTasks()
     {
         return new[] { _backgroundPaint };
     }

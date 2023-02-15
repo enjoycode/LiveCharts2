@@ -50,7 +50,7 @@ public class MotionCanvas<TDrawingContext> : IDisposable
         _stopwatch.Start();
     }
 
-    internal bool DisableAnimations { get; set; }
+    public bool DisableAnimations { get; set; }
 
     /// <summary>
     /// Gets or sets the point where the draw starts.
@@ -81,7 +81,7 @@ public class MotionCanvas<TDrawingContext> : IDisposable
     /// <value>
     /// The synchronize.
     /// </value>
-    public object Sync { get => _sync; internal set => _sync = value ?? new object(); }
+    public object Sync { get => _sync; set => _sync = value ?? new object(); }
 
     /// <summary>
     /// Gets the animatables collection.
