@@ -37,9 +37,9 @@ namespace LiveChartsCore;
 /// <typeparam name="TLabel">the type of the label.</typeparam>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TModel, TVisual, TLabel, TDrawingContext>
-    where TVisual : class, ISizedVisualChartPoint<TDrawingContext>, new()
+    where TVisual : class, ISizedVisualChartPoint<TDrawingContext>/*, new()*/
     where TDrawingContext : DrawingContext
-    where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+    where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
 {
     private readonly bool _isRounded = false;
 

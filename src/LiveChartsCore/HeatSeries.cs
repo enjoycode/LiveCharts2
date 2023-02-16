@@ -39,9 +39,9 @@ namespace LiveChartsCore;
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
     : CartesianSeries<TModel, TVisual, TLabel, TDrawingContext>, IHeatSeries<TDrawingContext>
-        where TVisual : class, ISolidColorChartPoint<TDrawingContext>, new()
+        where TVisual : class, ISolidColorChartPoint<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
 {
     private IPaint<TDrawingContext>? _paintTaks;
     private Bounds _weightBounds = new();

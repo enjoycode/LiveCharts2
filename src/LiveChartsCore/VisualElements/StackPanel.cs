@@ -33,7 +33,7 @@ namespace LiveChartsCore.VisualElements;
 /// </summary>
 public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDrawingContext>
     where TDrawingContext : DrawingContext
-    where TBackgroundGemetry : ISizedGeometry<TDrawingContext>, new()
+    where TBackgroundGemetry : ISizedGeometry<TDrawingContext>/*, new()*/
 {
     private LvcPoint _targetPosition;
     private IPaint<TDrawingContext>? _backgroundPaint;

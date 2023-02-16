@@ -34,8 +34,8 @@ namespace LiveChartsCore;
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 public class StackedRowSeries<TModel, TVisual, TLabel, TDrawingContext>
     : RowSeries<TModel, TVisual, TLabel, TDrawingContext>, IStackedBarSeries<TDrawingContext>
-        where TVisual : class, IRoundedRectangleChartPoint<TDrawingContext>, new()
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TVisual : class, IRoundedRectangleChartPoint<TDrawingContext>/*, new()*/
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
     private int _stackGroup = 0;

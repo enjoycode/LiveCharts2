@@ -32,7 +32,7 @@ namespace LiveChartsCore.Kernel;
 /// <summary>
 /// Defines a visual element in a chart.
 /// </summary>
-public abstract class ChartElement<TDrawingContext> : IChartElement<TDrawingContext>, INotifyPropertyChanged
+public abstract class ChartElement<TDrawingContext> : IChartElement<TDrawingContext>
     where TDrawingContext : DrawingContext
 {
     internal bool _isInternalSet = false;

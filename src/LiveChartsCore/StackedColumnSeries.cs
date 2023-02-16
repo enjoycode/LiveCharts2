@@ -35,8 +35,8 @@ namespace LiveChartsCore;
 /// <seealso cref="ColumnSeries{TModel, TVisual, TLabel, TDrawingContext}" />
 public class StackedColumnSeries<TModel, TVisual, TLabel, TDrawingContext>
     : ColumnSeries<TModel, TVisual, TLabel, TDrawingContext>, IStackedBarSeries<TDrawingContext>
-        where TVisual : class, IRoundedRectangleChartPoint<TDrawingContext>, new()
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TVisual : class, IRoundedRectangleChartPoint<TDrawingContext>/*, new()*/
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
     private int _stackGroup = 0;

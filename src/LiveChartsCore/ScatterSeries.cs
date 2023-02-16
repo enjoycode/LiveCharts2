@@ -41,8 +41,8 @@ namespace LiveChartsCore;
 /// <seealso cref="IScatterSeries{TDrawingContext}" />
 public class ScatterSeries<TModel, TVisual, TLabel, TDrawingContext>
     : StrokeAndFillCartesianSeries<TModel, TVisual, TLabel, TDrawingContext>, IScatterSeries<TDrawingContext>
-        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>, new()
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>/*, new()*/
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
     private Bounds _weightBounds = new();

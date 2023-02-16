@@ -43,9 +43,9 @@ namespace LiveChartsCore;
 public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, TCircleGeometry>
     : ChartElement<TDrawingContext>, IPolarAxis, IPlane<TDrawingContext>, INotifyPropertyChanged
         where TDrawingContext : DrawingContext
-        where TTextGeometry : ILabelGeometry<TDrawingContext>, new()
-        where TLineGeometry : ILineGeometry<TDrawingContext>, new()
-        where TCircleGeometry : ISizedGeometry<TDrawingContext>, new()
+        where TTextGeometry : ILabelGeometry<TDrawingContext>/*, new()*/
+        where TLineGeometry : ILineGeometry<TDrawingContext>/*, new()*/
+        where TCircleGeometry : ISizedGeometry<TDrawingContext>/*, new()*/
 {
     #region fields
 

@@ -43,10 +43,10 @@ namespace LiveChartsCore;
 /// <typeparam name="TVisualPoint">The type of the visual point.</typeparam>
 public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint>
     : ChartSeries<TModel, TVisualPoint, TLabel, TDrawingContext>, IPolarLineSeries<TDrawingContext>, IPolarSeries<TDrawingContext>
-        where TVisualPoint : BezierVisualPoint<TDrawingContext, TVisual>, new()
-        where TPathGeometry : IVectorGeometry<CubicBezierSegment, TDrawingContext>, new()
-        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>, new()
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TVisualPoint : BezierVisualPoint<TDrawingContext, TVisual>/*, new()*/
+        where TPathGeometry : IVectorGeometry<CubicBezierSegment, TDrawingContext>/*, new()*/
+        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>/*, new()*/
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
     private readonly Dictionary<object, List<TPathGeometry>> _fillPathHelperDictionary = new();

@@ -42,8 +42,8 @@ namespace LiveChartsCore;
 public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     : ChartElement<TDrawingContext>, ICartesianAxis<TDrawingContext>, IPlane<TDrawingContext>
         where TDrawingContext : DrawingContext
-        where TTextGeometry : ILabelGeometry<TDrawingContext>, new()
-        where TLineGeometry : class, ILineGeometry<TDrawingContext>, new()
+        where TTextGeometry : ILabelGeometry<TDrawingContext>/*, new()*/
+        where TLineGeometry : class, ILineGeometry<TDrawingContext>/*, new()*/
 {
     #region fields
 
@@ -96,10 +96,9 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     private readonly float _tickLength = 6f;
     private readonly int _subSections = 3;
     private Align? _labelsAlignment;
-
+    private bool _inLineNamePlacement;
 #if DEBUG
     private int _stepCount;
-    private bool _inLineNamePlacement;
 #endif
 
     #endregion

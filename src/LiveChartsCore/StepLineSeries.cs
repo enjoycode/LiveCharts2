@@ -43,10 +43,10 @@ namespace LiveChartsCore;
 /// <typeparam name="TVisualPoint">The type of the visual point.</typeparam>
 public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint>
     : StrokeAndFillCartesianSeries<TModel, TVisualPoint, TLabel, TDrawingContext>, IStepLineSeries<TDrawingContext>
-        where TVisualPoint : StepLineVisualPoint<TDrawingContext, TVisual>, new()
-        where TPathGeometry : IVectorGeometry<StepLineSegment, TDrawingContext>, new()
-        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>, new()
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TVisualPoint : StepLineVisualPoint<TDrawingContext, TVisual>/*, new()*/
+        where TPathGeometry : IVectorGeometry<StepLineSegment, TDrawingContext>/*, new()*/
+        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>/*, new()*/
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
     private readonly Dictionary<object, List<TPathGeometry>> _fillPathHelperDictionary = new();

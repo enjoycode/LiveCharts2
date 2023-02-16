@@ -42,8 +42,8 @@ namespace LiveChartsCore;
 public abstract class CartesianSeries<TModel, TVisual, TLabel, TDrawingContext>
     : ChartSeries<TModel, TVisual, TLabel, TDrawingContext>, ICartesianSeries<TDrawingContext>
     where TDrawingContext : DrawingContext
-    where TVisual : class, IVisualChartPoint<TDrawingContext>, new()
-    where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+    where TVisual : class, IVisualChartPoint<TDrawingContext>/*, new()*/
+    where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
 {
     private int _scalesXAt;
     private int _scalesYAt;

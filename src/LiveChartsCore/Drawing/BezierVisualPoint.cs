@@ -30,7 +30,7 @@ namespace LiveChartsCore.Drawing;
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <typeparam name="TVisual">The type of the visual.</typeparam>
 public class BezierVisualPoint<TDrawingContext, TVisual> : ICubicBezierVisualChartPoint<TDrawingContext>
-    where TVisual : ISizedVisualChartPoint<TDrawingContext>, new()
+    where TVisual : ISizedVisualChartPoint<TDrawingContext>/*, new()*/
     where TDrawingContext : DrawingContext
 {
     /// <summary>

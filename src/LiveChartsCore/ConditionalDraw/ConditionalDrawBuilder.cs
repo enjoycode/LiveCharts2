@@ -31,8 +31,8 @@ namespace LiveChartsCore.ConditionalDraw;
 /// </summary>
 public class ConditionalPaintBuilder<TModel, TVisual, TLabel, TDrawingContext>
     where TDrawingContext : DrawingContext
-    where TVisual : class, IVisualChartPoint<TDrawingContext>, new()
-    where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+    where TVisual : class, IVisualChartPoint<TDrawingContext>/*, new()*/
+    where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
 {
     private bool _isPaintInCanvas = false;
     private object _clipFor = new();

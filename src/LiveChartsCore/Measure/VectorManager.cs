@@ -135,7 +135,7 @@ public class VectorManager<TSegment, TDrawingContext>
             c = c.Next;
         }
 
-        Trace.WriteLine(a);
+        //Trace.WriteLine(a);
     }
 }
 

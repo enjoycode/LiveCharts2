@@ -42,8 +42,8 @@ public static class ConditionalDrawExtensions
     public static ConditionalPaintBuilder<TModel, TVisual, TLabel, TDrawingContext> WithConditionalPaint<TModel, TVisual, TLabel, TDrawingContext>(
         this Series<TModel, TVisual, TLabel, TDrawingContext> series, IPaint<TDrawingContext> paint)
             where TDrawingContext : DrawingContext
-            where TVisual : class, IVisualChartPoint<TDrawingContext>, new()
-            where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+            where TVisual : class, IVisualChartPoint<TDrawingContext>/*, new()*/
+            where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
     {
         return new ConditionalPaintBuilder<TModel, TVisual, TLabel, TDrawingContext>(series, paint);
     }

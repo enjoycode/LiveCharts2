@@ -44,10 +44,10 @@ namespace LiveChartsCore;
 /// <seealso cref="IHeatSeries{TDrawingContext}" />
 public abstract class FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDrawingContext>
     : CartesianSeries<TModel, TVisual, TLabel, TDrawingContext>, IFinancialSeries<TDrawingContext>
-        where TVisual : class, IFinancialVisualChartPoint<TDrawingContext>, new()
+        where TVisual : class, IFinancialVisualChartPoint<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
-        where TMiniatureGeometry : ISizedGeometry<TDrawingContext>, new()
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
+        where TMiniatureGeometry : ISizedGeometry<TDrawingContext>/*, new()*/
 {
     private IPaint<TDrawingContext>? _upStroke = null;
     private IPaint<TDrawingContext>? _upFill = null;

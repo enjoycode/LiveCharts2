@@ -37,10 +37,10 @@ namespace LiveChartsCore;
 /// <seealso cref="LineSeries{TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint}" />
 public class StackedAreaSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint>
     : LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint>
-        where TVisualPoint : BezierVisualPoint<TDrawingContext, TVisual>, new()
-        where TPathGeometry : IVectorGeometry<CubicBezierSegment, TDrawingContext>, new()
-        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>, new()
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TVisualPoint : BezierVisualPoint<TDrawingContext, TVisual>/*, new()*/
+        where TPathGeometry : IVectorGeometry<CubicBezierSegment, TDrawingContext>/*, new()*/
+        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>/*, new()*/
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
     /// <summary>

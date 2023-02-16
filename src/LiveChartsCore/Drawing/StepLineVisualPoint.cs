@@ -31,7 +31,7 @@ namespace LiveChartsCore.Drawing;
 /// <typeparam name="TVisual">The type of the visual.</typeparam>
 /// <seealso cref="IStepLineVisualChartPoint{TDrawingContext}" />
 public class StepLineVisualPoint<TDrawingContext, TVisual> : IStepLineVisualChartPoint<TDrawingContext>
-    where TVisual : ISizedVisualChartPoint<TDrawingContext>, new()
+    where TVisual : ISizedVisualChartPoint<TDrawingContext>/*, new()*/
     where TDrawingContext : DrawingContext
 {
     /// <summary>

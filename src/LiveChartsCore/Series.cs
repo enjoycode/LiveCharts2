@@ -50,8 +50,8 @@ namespace LiveChartsCore;
 public abstract class Series<TModel, TVisual, TLabel, TDrawingContext>
     : ChartElement<TDrawingContext>, ISeries, ISeries<TModel>, INotifyPropertyChanged
         where TDrawingContext : DrawingContext
-        where TVisual : class, IVisualChartPoint<TDrawingContext>, new()
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TVisual : class, IVisualChartPoint<TDrawingContext>/*, new()*/
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
 {
     /// <summary>
     /// The subscribed to
@@ -153,7 +153,7 @@ public abstract class Series<TModel, TVisual, TLabel, TDrawingContext>
     public double Pivot { get => pivot; set => SetProperty(ref pivot, (float)value); }
 
     /// <summary>
-    /// Gets or sets the mapping that defines how a type is mapped to a <see cref="ChartPoint"/> instance, 
+    /// Gets or sets the mapping that defines how a type is mapped to a <see cref="ChartPoint"/> instance,
     /// then the <see cref="ChartPoint"/> will be drawn as a point in the chart.
     /// </summary>
     public Action<TModel, ChartPoint>? Mapping { get => _mapping; set => SetProperty(ref _mapping, value); }
@@ -208,7 +208,7 @@ public abstract class Series<TModel, TVisual, TLabel, TDrawingContext>
     public int ZIndex { get => _zIndex; set => SetProperty(ref _zIndex, value); }
 
     /// <summary>
-    /// Gets or sets the tool tip label formatter, this function will build the label when a point in this series 
+    /// Gets or sets the tool tip label formatter, this function will build the label when a point in this series
     /// is shown inside a tool tip.
     /// </summary>
     /// <value>
@@ -221,7 +221,7 @@ public abstract class Series<TModel, TVisual, TLabel, TDrawingContext>
     }
 
     /// <summary>
-    /// Gets or sets the data label formatter, this function will build the label when a point in this series 
+    /// Gets or sets the data label formatter, this function will build the label when a point in this series
     /// is shown as data label.
     /// </summary>
     /// <value>

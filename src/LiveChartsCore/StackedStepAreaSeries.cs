@@ -37,10 +37,10 @@ namespace LiveChartsCore;
 /// <seealso cref="StepLineSeries{TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint}" />
 public class StackedStepAreaSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint>
     : StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint>
-        where TVisualPoint : StepLineVisualPoint<TDrawingContext, TVisual>, new()
-        where TPathGeometry : IVectorGeometry<StepLineSegment, TDrawingContext>, new()
-        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>, new()
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TVisualPoint : StepLineVisualPoint<TDrawingContext, TVisual>/*, new()*/
+        where TPathGeometry : IVectorGeometry<StepLineSegment, TDrawingContext>/*, new()*/
+        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>/*, new()*/
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
     /// <summary>

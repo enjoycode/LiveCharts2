@@ -41,9 +41,9 @@ namespace LiveChartsCore;
 /// <seealso cref="IBarSeries{TDrawingContext}" />
 public abstract class BarSeries<TModel, TVisual, TLabel, TDrawingContext>
     : StrokeAndFillCartesianSeries<TModel, TVisual, TLabel, TDrawingContext>, IBarSeries<TDrawingContext>
-        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>, new()
+        where TVisual : class, ISizedVisualChartPoint<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
 {
     private double _pading = 5;
     private double _maxBarWidth = 50;

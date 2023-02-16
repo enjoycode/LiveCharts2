@@ -183,7 +183,7 @@ public abstract class Section<TDrawingContext> : ChartElement<TDrawingContext>, 
 /// <seealso cref="ChartElement{TDrawingContext}" />
 public abstract class Section<TSizedGeometry, TDrawingContext> : Section<TDrawingContext>
     where TDrawingContext : DrawingContext
-    where TSizedGeometry : ISizedGeometry<TDrawingContext>, new()
+    where TSizedGeometry : ISizedGeometry<TDrawingContext>/*, new()*/
 {
     /// <summary>
     /// The fill sized geometry

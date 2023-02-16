@@ -30,7 +30,7 @@ using LiveChartsCore.Measure;
 namespace LiveChartsCore;
 
 /// <summary>
-/// Defines the row series 
+/// Defines the row series
 /// </summary>
 /// <typeparam name="TModel">The type of the model.</typeparam>
 /// <typeparam name="TVisual">The type of the visual.</typeparam>
@@ -38,8 +38,8 @@ namespace LiveChartsCore;
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="BarSeries{TModel, TVisual, TLabel, TDrawingContext}" />
 public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TModel, TVisual, TLabel, TDrawingContext>
-    where TVisual : class, ISizedVisualChartPoint<TDrawingContext>, new()
-    where TLabel : class, ILabelGeometry<TDrawingContext>, new()
+    where TVisual : class, ISizedVisualChartPoint<TDrawingContext>/*, new()*/
+    where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
     where TDrawingContext : DrawingContext
 {
     private readonly bool _isRounded = false;

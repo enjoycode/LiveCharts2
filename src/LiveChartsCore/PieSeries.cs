@@ -42,9 +42,9 @@ namespace LiveChartsCore;
 public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDrawingContext>
     : ChartSeries<TModel, TVisual, TLabel, TDrawingContext>, IPieSeries<TDrawingContext>
         where TDrawingContext : DrawingContext
-        where TVisual : class, IDoughnutVisualChartPoint<TDrawingContext>, new()
-        where TLabel : class, ILabelGeometry<TDrawingContext>, new()
-        where TMiniatureGeometry : ISizedGeometry<TDrawingContext>, new()
+        where TVisual : class, IDoughnutVisualChartPoint<TDrawingContext>/*, new()*/
+        where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
+        where TMiniatureGeometry : ISizedGeometry<TDrawingContext>/*, new()*/
 {
     private IPaint<TDrawingContext>? _stroke = null;
     private IPaint<TDrawingContext>? _fill = null;
