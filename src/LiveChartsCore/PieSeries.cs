@@ -61,13 +61,23 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
     private bool _isFillSeries;
     private PolarLabelsPosition _labelsPosition = PolarLabelsPosition.Middle;
 
+    protected readonly Func<TVisual> _visualFactory;
+    protected readonly Func<TLabel> _labelFactory;
+    protected readonly Func<TMiniatureGeometry> _miniatureGeometryFactory;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PieSeries{TModel, TVisual, TLabel, TMiniatureGeometry, TDrawingContext}"/> class.
     /// </summary>
-    protected PieSeries(bool isGauge = false, bool isGaugeFill = false)
+    protected PieSeries(Func<TVisual> visualFactory, Func<TLabel> labelFactory,
+        Func<TMiniatureGeometry> miniatureGeometryFactory, bool isGauge = false, bool isGaugeFill = false)
         : base(SeriesProperties.PieSeries | SeriesProperties.Stacked |
-              (isGauge ? SeriesProperties.Gauge : 0) | (isGaugeFill ? SeriesProperties.GaugeFill : 0) | SeriesProperties.Solid)
-    { }
+               (isGauge ? SeriesProperties.Gauge : 0) | (isGaugeFill ? SeriesProperties.GaugeFill : 0) |
+               SeriesProperties.Solid)
+    {
+        _visualFactory = visualFactory;
+        _labelFactory = labelFactory;
+        _miniatureGeometryFactory = miniatureGeometryFactory;
+    }
 
     /// <summary>
     /// Gets or sets the stroke.
@@ -289,20 +299,32 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
 
             if (visual is null)
             {
-                var p = new TVisual
-                {
-                    CenterX = cx,
-                    CenterY = cy,
-                    X = cx,
-                    Y = cy,
-                    Width = 0,
-                    Height = 0,
-                    StartAngle = (float)(pieChart.IsFirstDraw ? initialRotation : start + initialRotation),
-                    SweepAngle = 0,
-                    PushOut = 0,
-                    InnerRadius = 0,
-                    CornerRadius = 0
-                };
+                // var p = new TVisual
+                // {
+                //     CenterX = cx,
+                //     CenterY = cy,
+                //     X = cx,
+                //     Y = cy,
+                //     Width = 0,
+                //     Height = 0,
+                //     StartAngle = (float)(pieChart.IsFirstDraw ? initialRotation : start + initialRotation),
+                //     SweepAngle = 0,
+                //     PushOut = 0,
+                //     InnerRadius = 0,
+                //     CornerRadius = 0
+                // };
+                var p = _visualFactory();
+                p.CenterX = cx;
+                p.CenterY = cy;
+                p.X = cx;
+                p.Y = cy;
+                p.Width = 0;
+                p.Height = 0;
+                p.StartAngle = (float)(pieChart.IsFirstDraw ? initialRotation : start + initialRotation);
+                p.SweepAngle = 0;
+                p.PushOut = 0;
+                p.InnerRadius = 0;
+                p.CornerRadius = 0;
 
                 visual = p;
                 point.Context.Visual = visual;
@@ -362,7 +384,11 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
 
                 if (label is null)
                 {
-                    var l = new TLabel { X = cx, Y = cy, RotateTransform = actualRotation };
+                    //var l = new TLabel { X = cx, Y = cy, RotateTransform = actualRotation };
+                    var l = _labelFactory();
+                    l.X = cx;
+                    l.Y = cy;
+                    l.RotateTransform = actualRotation;
 
                     _ = l.TransitionateProperties(nameof(l.X), nameof(l.Y))
                         .WithAnimation(animation =>
@@ -445,8 +471,8 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
     {
         var schedules = new List<PaintSchedule<TDrawingContext>>();
 
-        if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, new TMiniatureGeometry()));
-        if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, new TMiniatureGeometry()));
+        if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, _miniatureGeometryFactory() /*new TMiniatureGeometry()*/));
+        if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, _miniatureGeometryFactory() /*new TMiniatureGeometry()*/));
 
         return new Sketch<TDrawingContext>()
         {

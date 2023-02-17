@@ -45,6 +45,15 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
         where TTextGeometry : ILabelGeometry<TDrawingContext>/*, new()*/
         where TLineGeometry : class, ILineGeometry<TDrawingContext>/*, new()*/
 {
+    protected Axis(Func<TTextGeometry> textGeometryFactory, Func<TLineGeometry> lineGeometryFactory)
+    {
+        _textGeometryFactory = textGeometryFactory;
+        _lineGeometryFactory = lineGeometryFactory;
+    }
+
+    private readonly Func<TTextGeometry> _textGeometryFactory;
+    private readonly Func<TLineGeometry> _lineGeometryFactory;
+
     #region fields
 
     /// <summary>
@@ -435,7 +444,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 
             if (_zeroLine is null)
             {
-                _zeroLine = new TLineGeometry();
+                _zeroLine = _lineGeometryFactory(); //new TLineGeometry();
                 ZeroPaint.AddGeometryToPaintTask(cartesianChart.Canvas, _zeroLine);
                 InitializeLine(_zeroLine, cartesianChart);
                 UpdateSeparator(_zeroLine, x, y, lxi, lxj, lyi, lyj, UpdateMode.UpdateAndComplete);
@@ -448,7 +457,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
         {
             if (_ticksPath is null)
             {
-                _ticksPath = new TLineGeometry();
+                _ticksPath = _lineGeometryFactory(); //new TLineGeometry();
                 InitializeLine(_ticksPath, cartesianChart);
             }
             TicksPaint.AddGeometryToPaintTask(cartesianChart.Canvas, _ticksPath);
@@ -714,7 +723,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 
         if (_crosshairLine is null)
         {
-            _crosshairLine = new TLineGeometry();
+            _crosshairLine = _lineGeometryFactory(); //new TLineGeometry();
             UpdateSeparator(_crosshairLine, x, y, lxi, lxj, lyi, lyj, UpdateMode.UpdateAndComplete);
         }
         CrosshairPaint.AddGeometryToPaintTask(cartesianChart.Canvas, _crosshairLine);
@@ -738,7 +747,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
             }
             cartesianChart.Canvas.AddDrawableTask(CrosshairLabelsPaint);
 
-            _crosshairLabel ??= new TTextGeometry();
+            _crosshairLabel ??= _textGeometryFactory(); //new TTextGeometry();
             var labeler = Labeler;
             if (Labels is not null)
             {
@@ -790,15 +799,20 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     {
         if (NamePaint is null || string.IsNullOrWhiteSpace(Name)) return new LvcSize(0, 0);
 
-        var textGeometry = new TTextGeometry
-        {
-            Text = Name ?? string.Empty,
-            TextSize = (float)_nameTextSize,
-            RotateTransform = Orientation == AxisOrientation.X
-                ? 0
-                : InLineNamePlacement ? 0 : -90,
-            Padding = NamePadding
-        };
+        // var textGeometry = new TTextGeometry
+        // {
+        //     Text = Name ?? string.Empty,
+        //     TextSize = (float)_nameTextSize,
+        //     RotateTransform = Orientation == AxisOrientation.X
+        //         ? 0
+        //         : InLineNamePlacement ? 0 : -90,
+        //     Padding = NamePadding
+        // };
+        var textGeometry = _textGeometryFactory();
+        textGeometry.Text = Name ?? string.Empty;
+        textGeometry.TextSize = (float)_nameTextSize;
+        textGeometry.RotateTransform = Orientation == AxisOrientation.X ? 0 : InLineNamePlacement ? 0 : -90;
+        textGeometry.Padding = NamePadding;
 
         return textGeometry.Measure(NamePaint);
     }
@@ -835,13 +849,19 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 
         for (var i = start; i <= max; i += s)
         {
-            var textGeometry = new TTextGeometry
-            {
-                Text = TryGetLabelOrLogError(labeler, i),
-                TextSize = ts,
-                RotateTransform = r,
-                Padding = _padding
-            };
+            // var textGeometry = new TTextGeometry
+            // {
+            //     Text = TryGetLabelOrLogError(labeler, i),
+            //     TextSize = ts,
+            //     RotateTransform = r,
+            //     Padding = _padding
+            // };
+            var textGeometry = _textGeometryFactory();
+            textGeometry.Text = TryGetLabelOrLogError(labeler, i);
+            textGeometry.TextSize = ts;
+            textGeometry.RotateTransform = r;
+            textGeometry.Padding = _padding;
+
             var m = textGeometry.Measure(LabelsPaint);
             if (m.Width > w) w = m.Width;
             if (m.Height > h) h = m.Height;
@@ -938,13 +958,18 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 
         for (var i = min; i <= max; i += s)
         {
-            var textGeometry = new TTextGeometry
-            {
-                Text = labeler(i),
-                TextSize = (float)_textSize,
-                RotateTransform = (float)LabelsRotation,
-                Padding = _padding
-            };
+            // var textGeometry = new TTextGeometry
+            // {
+            //     Text = labeler(i),
+            //     TextSize = (float)_textSize,
+            //     RotateTransform = (float)LabelsRotation,
+            //     Padding = _padding
+            // };
+            var textGeometry = _textGeometryFactory();
+            textGeometry.Text = labeler(i);
+            textGeometry.TextSize = (float)_textSize;
+            textGeometry.RotateTransform = (float)LabelsRotation;
+            textGeometry.Padding = _padding;
 
             var m = textGeometry.Measure(LabelsPaint);
 
@@ -972,12 +997,16 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 
         if (_nameGeometry is null)
         {
-            _nameGeometry = new TTextGeometry
-            {
-                TextSize = size,
-                HorizontalAlign = Align.Middle,
-                VerticalAlign = Align.Middle
-            };
+            // _nameGeometry = new TTextGeometry
+            // {
+            //     TextSize = size,
+            //     HorizontalAlign = Align.Middle,
+            //     VerticalAlign = Align.Middle
+            // };
+            _nameGeometry = _textGeometryFactory();
+            _nameGeometry.TextSize = size;
+            _nameGeometry.HorizontalAlign = Align.Middle;
+            _nameGeometry.VerticalAlign = Align.Middle;
 
             _ = _nameGeometry
                  .TransitionateProperties(
@@ -1037,7 +1066,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
         }
         else
         {
-            lineGeometry = new TLineGeometry();
+            lineGeometry = _lineGeometryFactory(); //new TLineGeometry();
             visualSeparator.Separator = lineGeometry;
         }
 
@@ -1052,7 +1081,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 
         for (var j = 0; j < _subSections; j++)
         {
-            var subSeparator = new TLineGeometry();
+            var subSeparator = _lineGeometryFactory();//new TLineGeometry();
             visualSeparator.Subseparators[j] = subSeparator;
             InitializeTick(visualSeparator, cartesianChart, subSeparator);
         }
@@ -1082,7 +1111,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
         }
         else
         {
-            tickGeometry = new TLineGeometry();
+            tickGeometry = _lineGeometryFactory(); //new TLineGeometry();
             visualSeparator.Tick = tickGeometry;
         }
 
@@ -1104,7 +1133,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 
         for (var j = 0; j < _subSections; j++)
         {
-            var subTick = new TLineGeometry();
+            var subTick = _lineGeometryFactory(); //new TLineGeometry();
             visualSeparator.Subticks[j] = subTick;
             InitializeTick(visualSeparator, cartesianChart, subTick);
         }
@@ -1117,7 +1146,10 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
         bool hasRotation,
         float r)
     {
-        var textGeometry = new TTextGeometry { TextSize = size };
+        // var textGeometry = new TTextGeometry { TextSize = size };
+        var textGeometry = _textGeometryFactory();
+        textGeometry.TextSize = size;
+
         visualSeparator.Label = textGeometry;
         if (hasRotation) textGeometry.RotateTransform = r;
 
@@ -1259,9 +1291,14 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
             {
                 if (hasRotation && _labelsPaint is not null)
                 {
-                    var notRotatedSize =
-                        new TTextGeometry { TextSize = (float)_textSize, Padding = _padding, Text = text }
-                        .Measure(_labelsPaint);
+                    // var notRotatedSize =
+                    //     new TTextGeometry { TextSize = (float)_textSize, Padding = _padding, Text = text }
+                    //     .Measure(_labelsPaint);
+                    var textGeometry = _textGeometryFactory();
+                    textGeometry.Text = text;
+                    textGeometry.TextSize = (float)_textSize;
+                    textGeometry.Padding = _padding;
+                    var notRotatedSize = textGeometry.Measure(_labelsPaint);
 
                     var rhx = Math.Cos((90 - actualRotatation) * toRadians) * notRotatedSize.Height;
                     x += (float)Math.Abs(rhx * 0.5f);
@@ -1274,9 +1311,14 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
             {
                 if (hasRotation && _labelsPaint is not null)
                 {
-                    var notRotatedSize =
-                        new TTextGeometry { TextSize = (float)_textSize, Padding = _padding, Text = text }
-                        .Measure(_labelsPaint);
+                    // var notRotatedSize =
+                    //     new TTextGeometry { TextSize = (float)_textSize, Padding = _padding, Text = text }
+                    //     .Measure(_labelsPaint);
+                    var textGeometry = _textGeometryFactory();
+                    textGeometry.Text = text;
+                    textGeometry.TextSize = (float)_textSize;
+                    textGeometry.Padding = _padding;
+                    var notRotatedSize = textGeometry.Measure(_labelsPaint);
 
                     var rhx = Math.Cos((90 - actualRotatation) * toRadians) * notRotatedSize.Height;
                     x -= (float)Math.Abs(rhx * 0.5f);
@@ -1301,9 +1343,14 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
             {
                 if (hasRotation && _labelsPaint is not null)
                 {
-                    var notRotatedSize =
-                        new TTextGeometry { TextSize = (float)_textSize, Padding = _padding, Text = text }
-                        .Measure(_labelsPaint);
+                    // var notRotatedSize =
+                    //     new TTextGeometry { TextSize = (float)_textSize, Padding = _padding, Text = text }
+                    //     .Measure(_labelsPaint);
+                    var textGeometry = _textGeometryFactory();
+                    textGeometry.Text = text;
+                    textGeometry.TextSize = (float)_textSize;
+                    textGeometry.Padding = _padding;
+                    var notRotatedSize = textGeometry.Measure(_labelsPaint);
 
                     var rhx = Math.Sin((90 - actualRotatation) * toRadians) * notRotatedSize.Height;
                     y += (float)Math.Abs(rhx * 0.5f);
@@ -1325,9 +1372,14 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
             {
                 if (hasRotation && _labelsPaint is not null)
                 {
-                    var notRotatedSize =
-                        new TTextGeometry { TextSize = (float)_textSize, Padding = _padding, Text = text }
-                        .Measure(_labelsPaint);
+                    // var notRotatedSize =
+                    //     new TTextGeometry { TextSize = (float)_textSize, Padding = _padding, Text = text }
+                    //     .Measure(_labelsPaint);
+                    var textGeometry = _textGeometryFactory();
+                    textGeometry.Text = text;
+                    textGeometry.TextSize = (float)_textSize;
+                    textGeometry.Padding = _padding;
+                    var notRotatedSize = textGeometry.Measure(_labelsPaint);
 
                     var rhx = Math.Sin((90 - actualRotatation) * toRadians) * notRotatedSize.Height;
                     y -= (float)Math.Abs(rhx * 0.5f);
@@ -1361,15 +1413,15 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     {
         switch (mode)
         {
-            case Axis<TDrawingContext, TTextGeometry, TLineGeometry>.UpdateMode.UpdateAndComplete:
+            case UpdateMode.UpdateAndComplete:
                 if (_animatableBounds.HasPreviousState) geometry.Opacity = 0;
                 geometry.CompleteTransition(null);
                 break;
-            case Axis<TDrawingContext, TTextGeometry, TLineGeometry>.UpdateMode.UpdateAndRemove:
+            case UpdateMode.UpdateAndRemove:
                 geometry.Opacity = 0;
                 geometry.RemoveOnCompleted = true;
                 break;
-            case Axis<TDrawingContext, TTextGeometry, TLineGeometry>.UpdateMode.Update:
+            case UpdateMode.Update:
             default:
                 geometry.Opacity = 1;
                 break;
@@ -1391,10 +1443,17 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
         }
     }
 
-    private enum UpdateMode
-    {
-        Update,
-        UpdateAndComplete,
-        UpdateAndRemove
-    }
+    // private enum UpdateMode
+    // {
+    //     Update,
+    //     UpdateAndComplete,
+    //     UpdateAndRemove
+    // }
+}
+
+enum UpdateMode
+{
+    Update,
+    UpdateAndComplete,
+    UpdateAndRemove
 }

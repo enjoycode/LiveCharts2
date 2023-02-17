@@ -47,6 +47,18 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
         where TLineGeometry : ILineGeometry<TDrawingContext>/*, new()*/
         where TCircleGeometry : ISizedGeometry<TDrawingContext>/*, new()*/
 {
+
+    protected readonly Func<TTextGeometry> _textGeometryFactory;
+    protected readonly Func<TLineGeometry> _lineGeometryFactory;
+    protected readonly Func<TCircleGeometry> _circleGeometryFactory;
+
+    protected PolarAxis(Func<TTextGeometry> textGeometryFactory, Func<TLineGeometry> lineGeometryFactory, Func<TCircleGeometry> circleGeometryFactory)
+    {
+        _textGeometryFactory = textGeometryFactory;
+        _lineGeometryFactory = lineGeometryFactory;
+        _circleGeometryFactory = circleGeometryFactory;
+    }
+
     #region fields
 
     /// <summary>
@@ -317,7 +329,8 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
 
                 if (LabelsPaint is not null)
                 {
-                    var textGeometry = new TTextGeometry { TextSize = size };
+                    var textGeometry = _textGeometryFactory(); //new TTextGeometry { TextSize = size };
+                    textGeometry.TextSize = size;
                     visualSeparator.Label = textGeometry;
                     if (hasRotation) textGeometry.RotateTransform = r;
 
@@ -342,7 +355,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
                 {
                     if (visualSeparator is AxisVisualSeprator<TDrawingContext> linearSeparator)
                     {
-                        var lineGeometry = new TLineGeometry();
+                        var lineGeometry = _lineGeometryFactory(); //new TLineGeometry();
 
                         linearSeparator.Separator = lineGeometry;
 
@@ -362,7 +375,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
 
                     if (visualSeparator is RadialAxisVisualSeparator<TDrawingContext> polarSeparator)
                     {
-                        var circleGeometry = new TCircleGeometry();
+                        var circleGeometry = _circleGeometryFactory(); //new TCircleGeometry();
 
                         polarSeparator.Circle = circleGeometry;
 
@@ -471,12 +484,16 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
     {
         if (NamePaint is null || string.IsNullOrWhiteSpace(Name)) return new LvcSize(0, 0);
 
-        var textGeometry = new TTextGeometry
-        {
-            Text = Name ?? string.Empty,
-            TextSize = (float)NameTextSize,
-            Padding = _labelsPadding
-        };
+        // var textGeometry = new TTextGeometry
+        // {
+        //     Text = Name ?? string.Empty,
+        //     TextSize = (float)NameTextSize,
+        //     Padding = _labelsPadding
+        // };
+        var textGeometry = _textGeometryFactory();
+        textGeometry.Text = Name ?? string.Empty;
+        textGeometry.TextSize = (float)NameTextSize;
+        textGeometry.Padding = _labelsPadding;
 
         return textGeometry.Measure(NamePaint);
     }
@@ -527,13 +544,19 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
 
         for (var i = start; i <= max; i += s)
         {
-            var textGeometry = new TTextGeometry
-            {
-                Text = labeler(i),
-                TextSize = ts,
-                RotateTransform = r + (_orientation == PolarAxisOrientation.Angle ? scaler.GetAngle(i) - 90 : 0),
-                Padding = _labelsPadding
-            };
+            // var textGeometry = new TTextGeometry
+            // {
+            //     Text = labeler(i),
+            //     TextSize = ts,
+            //     RotateTransform = r + (_orientation == PolarAxisOrientation.Angle ? scaler.GetAngle(i) - 90 : 0),
+            //     Padding = _labelsPadding
+            // };
+            var textGeometry = _textGeometryFactory();
+            textGeometry.Text = labeler(i);
+            textGeometry.TextSize = ts;
+            textGeometry.RotateTransform =
+                r + (_orientation == PolarAxisOrientation.Angle ? scaler.GetAngle(i) - 90 : 0);
+            textGeometry.Padding = _labelsPadding;
             var m = textGeometry.Measure(LabelsPaint); // TextBrush.MeasureText(labeler(i, axisTick));
 
             var h = (float)Math.Sqrt(Math.Pow(m.Width * 0.5, 2) + Math.Pow(m.Height * 0.5, 2));

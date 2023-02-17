@@ -51,13 +51,19 @@ public abstract class BarSeries<TModel, TVisual, TLabel, TDrawingContext>
     private double _rx;
     private double _ry;
 
+    protected readonly Func<TVisual> _visualFactory;
+    protected readonly Func<TLabel> _labelFactory;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BarSeries{TModel, TVisual, TLabel, TDrawingContext}"/> class.
     /// </summary>
     /// <param name="properties">The properties.</param>
-    protected BarSeries(SeriesProperties properties)
+    protected BarSeries(SeriesProperties properties, Func<TVisual> visualFactory, Func<TLabel> labelFactory)
         : base(properties)
-    { }
+    {
+        _visualFactory = visualFactory;
+        _labelFactory = labelFactory;
+    }
 
     /// <inheritdoc cref="IBarSeries{TDrawingContext}.GroupPadding"/>
     [Obsolete($"Replace by {nameof(Padding)} property.")]
@@ -83,8 +89,8 @@ public abstract class BarSeries<TModel, TVisual, TLabel, TDrawingContext>
     {
         var schedules = new List<PaintSchedule<TDrawingContext>>();
 
-        if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, new TVisual()));
-        if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, new TVisual()));
+        if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, _visualFactory()/*new TVisual()*/));
+        if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, _visualFactory()/*new TVisual()*/));
 
         return new Sketch<TDrawingContext>()
         {

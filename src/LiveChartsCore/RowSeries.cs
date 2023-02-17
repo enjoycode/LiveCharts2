@@ -47,10 +47,11 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
     /// <summary>
     /// Initializes a new instance of the <see cref="RowSeries{TModel, TVisual, TLabel, TDrawingContext}"/> class.
     /// </summary>
-    public RowSeries(bool isStacked = false)
+    public RowSeries(Func<TVisual> visualFactory, Func<TLabel> labelFactory, bool isStacked = false)
         : base(
               SeriesProperties.Bar | SeriesProperties.PrimaryAxisHorizontalOrientation |
-              SeriesProperties.Solid | SeriesProperties.PrefersYStrategyTooltips | (isStacked ? SeriesProperties.Stacked : 0))
+              SeriesProperties.Solid | SeriesProperties.PrefersYStrategyTooltips | (isStacked ? SeriesProperties.Stacked : 0),
+              visualFactory, labelFactory)
     {
         _isRounded = typeof(IRoundedRectangleChartPoint<TDrawingContext>).IsAssignableFrom(typeof(TVisual));
     }
@@ -148,13 +149,18 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
                     hi = cartesianChart.IsZoomingOrPanning ? bp : 0;
                 }
 
-                var r = new TVisual
-                {
-                    X = pi,
-                    Y = yi,
-                    Width = hi,
-                    Height = uwi
-                };
+                // var r = new TVisual
+                // {
+                //     X = pi,
+                //     Y = yi,
+                //     Width = hi,
+                //     Height = uwi
+                // };
+                var r = _visualFactory();
+                r.X = pi;
+                r.Y = yi;
+                r.Width = hi;
+                r.Height = uwi;
 
                 if (_isRounded)
                 {
@@ -223,7 +229,11 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
 
                 if (label is null)
                 {
-                    var l = new TLabel { X = helper.p, Y = secondary - helper.uwm + helper.cp, RotateTransform = (float)DataLabelsRotation };
+                    //var l = new TLabel { X = helper.p, Y = secondary - helper.uwm + helper.cp, RotateTransform = (float)DataLabelsRotation };
+                    var l = _labelFactory();
+                    l.X = helper.p;
+                    l.Y = secondary - helper.uwm + helper.cp;
+                    l.RotateTransform = (float)DataLabelsRotation;
 
                     _ = l.TransitionateProperties(nameof(l.X), nameof(l.Y))
                         .WithAnimation(animation =>

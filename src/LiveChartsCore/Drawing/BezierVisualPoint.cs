@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using LiveChartsCore.Drawing.Segments;
 
 namespace LiveChartsCore.Drawing;
@@ -33,13 +34,18 @@ public class BezierVisualPoint<TDrawingContext, TVisual> : ICubicBezierVisualCha
     where TVisual : ISizedVisualChartPoint<TDrawingContext>/*, new()*/
     where TDrawingContext : DrawingContext
 {
+    protected BezierVisualPoint(TVisual geometry)
+    {
+        Geometry = geometry;
+    }
+
     /// <summary>
     /// Gets the geometry.
     /// </summary>
     /// <value>
     /// The geometry.
     /// </value>
-    public TVisual Geometry { get; set; } = new();
+    public TVisual Geometry { get; set; } /*= new();*/
 
     /// <summary>
     /// Gets the bezier.

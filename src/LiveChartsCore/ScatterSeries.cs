@@ -47,12 +47,18 @@ public class ScatterSeries<TModel, TVisual, TLabel, TDrawingContext>
 {
     private Bounds _weightBounds = new();
 
+    protected readonly Func<TVisual> _visualFactory;
+    protected readonly Func<TLabel> _labelFactory;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ScatterSeries{TModel, TVisual, TLabel, TDrawingContext}"/> class.
     /// </summary>
-    public ScatterSeries()
+    public ScatterSeries(Func<TVisual> visualFactory, Func<TLabel> labelFactory )
         : base(SeriesProperties.Scatter | SeriesProperties.Solid | SeriesProperties.PrefersXYStrategyTooltips)
     {
+        _visualFactory = visualFactory;
+        _labelFactory = labelFactory;
+
         DataPadding = new LvcPoint(1, 1);
 
         DataLabelsFormatter = (point) => $"{point.SecondaryValue}, {point.PrimaryValue}";
@@ -151,13 +157,18 @@ public class ScatterSeries<TModel, TVisual, TLabel, TDrawingContext>
 
             if (visual is null)
             {
-                var r = new TVisual
-                {
-                    X = x,
-                    Y = y,
-                    Width = 0,
-                    Height = 0
-                };
+                // var r = new TVisual
+                // {
+                //     X = x,
+                //     Y = y,
+                //     Width = 0,
+                //     Height = 0
+                // };
+                var r = _visualFactory();
+                r.X = x;
+                r.Y = y;
+                r.Width = 0;
+                r.Height = 0;
 
                 visual = r;
                 point.Context.Visual = visual;
@@ -188,7 +199,11 @@ public class ScatterSeries<TModel, TVisual, TLabel, TDrawingContext>
             {
                 if (point.Context.Label is not TLabel label)
                 {
-                    var l = new TLabel { X = x - hgs, Y = y - hgs, RotateTransform = (float)DataLabelsRotation };
+                    //var l = new TLabel { X = x - hgs, Y = y - hgs, RotateTransform = (float)DataLabelsRotation };
+                    var l = _labelFactory();
+                    l.X = x - hgs;
+                    l.Y = y - hgs;
+                    l.RotateTransform = (float)DataLabelsRotation;
 
                     _ = l.TransitionateProperties(nameof(l.X), nameof(l.Y))
                         .WithAnimation(animation =>
@@ -234,8 +249,8 @@ public class ScatterSeries<TModel, TVisual, TLabel, TDrawingContext>
     {
         var schedules = new List<PaintSchedule<TDrawingContext>>();
 
-        if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, new TVisual()));
-        if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, new TVisual()));
+        if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, _visualFactory()/*new TVisual()*/));
+        if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, _visualFactory()/*new TVisual()*/));
 
         return new Sketch<TDrawingContext>()
         {

@@ -55,14 +55,22 @@ public abstract class FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometr
     private IPaint<TDrawingContext>? _downFill = null;
     private double _maxBarWidth = 25;
 
+    protected readonly Func<TVisual> _visualFactory;
+    protected readonly Func<TLabel> _labelFactory;
+    protected readonly Func<TMiniatureGeometry> _miniatureGeometryFactory;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="FinancialSeries{TModel, TVisual, TLabel, TMiniatureGeometry, TDrawingContext}"/> class.
     /// </summary>
-    protected FinancialSeries()
+    protected FinancialSeries(Func<TVisual> visualFactory, Func<TLabel> labelFactory, Func<TMiniatureGeometry> miniatureGeometryFactory)
         : base(
              SeriesProperties.Financial | SeriesProperties.PrimaryAxisVerticalOrientation |
              SeriesProperties.Solid | SeriesProperties.PrefersXStrategyTooltips)
     {
+        _visualFactory = visualFactory;
+        _labelFactory = labelFactory;
+        _miniatureGeometryFactory = miniatureGeometryFactory;
+
         TooltipLabelFormatter = p => $"{Name}, H: {p.PrimaryValue:N2}, O: {p.TertiaryValue:N2}, C: {p.QuaternaryValue:N2}, L: {p.QuinaryValue:N2}";
     }
 
@@ -203,15 +211,22 @@ public abstract class FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometr
                     hi = cartesianChart.IsZoomingOrPanning ? bp : 0;
                 }
 
-                var r = new TVisual
-                {
-                    X = xi,
-                    Width = uwi,
-                    Y = middle, // y == high
-                    Open = middle,
-                    Close = middle,
-                    Low = middle
-                };
+                // var r = new TVisual
+                // {
+                //     X = xi,
+                //     Width = uwi,
+                //     Y = middle, // y == high
+                //     Open = middle,
+                //     Close = middle,
+                //     Low = middle
+                // };
+                var r = _visualFactory();
+                r.X = xi;
+                r.Width = uwi;
+                r.Y = middle;
+                r.Open = middle;
+                r.Close = middle;
+                r.Low = middle;
 
                 visual = r;
                 point.Context.Visual = visual;
@@ -257,7 +272,11 @@ public abstract class FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometr
 
                 if (label is null)
                 {
-                    var l = new TLabel { X = secondary - uwm, Y = high, RotateTransform = (float)DataLabelsRotation };
+                    //var l = new TLabel { X = secondary - uwm, Y = high, RotateTransform = (float)DataLabelsRotation };
+                    var l = _labelFactory();
+                    l.X = secondary - uwm;
+                    l.Y = high;
+                    l.RotateTransform = (float)DataLabelsRotation;
 
                     _ = l.TransitionateProperties(nameof(l.X), nameof(l.Y))
                         .WithAnimation(animation =>
@@ -468,7 +487,7 @@ public abstract class FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometr
     {
         var schedules = new List<PaintSchedule<TDrawingContext>>();
 
-        if (UpStroke is not null) schedules.Add(BuildMiniatureSchedule(UpStroke, new TMiniatureGeometry()));
+        if (UpStroke is not null) schedules.Add(BuildMiniatureSchedule(UpStroke, _miniatureGeometryFactory()/*new TMiniatureGeometry()*/));
 
         return new Sketch<TDrawingContext>()
         {

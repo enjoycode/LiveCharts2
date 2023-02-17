@@ -63,15 +63,25 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
     private bool _isClosed = true;
     private PolarLabelsPosition _labelsPosition;
 
+    protected readonly Func<TVisualPoint> _visualPointFactory;
+    protected readonly Func<TPathGeometry> _pathGeometryFactory;
+    protected readonly Func<TVisual> _visualFactory;
+    protected readonly Func<TLabel> _labelFactory;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PolarLineSeries{TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint}"/> class.
     /// </summary>
     /// <param name="isStacked">if set to <c>true</c> [is stacked].</param>
-    public PolarLineSeries(bool isStacked = false)
+    public PolarLineSeries(Func<TVisual> visualFactory, Func<TLabel> labelFactory,
+        Func<TPathGeometry> pathGeometryFactory, Func<TVisualPoint> visualPointFactory, bool isStacked = false)
         : base(
               SeriesProperties.Polar | SeriesProperties.PolarLine |
               (isStacked ? SeriesProperties.Stacked : 0) | SeriesProperties.Sketch | SeriesProperties.PrefersXStrategyTooltips)
     {
+        _visualPointFactory = visualPointFactory;
+        _pathGeometryFactory = pathGeometryFactory;
+        _visualFactory = visualFactory;
+        _labelFactory = labelFactory;
         DataPadding = new LvcPoint(1f, 1.5f);
     }
 
@@ -228,8 +238,10 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
 
             if (segmentI >= fillPathHelperContainer.Count)
             {
-                fillPath = new TPathGeometry { ClosingMethod = VectorClosingMethod.NotClosed };
-                strokePath = new TPathGeometry { ClosingMethod = VectorClosingMethod.NotClosed };
+                fillPath = _pathGeometryFactory(); //new TPathGeometry { ClosingMethod = VectorClosingMethod.NotClosed };
+                fillPath.ClosingMethod = VectorClosingMethod.NotClosed;
+                strokePath = _pathGeometryFactory(); //new TPathGeometry { ClosingMethod = VectorClosingMethod.NotClosed };
+                strokePath.ClosingMethod = VectorClosingMethod.NotClosed;
                 fillPathHelperContainer.Add(fillPath);
                 strokePathHelperContainer.Add(strokePath);
             }
@@ -271,7 +283,7 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
 
                 if (visual is null)
                 {
-                    var v = new TVisualPoint();
+                    var v = _visualPointFactory(); //new TVisualPoint();
 
                     visual = v;
 
@@ -342,7 +354,11 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
 
                     if (label is null)
                     {
-                        var l = new TLabel { X = x - hgs, Y = scaler.CenterY - hgs, RotateTransform = (float)actualRotation };
+                        //var l = new TLabel { X = x - hgs, Y = scaler.CenterY - hgs, RotateTransform = (float)actualRotation };
+                        var l = _labelFactory();
+                        l.X = x - hgs;
+                        l.Y = scaler.CenterY - hgs;
+                        l.RotateTransform  = actualRotation;
 
                         _ = l.TransitionateProperties(nameof(l.X), nameof(l.Y))
                             .WithAnimation(animation =>
@@ -476,11 +492,11 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
     {
         var schedules = new List<PaintSchedule<TDrawingContext>>();
 
-        if (GeometryFill is not null) schedules.Add(BuildMiniatureSchedule(GeometryFill, new TVisual()));
-        else if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, new TVisual()));
+        if (GeometryFill is not null) schedules.Add(BuildMiniatureSchedule(GeometryFill, _visualFactory() /*new TVisual()*/));
+        else if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, _visualFactory()/*new TVisual()*/));
 
-        if (GeometryStroke is not null) schedules.Add(BuildMiniatureSchedule(GeometryStroke, new TVisual()));
-        else if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, new TVisual()));
+        if (GeometryStroke is not null) schedules.Add(BuildMiniatureSchedule(GeometryStroke, _visualFactory() /*new TVisual()*/));
+        else if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, _visualFactory() /*new TVisual()*/));
 
         return new Sketch<TDrawingContext>()
         {

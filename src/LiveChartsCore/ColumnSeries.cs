@@ -46,10 +46,11 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnSeries{TModel, TVisual, TLabel, TDrawingContext}"/> class.
     /// </summary>
-    protected ColumnSeries(bool isStacked = false)
+    protected ColumnSeries(Func<TVisual> visualFactory, Func<TLabel> labelFactory, bool isStacked = false)
         : base(
               SeriesProperties.Bar | SeriesProperties.PrimaryAxisVerticalOrientation |
-              SeriesProperties.Solid | SeriesProperties.PrefersXStrategyTooltips | (isStacked ? SeriesProperties.Stacked : 0))
+              SeriesProperties.Solid | SeriesProperties.PrefersXStrategyTooltips | (isStacked ? SeriesProperties.Stacked : 0),
+              visualFactory, labelFactory)
     {
         DataPadding = new LvcPoint(0, 1);
         _isRounded = typeof(IRoundedRectangleChartPoint<TDrawingContext>).IsAssignableFrom(typeof(TVisual));
@@ -147,13 +148,18 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
                     hi = cartesianChart.IsZoomingOrPanning ? bp : 0;
                 }
 
-                var r = new TVisual
-                {
-                    X = xi,
-                    Y = pi,
-                    Width = uwi,
-                    Height = hi
-                };
+                // var r = new TVisual
+                // {
+                //     X = xi,
+                //     Y = pi,
+                //     Width = uwi,
+                //     Height = hi
+                // };
+                var r = _visualFactory();
+                r.X = xi;
+                r.Y = pi;
+                r.Width = uwi;
+                r.Height = hi;
 
                 if (_isRounded)
                 {
@@ -222,7 +228,11 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
 
                 if (label is null)
                 {
-                    var l = new TLabel { X = secondary - helper.uwm + helper.cp, Y = helper.p, RotateTransform = (float)DataLabelsRotation };
+                    //var l = new TLabel { X = secondary - helper.uwm + helper.cp, Y = helper.p, RotateTransform = (float)DataLabelsRotation };
+                    var l = _labelFactory();
+                    l.X = secondary - helper.uwm + helper.cp;
+                    l.Y = helper.p;
+                    l.RotateTransform = (float)DataLabelsRotation;
 
                     _ = l.TransitionateProperties(nameof(l.X), nameof(l.Y))
                         .WithAnimation(animation =>

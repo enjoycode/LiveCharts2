@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using LiveChartsCore.Drawing;
@@ -35,6 +36,12 @@ public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDr
     where TDrawingContext : DrawingContext
     where TBackgroundGemetry : ISizedGeometry<TDrawingContext>/*, new()*/
 {
+    public StackPanel(Func<TBackgroundGemetry> backgroundGeometryFactory)
+    {
+        _backgroundGeometryFactory = backgroundGeometryFactory;
+    }
+
+    private readonly Func<TBackgroundGemetry> _backgroundGeometryFactory;
     private LvcPoint _targetPosition;
     private IPaint<TDrawingContext>? _backgroundPaint;
     private TBackgroundGemetry? _backgroundGeometry;
@@ -134,13 +141,18 @@ public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDr
         {
             var cp = GetPositionRelativeToParent();
 
-            _backgroundGeometry = new TBackgroundGemetry
-            {
-                X = cp.X,
-                Y = cp.Y,
-                Width = controlSize.Width,
-                Height = controlSize.Height
-            };
+            // _backgroundGeometry = new TBackgroundGemetry
+            // {
+            //     X = cp.X,
+            //     Y = cp.Y,
+            //     Width = controlSize.Width,
+            //     Height = controlSize.Height
+            // };
+            _backgroundGeometry = _backgroundGeometryFactory();
+            _backgroundGeometry.X = cp.X;
+            _backgroundGeometry.Y = cp.Y;
+            _backgroundGeometry.Width = controlSize.Width;
+            _backgroundGeometry.Height = controlSize.Height;
 
             _ = _backgroundGeometry
                 .TransitionateProperties()

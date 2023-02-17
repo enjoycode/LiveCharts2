@@ -55,14 +55,20 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
     private double[]? _colorStops;
     private Padding _pointPadding = new(4);
 
+    protected readonly Func<TVisual> _visualFactory;
+    protected readonly Func<TLabel> _labelFactory;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HeatSeries{TModel, TVisual, TLabel, TDrawingContext}"/> class.
     /// </summary>
-    protected HeatSeries()
+    protected HeatSeries(Func<TVisual> visualFactory, Func<TLabel> labelFactory)
         : base(
              SeriesProperties.Heat | SeriesProperties.PrimaryAxisVerticalOrientation |
              SeriesProperties.Solid | SeriesProperties.PrefersXYStrategyTooltips)
     {
+        _visualFactory = visualFactory;
+        _labelFactory = labelFactory;
+
         DataPadding = new LvcPoint(0, 0);
         TooltipLabelFormatter = (point) => $"{Name}: {point.TertiaryValue:N}";
     }
@@ -168,14 +174,20 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
                     yi = previousPrimaryScale.ToPixels(point.PrimaryValue) - uwp * 0.5f;
                 }
 
-                var r = new TVisual
-                {
-                    X = xi + p.Left,
-                    Y = yi + p.Top,
-                    Width = uws - p.Left - p.Right,
-                    Height = uwp - p.Top - p.Bottom,
-                    Color = LvcColor.FromArgb(0, baseColor.R, baseColor.G, baseColor.B)
-                };
+                // var r = new TVisual
+                // {
+                //     X = xi + p.Left,
+                //     Y = yi + p.Top,
+                //     Width = uws - p.Left - p.Right,
+                //     Height = uwp - p.Top - p.Bottom,
+                //     Color = LvcColor.FromArgb(0, baseColor.R, baseColor.G, baseColor.B)
+                // };
+                var r = _visualFactory();
+                r.X = xi + p.Left;
+                r.Y = yi + p.Top;
+                r.Width = uws - p.Left - p.Right;
+                r.Height = uwp - p.Top - p.Bottom;
+                r.Color = LvcColor.FromArgb(0, baseColor.R, baseColor.G, baseColor.B);
 
                 visual = r;
                 point.Context.Visual = visual;
@@ -205,7 +217,11 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
 
                 if (label is null)
                 {
-                    var l = new TLabel { X = secondary - uws * 0.5f, Y = primary - uws * 0.5f, RotateTransform = (float)DataLabelsRotation };
+                    //var l = new TLabel { X = secondary - uws * 0.5f, Y = primary - uws * 0.5f, RotateTransform = (float)DataLabelsRotation };
+                    var l = _labelFactory();
+                    l.X = secondary - uws * 0.5f;
+                    l.Y = primary - uws * 0.5f;
+                    l.RotateTransform = (float)DataLabelsRotation;
 
                     _ = l.TransitionateProperties(nameof(l.X), nameof(l.Y))
                         .WithAnimation(animation =>
@@ -318,14 +334,21 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
             strokeClone.StrokeThickness = MAX_MINIATURE_STROKE_WIDTH;
         }
 
-        var visual = new TVisual
-        {
-            X = st * 0.5f,
-            Y = st * 0.5f,
-            Height = (float)MiniatureShapeSize,
-            Width = (float)MiniatureShapeSize,
-            Color = HeatMap[0] // ToDo <- draw the gradient?
-        };
+        // var visual = new TVisual
+        // {
+        //     X = st * 0.5f,
+        //     Y = st * 0.5f,
+        //     Height = (float)MiniatureShapeSize,
+        //     Width = (float)MiniatureShapeSize,
+        //     Color = HeatMap[0] // ToDo <- draw the gradient?
+        // };
+        var visual = _visualFactory();
+        visual.X = st * 0.5f;
+        visual.Y = st * 0.5f;
+        visual.Height = (float)MiniatureShapeSize;
+        visual.Width = (float)MiniatureShapeSize;
+        visual.Color = HeatMap[0]; // ToDo <- draw the gradient?
+
         strokeClone.ZIndex = 1;
         schedules.Add(new PaintSchedule<TDrawingContext>(strokeClone, visual));
 

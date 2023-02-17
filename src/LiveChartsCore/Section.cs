@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using LiveChartsCore.Drawing;
@@ -185,6 +186,14 @@ public abstract class Section<TSizedGeometry, TDrawingContext> : Section<TDrawin
     where TDrawingContext : DrawingContext
     where TSizedGeometry : ISizedGeometry<TDrawingContext>/*, new()*/
 {
+
+    protected readonly Func<TSizedGeometry> _sizedGeometryFactory;
+
+    protected Section(Func<TSizedGeometry> sizedGeometryFactory)
+    {
+        _sizedGeometryFactory = sizedGeometryFactory;
+    }
+
     /// <summary>
     /// The fill sized geometry
     /// </summary>
@@ -223,13 +232,18 @@ public abstract class Section<TSizedGeometry, TDrawingContext> : Section<TDrawin
 
             if (_fillSizedGeometry is null)
             {
-                _fillSizedGeometry = new TSizedGeometry
-                {
-                    X = xi,
-                    Y = yi,
-                    Width = xj - xi,
-                    Height = yj - yi
-                };
+                // _fillSizedGeometry = new TSizedGeometry
+                // {
+                //     X = xi,
+                //     Y = yi,
+                //     Width = xj - xi,
+                //     Height = yj - yi
+                // };
+                _fillSizedGeometry = _sizedGeometryFactory();
+                _fillSizedGeometry.X = xi;
+                _fillSizedGeometry.Y = yi;
+                _fillSizedGeometry.Width = xj - xi;
+                _fillSizedGeometry.Height = yj - yi;
 
                 _ = _fillSizedGeometry
                    .TransitionateProperties(
@@ -261,13 +275,18 @@ public abstract class Section<TSizedGeometry, TDrawingContext> : Section<TDrawin
 
             if (_strokeSizedGeometry is null)
             {
-                _strokeSizedGeometry = new TSizedGeometry
-                {
-                    X = xi,
-                    Y = yi,
-                    Width = xj - xi,
-                    Height = yj - yi
-                };
+                // _strokeSizedGeometry = new TSizedGeometry
+                // {
+                //     X = xi,
+                //     Y = yi,
+                //     Width = xj - xi,
+                //     Height = yj - yi
+                // };
+                _strokeSizedGeometry = _sizedGeometryFactory();
+                _strokeSizedGeometry.X = xi;
+                _strokeSizedGeometry.Y = yi;
+                _strokeSizedGeometry.Width = xj - xi;
+                _strokeSizedGeometry.Height = yj - yi;
 
                 _ = _strokeSizedGeometry
                    .TransitionateProperties(

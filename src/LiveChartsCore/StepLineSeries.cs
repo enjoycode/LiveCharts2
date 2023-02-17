@@ -56,15 +56,24 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
     private IPaint<TDrawingContext>? _geometryStroke;
     private bool _enableNullSplitting = true;
 
+    protected readonly Func<TVisual> _visualFactory;
+    protected readonly Func<TLabel> _labelFactory;
+    protected readonly Func<TPathGeometry> _pathGeometryFactory;
+    protected readonly Func<TVisualPoint> _visualPointFactory;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="StepLineSeries{TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint}"/> class.
     /// </summary>
     /// <param name="isStacked">if set to <c>true</c> [is stacked].</param>
-    public StepLineSeries(bool isStacked = false)
+    public StepLineSeries(Func<TVisual> visualFactory, Func<TLabel> labelFactory, Func<TPathGeometry> pathGeometryFactory, Func<TVisualPoint> visualPointFactory, bool isStacked = false)
         : base(
               SeriesProperties.StepLine | SeriesProperties.PrimaryAxisVerticalOrientation |
               (isStacked ? SeriesProperties.Stacked : 0) | SeriesProperties.Sketch | SeriesProperties.PrefersXStrategyTooltips)
     {
+        _visualFactory = visualFactory;
+        _labelFactory = labelFactory;
+        _pathGeometryFactory = pathGeometryFactory;
+        _visualPointFactory = visualPointFactory;
         DataPadding = new LvcPoint(0.5f, 1f);
     }
 
@@ -155,8 +164,10 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
             if (segmentI >= fillPathHelperContainer.Count)
             {
                 isNew = true;
-                fillPath = new TPathGeometry { ClosingMethod = VectorClosingMethod.CloseToPivot };
-                strokePath = new TPathGeometry { ClosingMethod = VectorClosingMethod.NotClosed };
+                fillPath = _pathGeometryFactory(); //new TPathGeometry { ClosingMethod = VectorClosingMethod.CloseToPivot };
+                fillPath.ClosingMethod = VectorClosingMethod.CloseToPivot;
+                strokePath = _pathGeometryFactory(); //new TPathGeometry { ClosingMethod = VectorClosingMethod.NotClosed };
+                strokePath.ClosingMethod = VectorClosingMethod.NotClosed;
                 fillPathHelperContainer.Add(fillPath);
                 strokePathHelperContainer.Add(strokePath);
             }
@@ -217,7 +228,7 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
 
                 if (visual is null)
                 {
-                    var v = new TVisualPoint();
+                    var v = _visualPointFactory(); //new TVisualPoint();
                     visual = v;
 
                     if (IsFirstDraw)
@@ -280,7 +291,11 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
 
                     if (label is null)
                     {
-                        var l = new TLabel { X = x - hgs, Y = p - hgs, RotateTransform = (float)DataLabelsRotation };
+                        //var l = new TLabel { X = x - hgs, Y = p - hgs, RotateTransform = (float)DataLabelsRotation };
+                        var l = _labelFactory();
+                        l.X = x - hgs;
+                        l.Y = p - hgs;
+                        l.RotateTransform = (float)DataLabelsRotation;
 
                         _ = l.TransitionateProperties(nameof(l.X), nameof(l.Y))
                             .WithAnimation(animation =>
@@ -368,11 +383,11 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
     {
         var schedules = new List<PaintSchedule<TDrawingContext>>();
 
-        if (GeometryFill is not null) schedules.Add(BuildMiniatureSchedule(GeometryFill, new TVisual()));
-        else if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, new TVisual()));
+        if (GeometryFill is not null) schedules.Add(BuildMiniatureSchedule(GeometryFill, _visualFactory() /*new TVisual()*/));
+        else if (Fill is not null) schedules.Add(BuildMiniatureSchedule(Fill, _visualFactory() /*new TVisual()*/));
 
-        if (GeometryStroke is not null) schedules.Add(BuildMiniatureSchedule(GeometryStroke, new TVisual()));
-        else if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, new TVisual()));
+        if (GeometryStroke is not null) schedules.Add(BuildMiniatureSchedule(GeometryStroke, _visualFactory() /*new TVisual()*/));
+        else if (Stroke is not null) schedules.Add(BuildMiniatureSchedule(Stroke, _visualFactory() /*new TVisual()*/));
 
         return new Sketch<TDrawingContext>()
         {

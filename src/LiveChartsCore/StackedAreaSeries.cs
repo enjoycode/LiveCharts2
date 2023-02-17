@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Drawing.Segments;
 
@@ -46,8 +47,9 @@ public class StackedAreaSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGe
     /// <summary>
     /// Initializes a new instance of the <see cref="StackedAreaSeries{TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TBezierVisual}"/> class.
     /// </summary>
-    public StackedAreaSeries()
-        : base(true)
+    public StackedAreaSeries(Func<TVisual> visualFactory, Func<TLabel> labelFactory,
+        Func<TPathGeometry> pathGeometryFactory, Func<TVisualPoint> visualPointFactory)
+        : base(visualFactory, labelFactory, pathGeometryFactory, visualPointFactory, true)
     {
         GeometryFill = null;
         GeometryStroke = null;
