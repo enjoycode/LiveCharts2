@@ -65,7 +65,7 @@ public interface IChartView
     LvcSize ControlSize { get; }
 
     /// <summary>
-    /// Gets or sets the draw margin, if this property is null, the library will calculate a margin, this margin is the distance 
+    /// Gets or sets the draw margin, if this property is null, the library will calculate a margin, this margin is the distance
     /// between the view bounds and the drawable area.
     /// </summary>
     /// <value>
@@ -82,7 +82,7 @@ public interface IChartView
     TimeSpan AnimationsSpeed { get; set; }
 
     /// <summary>
-    /// Gets or sets the easing function, the library already provides many easing functions in the 
+    /// Gets or sets the easing function, the library already provides many easing functions in the
     /// LiveCharts.EasingFunction static class.
     /// </summary>
     /// <value>
@@ -131,11 +131,11 @@ public interface IChartView
     /// <param name="pointer">The pointer location.</param>
     void OnDataPointerDown(IEnumerable<ChartPoint> points, LvcPoint pointer);
 
-    /// <summary>
-    /// Gets or sets the Synchronization Context, use this property to
-    /// use an external object to handle multi threading synchronization.
-    /// </summary>
-    object SyncContext { get; /*set;*/ }
+    // /// <summary>
+    // /// Gets or sets the Synchronization Context, use this property to
+    // /// use an external object to handle multi threading synchronization.
+    // /// </summary>
+    // object SyncContext { get; /*set;*/ }
 
     /// <summary>
     /// Invokes an action in the UI thread.
@@ -143,10 +143,10 @@ public interface IChartView
     /// <param name="action"></param>
     void InvokeOnUIThread(Action action);
 
-    /// <summary>
-    /// Invalidates the control.
-    /// </summary>
-    void Invalidate();
+    // /// <summary>
+    // /// Invalidates the control.
+    // /// </summary>
+    // void Invalidate();
 }
 
 /// <summary>
