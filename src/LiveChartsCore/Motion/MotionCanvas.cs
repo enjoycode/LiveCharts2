@@ -81,7 +81,7 @@ public class MotionCanvas<TDrawingContext> : IDisposable
     /// <value>
     /// The synchronize.
     /// </value>
-    public object Sync { get => _sync; set => _sync = value ?? new object(); }
+    public object Sync { get => _sync; /*set => _sync = value ?? new object();*/ }
 
     /// <summary>
     /// Gets the animatables collection.

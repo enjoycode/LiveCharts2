@@ -69,15 +69,6 @@ public class ChartPoint
     public static ChartPoint Empty => new() { IsLocalEmpty = true };
 
     /// <summary>
-    /// Gets or sets a value indicating whether this instance is null.
-    /// </summary>
-    /// <value>
-    ///   <c>true</c> if this instance is null; otherwise, <c>false</c>.
-    /// </value>
-    [Obsolete($"Use IsEmpty instead")]
-    public bool IsNull => IsEmpty;
-
-    /// <summary>
     /// Gets or sets a value indicating whether this instance is empty.
     /// </summary>
     /// <value>

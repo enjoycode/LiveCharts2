@@ -135,7 +135,7 @@ public interface IChartView
     /// Gets or sets the Synchronization Context, use this property to
     /// use an external object to handle multi threading synchronization.
     /// </summary>
-    object SyncContext { get; set; }
+    object SyncContext { get; /*set;*/ }
 
     /// <summary>
     /// Invokes an action in the UI thread.
