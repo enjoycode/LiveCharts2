@@ -205,8 +205,16 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
             visual.Color = LvcColor.FromArgb(baseColor.A, baseColor.R, baseColor.G, baseColor.B);
             visual.RemoveOnCompleted = false;
 
+#if __WEB__
+            RectangleHoverArea ha;
+            if (point.Context.HoverArea is RectangleHoverArea)
+                ha = (point.Context.HoverArea as RectangleHoverArea)!;
+            else
+                point.Context.HoverArea = ha = new RectangleHoverArea();
+#else
             if (point.Context.HoverArea is not RectangleHoverArea ha)
                 point.Context.HoverArea = ha = new RectangleHoverArea();
+#endif
             _ = ha.SetDimensions(secondary - uws * 0.5f, primary - uwp * 0.5f, uws, uwp);
 
             pointsCleanup.Clean(point);
@@ -278,7 +286,11 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
     {
         var chart = chartPoint.Context.Chart;
 
+#if __WEB__
+        var visual = (chartPoint.Context.Visual as TVisual)!;
+#else
         if (chartPoint.Context.Visual is not TVisual visual) throw new Exception("Unable to initialize the point instance.");
+#endif
 
         _ = visual
             .TransitionateProperties(

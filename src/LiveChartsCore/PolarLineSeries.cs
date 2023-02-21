@@ -172,8 +172,12 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
         var hgs = gs / 2f;
         var sw = Stroke?.StrokeThickness ?? 0;
 
+#if __WEB__
+        var points = Fetch(polarChart).ToArray();
+#else
         var fetched = Fetch(polarChart);
         if (fetched is not ChartPoint[] points) points = fetched.ToArray();
+#endif
 
         var segments = _enableNullSplitting
             ? SplitEachNull(points, scaler)
@@ -335,8 +339,16 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
                 visual.StrokePath = strokePath;
 
                 var hags = gs < 16 ? 16 : gs;
+#if __WEB__
+                RectangleHoverArea ha;
+                if (data.TargetPoint.Context.HoverArea is RectangleHoverArea)
+                    ha = (data.TargetPoint.Context.HoverArea as RectangleHoverArea)!;
+                else
+                    data.TargetPoint.Context.HoverArea = ha = new RectangleHoverArea();
+#else
                 if (data.TargetPoint.Context.HoverArea is not RectangleHoverArea ha)
                     data.TargetPoint.Context.HoverArea = ha = new RectangleHoverArea();
+#endif
                 _ = ha.SetDimensions(x - hags * 0.5f, y - hags * 0.5f, hags, hags);
 
                 pointsCleanup.Clean(data.TargetPoint);
@@ -624,8 +636,12 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
     {
         var chart = chartPoint.Context.Chart;
 
+#if __WEB__
+        var visual = (chartPoint.Context.Visual as TVisualPoint)!;
+#else
         if (chartPoint.Context.Visual is not TVisualPoint visual)
             throw new Exception("Unable to initialize the point instance.");
+#endif
 
         _ = visual.Geometry
             .TransitionateProperties(

@@ -217,8 +217,16 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
             }
             visual.RemoveOnCompleted = false;
 
+#if __WEB__
+            RectangleHoverArea ha;
+            if (point.Context.HoverArea is RectangleHoverArea)
+                ha = (point.Context.HoverArea as RectangleHoverArea)!;
+            else
+                point.Context.HoverArea = ha = new RectangleHoverArea();
+#else
             if (point.Context.HoverArea is not RectangleHoverArea ha)
                 point.Context.HoverArea = ha = new RectangleHoverArea();
+#endif
             _ = ha.SetDimensions(cx, secondary - helper.actualUw * 0.5f, b, helper.actualUw);
 
             pointsCleanup.Clean(point);
@@ -286,7 +294,11 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
     {
         var chart = chartPoint.Context.Chart;
 
+#if __WEB__
+        var visual = (chartPoint.Context.Visual as TVisual)!;
+#else
         if (chartPoint.Context.Visual is not TVisual visual) throw new Exception("Unable to initialize the point instance.");
+#endif
 
         _ = visual
             .TransitionateProperties(

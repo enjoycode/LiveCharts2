@@ -216,8 +216,16 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
             }
             visual.RemoveOnCompleted = false;
 
+#if __WEB__
+            RectangleHoverArea ha;
+            if (point.Context.HoverArea is RectangleHoverArea)
+                ha = (RectangleHoverArea)point.Context.HoverArea;
+            else
+                point.Context.HoverArea = ha = new RectangleHoverArea();
+#else
             if (point.Context.HoverArea is not RectangleHoverArea ha)
                 point.Context.HoverArea = ha = new RectangleHoverArea();
+#endif
             _ = ha.SetDimensions(secondary - helper.actualUw * 0.5f, cy, helper.actualUw, b);
 
             pointsCleanup.Clean(point);
@@ -279,7 +287,11 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
     {
         var chart = chartPoint.Context.Chart;
 
+#if __WEB__
+        var visual = (chartPoint.Context.Visual as TVisual)!;
+#else
         if (chartPoint.Context.Visual is not TVisual visual) throw new Exception("Unable to initialize the point instance.");
+#endif
 
         _ = visual
             .TransitionateProperties(

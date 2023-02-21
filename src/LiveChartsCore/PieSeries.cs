@@ -362,8 +362,16 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
             if (start + initialRotation == initialRotation && sweep == 360)
                 dougnutGeometry.SweepAngle = 359.99f;
 
+#if __WEB__
+            SemicircleHoverArea ha;
+            if (point.Context.HoverArea is SemicircleHoverArea)
+                ha = (point.Context.HoverArea as SemicircleHoverArea)!;
+            else
+                point.Context.HoverArea = ha = new SemicircleHoverArea();
+#else
             if (point.Context.HoverArea is not SemicircleHoverArea ha)
                 point.Context.HoverArea = ha = new SemicircleHoverArea();
+#endif
             _ = ha.SetDimensions(cx, cy, (float)(start + initialRotation), (float)(start + initialRotation + sweep), md * 0.5f);
 
             pointsCleanup.Clean(point);
@@ -538,7 +546,11 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
 
         var chart = chartPoint.Context.Chart;
 
+#if __WEB__
+        var visual = (chartPoint.Context.Visual as TVisual)!;
+#else
         if (chartPoint.Context.Visual is not TVisual visual) throw new Exception("Unable to initialize the point instance.");
+#endif
 
         _ = visual
             .TransitionateProperties(

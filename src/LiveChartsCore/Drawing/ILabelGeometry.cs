@@ -27,6 +27,7 @@ namespace LiveChartsCore.Drawing;
 /// </summary>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="IGeometry{TDrawingContext}" />
+[PixUI.TSInterfaceOf]
 public interface ILabelGeometry<TDrawingContext> : IGeometry<TDrawingContext>
      where TDrawingContext : DrawingContext
 {

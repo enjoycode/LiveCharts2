@@ -16,6 +16,8 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <RepositoryUrl>https://github.com/beto-rodriguez/LiveCharts2</RepositoryUrl>
+    <Configurations>Debug;Release;DebugWeb</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -25,6 +27,10 @@
   <PropertyGroup>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'DebugWeb' ">
+    <DefineConstants>TRACE;__WEB__</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,6 +50,10 @@
 
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)' == 'net462' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'netcoreapp2.1'" Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\PixUI\PixUI.TSAttributes\PixUI.TSAttributes.csproj" />
   </ItemGroup>
 
 </Project>

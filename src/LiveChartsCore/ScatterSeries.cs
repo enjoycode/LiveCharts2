@@ -189,15 +189,30 @@ public class ScatterSeries<TModel, TVisual, TLabel, TDrawingContext>
 
             sizedGeometry.RemoveOnCompleted = false;
 
+#if __WEB__
+            RectangleHoverArea ha;
+            if (point.Context.HoverArea is RectangleHoverArea)
+                ha = (point.Context.HoverArea as RectangleHoverArea)!;
+            else
+                point.Context.HoverArea = ha = new RectangleHoverArea();
+#else
             if (point.Context.HoverArea is not RectangleHoverArea ha)
                 point.Context.HoverArea = ha = new RectangleHoverArea();
+#endif
             _ = ha.SetDimensions(x - uwx * 0.5f, y - uwy * 0.5f, uwx, uwy);
 
             pointsCleanup.Clean(point);
 
             if (DataLabelsPaint is not null)
             {
+#if __WEB__
+                ILabelGeometry<TDrawingContext> label;
+                if (point.Context.Label is ILabelGeometry<TDrawingContext>)
+                    label = (point.Context.Label as ILabelGeometry<TDrawingContext>)!;
+                else
+#else
                 if (point.Context.Label is not TLabel label)
+#endif
                 {
                     //var l = new TLabel { X = x - hgs, Y = y - hgs, RotateTransform = (float)DataLabelsRotation };
                     var l = _labelFactory();

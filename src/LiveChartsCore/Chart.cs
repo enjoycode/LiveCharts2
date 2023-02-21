@@ -678,7 +678,15 @@ public abstract class Chart<TDrawingContext> : IChart
         return Task.Run(() =>
             View.InvokeOnUIThread(() =>
             {
+#if __WEB__
+                CartesianChart<TDrawingContext> cartesianChart;
+                if (this is CartesianChart<TDrawingContext>)
+                    cartesianChart = (this as CartesianChart<TDrawingContext>)!;
+                else
+                    return;
+#else
                 if (this is not CartesianChart<TDrawingContext> cartesianChart) return;
+#endif
 
                 lock (Canvas.Sync)
                 {

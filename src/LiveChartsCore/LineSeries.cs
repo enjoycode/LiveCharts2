@@ -322,8 +322,16 @@ public class LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry,
 
                 var hags = gs < 8 ? 8 : gs;
 
+#if __WEB__
+                RectangleHoverArea ha;
+                if(data.TargetPoint.Context.HoverArea is RectangleHoverArea)
+                    ha = (data.TargetPoint.Context.HoverArea as RectangleHoverArea)!;
+                else
+                    data.TargetPoint.Context.HoverArea = ha = new RectangleHoverArea();
+#else
                 if (data.TargetPoint.Context.HoverArea is not RectangleHoverArea ha)
                     data.TargetPoint.Context.HoverArea = ha = new RectangleHoverArea();
+#endif
                 _ = ha.SetDimensions(x - uwx * 0.5f, y - hgs, uwx, gs);
 
                 pointsCleanup.Clean(data.TargetPoint);
@@ -600,8 +608,12 @@ public class LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry,
     {
         var chart = chartPoint.Context.Chart;
 
+#if __WEB__
+        var visual = (chartPoint.Context.Visual as TVisualPoint)!;
+#else
         if (chartPoint.Context.Visual is not TVisualPoint visual)
             throw new Exception("Unable to initialize the point instance.");
+#endif
 
         _ = visual.Geometry
             .TransitionateProperties(
@@ -658,7 +670,15 @@ public class LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry,
 
     private void DeleteNullPoint(ChartPoint point, Scaler xScale, Scaler yScale)
     {
+#if __WEB__
+        TVisualPoint visual;
+        if (point.Context.Visual is BezierVisualPoint<TDrawingContext, TVisual>)
+            visual = (point.Context.Visual as TVisualPoint)!;
+        else
+            return;
+#else
         if (point.Context.Visual is not TVisualPoint visual) return;
+#endif
 
         var x = xScale.ToPixels(point.SecondaryValue);
         var y = yScale.ToPixels(point.PrimaryValue);

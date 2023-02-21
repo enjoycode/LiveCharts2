@@ -260,8 +260,16 @@ public abstract class FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometr
             visual.Low = low;
             visual.RemoveOnCompleted = false;
 
+#if __WEB__
+            RectangleHoverArea ha;
+            if (point.Context.HoverArea is RectangleHoverArea)
+                ha = (point.Context.HoverArea as RectangleHoverArea)!;
+            else
+                point.Context.HoverArea = ha = new RectangleHoverArea();
+#else
             if (point.Context.HoverArea is not RectangleHoverArea ha)
                 point.Context.HoverArea = ha = new RectangleHoverArea();
+#endif
             _ = ha.SetDimensions(secondary - uwm, high, uw, Math.Abs(low - high));
 
             pointsCleanup.Clean(point);
@@ -400,7 +408,11 @@ public abstract class FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometr
     {
         var chart = chartPoint.Context.Chart;
 
+#if __WEB__
+        var visual = (chartPoint.Context.Visual as TVisual)!;
+#else
         if (chartPoint.Context.Visual is not TVisual visual) throw new Exception("Unable to initialize the point instance.");
+#endif
 
         _ = visual
             .TransitionateProperties(

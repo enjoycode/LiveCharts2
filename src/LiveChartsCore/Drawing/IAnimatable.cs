@@ -28,6 +28,7 @@ namespace LiveChartsCore.Drawing;
 /// <summary>
 /// Defines an animated object, the properties of this object move according to the easing and speed when a change occurs.
 /// </summary>
+[PixUI.TSInterfaceOf]
 public interface IAnimatable
 {
     /// <summary>

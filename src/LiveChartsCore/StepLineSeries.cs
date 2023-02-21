@@ -49,17 +49,23 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
         where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
+    #if __WEB__
+    private readonly ObjectMap<List<TPathGeometry>> _fillPathHelperDictionary = new();
+    private readonly ObjectMap<List<TPathGeometry>> _strokePathHelperDictionary = new();
+    #else
     private readonly Dictionary<object, List<TPathGeometry>> _fillPathHelperDictionary = new();
     private readonly Dictionary<object, List<TPathGeometry>> _strokePathHelperDictionary = new();
+    #endif
+
     private float _geometrySize = 14f;
     private IPaint<TDrawingContext>? _geometryFill;
     private IPaint<TDrawingContext>? _geometryStroke;
     private bool _enableNullSplitting = true;
 
-    protected readonly Func<TVisual> _visualFactory;
-    protected readonly Func<TLabel> _labelFactory;
-    protected readonly Func<TPathGeometry> _pathGeometryFactory;
-    protected readonly Func<TVisualPoint> _visualPointFactory;
+    private readonly Func<TVisual> _visualFactory;
+    private readonly Func<TLabel> _labelFactory;
+    private readonly Func<TPathGeometry> _pathGeometryFactory;
+    private readonly Func<TVisualPoint> _visualPointFactory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StepLineSeries{TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint}"/> class.
@@ -140,6 +146,21 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
         var segmentI = 0;
         var pointsCleanup = ChartPointCleanupContext.For(everFetched);
 
+#if __WEB__
+        var strokePathHelperContainer = _strokePathHelperDictionary.get(chart.Canvas.Sync);
+        if (strokePathHelperContainer == null)
+        {
+            strokePathHelperContainer = new List<TPathGeometry>();
+            _strokePathHelperDictionary.set(chart.Canvas.Sync, strokePathHelperContainer);
+        }
+
+        var fillPathHelperContainer = _fillPathHelperDictionary.get(chart.Canvas.Sync);
+        if (fillPathHelperContainer == null)
+        {
+            fillPathHelperContainer = new List<TPathGeometry>();
+            _fillPathHelperDictionary.set(chart.Canvas.Sync, fillPathHelperContainer);
+        }
+#else
         if (!_strokePathHelperDictionary.TryGetValue(chart.Canvas.Sync, out var strokePathHelperContainer))
         {
             strokePathHelperContainer = new List<TPathGeometry>();
@@ -151,6 +172,7 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
             fillPathHelperContainer = new List<TPathGeometry>();
             _fillPathHelperDictionary[chart.Canvas.Sync] = fillPathHelperContainer;
         }
+#endif
 
         var uwx = secondaryScale.MeasureInPixels(secondaryAxis.UnitWidth);
         uwx = uwx < gs ? gs : uwx;
@@ -278,9 +300,16 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
                 visual.StrokePath = strokePath;
 
                 var hags = gs < 8 ? 8 : gs;
-
+#if __WEB__
+                RectangleHoverArea ha;
+                if (point.Context.HoverArea is RectangleHoverArea)
+                    ha = (RectangleHoverArea)point.Context.HoverArea;
+                else
+                    point.Context.HoverArea = ha = new RectangleHoverArea();
+#else
                 if (point.Context.HoverArea is not RectangleHoverArea ha)
                     point.Context.HoverArea = ha = new RectangleHoverArea();
+#endif
                 _ = ha.SetDimensions(x - uwx * 0.5f, y - hgs, uwx, gs);
 
                 pointsCleanup.Clean(point);
@@ -412,8 +441,12 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
     {
         var chart = chartPoint.Context.Chart;
 
+#if __WEB__
+        var visual = (chartPoint.Context.Visual as TVisualPoint)!;
+#else
         if (chartPoint.Context.Visual is not TVisualPoint visual)
             throw new Exception("Unable to initialize the point instance.");
+#endif
 
         _ = visual.Geometry
             .TransitionateProperties(
@@ -483,16 +516,28 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
 
         if (Fill is not null)
         {
-            foreach (var activeChartContainer in _fillPathHelperDictionary.ToArray())
-                foreach (var pathHelper in activeChartContainer.Value.ToArray())
+#if __WEB__
+            foreach (var activeChartContainer in _fillPathHelperDictionary.values())
+                foreach (var pathHelper in activeChartContainer)
                     Fill.RemoveGeometryFromPainTask(canvas, pathHelper);
+#else
+            foreach (var activeChartContainer in _fillPathHelperDictionary)
+                foreach (var pathHelper in activeChartContainer.Value)
+                    Fill.RemoveGeometryFromPainTask(canvas, pathHelper);
+#endif
         }
 
         if (Stroke is not null)
         {
-            foreach (var activeChartContainer in _strokePathHelperDictionary.ToArray())
-                foreach (var pathHelper in activeChartContainer.Value.ToArray())
+#if __WEB__
+            foreach (var activeChartContainer in _strokePathHelperDictionary.values())
+                foreach (var pathHelper in activeChartContainer)
                     Stroke.RemoveGeometryFromPainTask(canvas, pathHelper);
+#else
+            foreach (var activeChartContainer in _strokePathHelperDictionary)
+                foreach (var pathHelper in activeChartContainer.Value)
+                    Stroke.RemoveGeometryFromPainTask(canvas, pathHelper);
+#endif
         }
 
         if (GeometryFill is not null) canvas.RemovePaintTask(GeometryFill);
@@ -504,8 +549,13 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
     {
         base.RemoveFromUI(chart);
 
+#if __WEB__
+        _fillPathHelperDictionary.delete(chart.Canvas.Sync);
+        _strokePathHelperDictionary.delete(chart.Canvas.Sync);
+#else
         _ = _fillPathHelperDictionary.Remove(chart.Canvas.Sync);
         _ = _strokePathHelperDictionary.Remove(chart.Canvas.Sync);
+#endif
     }
 
     /// <summary>
@@ -519,7 +569,15 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
 
     private void DeleteNullPoint(ChartPoint point, Scaler xScale, Scaler yScale)
     {
+#if __WEB__
+        TVisualPoint visual;
+        if (point.Context.Visual is StepLineVisualPoint<TDrawingContext, TVisual>)
+            visual = (point.Context.Visual as TVisualPoint)!;
+        else
+            return;
+#else
         if (point.Context.Visual is not TVisualPoint visual) return;
+#endif
 
         var x = xScale.ToPixels(point.SecondaryValue);
         var y = yScale.ToPixels(point.PrimaryValue);

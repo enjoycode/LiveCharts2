@@ -313,8 +313,8 @@ public class DataFactory<TModel, TDrawingContext>
             {
                 foreach (var chartPoint in entity.ChartPoints?.Values ?? Enumerable.Empty<ChartPoint>())
                 {
-                    if (chartPoint.Context.Visual is not IAnimatable visual) continue;
-                    visual.RemoveTransition(null);
+                    if (chartPoint.Context.Visual is IAnimatable visual)
+                        visual.RemoveTransition(null);
                 }
             }
         }
@@ -325,8 +325,8 @@ public class DataFactory<TModel, TDrawingContext>
             {
                 foreach (var chartPoint in index.ChartPoints?.Values ?? Enumerable.Empty<ChartPoint>())
                 {
-                    if (chartPoint.Context.Visual is not IAnimatable visual) continue;
-                    visual.RemoveTransition(null);
+                    if (chartPoint.Context.Visual is IAnimatable visual)
+                        visual.RemoveTransition(null);
                 }
             }
         }
@@ -338,8 +338,8 @@ public class DataFactory<TModel, TDrawingContext>
             {
                 foreach (var chartPoint in index.ChartPoints?.Values ?? Enumerable.Empty<ChartPoint>())
                 {
-                    if (chartPoint.Context.Visual is not IAnimatable visual) continue;
-                    visual.RemoveTransition(null);
+                    if (chartPoint.Context.Visual is IAnimatable visual)
+                        visual.RemoveTransition(null);
                 }
             }
         }

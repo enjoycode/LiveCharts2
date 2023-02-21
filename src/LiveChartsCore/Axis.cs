@@ -645,7 +645,16 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     /// <inheritdoc cref="ICartesianAxis{TDrawingContext}.InvalidateCrosshair(Chart{TDrawingContext}, LvcPoint)"/>
     public void InvalidateCrosshair(Chart<TDrawingContext> chart, LvcPoint pointerPosition)
     {
+#if __WEB__
+        if (CrosshairPaint is null) return;
+        CartesianChart<TDrawingContext> cartesianChart;
+        if (chart is CartesianChart<TDrawingContext>)
+            cartesianChart = (chart as CartesianChart<TDrawingContext>)!;
+        else
+            return;
+#else
         if (CrosshairPaint is null || chart is not CartesianChart<TDrawingContext> cartesianChart) return;
+#endif
 
         var scale = this.GetNextScaler(cartesianChart);
         var controlSize = cartesianChart.ControlSize;
