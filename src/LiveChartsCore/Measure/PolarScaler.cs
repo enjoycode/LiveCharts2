@@ -145,6 +145,7 @@ public class PolarScaler
     /// </summary>
     /// <param name="polarPoint">The polar point.</param>
     /// <returns></returns>
+    [PixUI.TSRename("ToPixelsFromCharPoint")]
     public LvcPoint ToPixels(ChartPoint polarPoint)
     {
         return ToPixels(polarPoint.SecondaryValue, polarPoint.PrimaryValue);

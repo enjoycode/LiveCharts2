@@ -64,7 +64,11 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
     /// <summary>
     /// The active separators
     /// </summary>
+#if __WEB__
+    protected readonly ObjectMap<DoubleMap<IVisualSeparator<TDrawingContext>>> activeSeparators = new();
+#else
     protected readonly Dictionary<IChart, Dictionary<double, IVisualSeparator<TDrawingContext>>> activeSeparators = new();
+#endif
 
     internal PolarAxisOrientation _orientation;
     private double _minStep = 0;
@@ -77,7 +81,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
     private double? _maxLimit = null;
     private IPaint<TDrawingContext>? _namePaint;
     private double _nameTextSize = 20;
-    private Padding _namePadding = new(5);
+    private Padding _namePadding = Padding.All(5f);
     private IPaint<TDrawingContext>? _labelsPaint;
     private double _unitWidth = 1;
     private double _textSize = 16;
@@ -87,7 +91,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
     private bool _isInverted;
     private bool _forceStepToMin;
     private double _labelsAngle;
-    private Padding _labelsPadding = new(3);
+    private Padding _labelsPadding = Padding.All(3f);
     private Align _labelsVerticalAlign = Align.Middle;
     private Align _labelsHorizontalAlign = Align.Middle;
     private LvcColor _labelsBackground = new(255, 255, 255);
@@ -295,11 +299,20 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
 
         var start = Math.Truncate(min / s) * s;
 
+#if __WEB__
+        var separators = activeSeparators.get(polarChart);
+        if (separators == null)
+        {
+            separators = new DoubleMap<IVisualSeparator<TDrawingContext>>();
+            activeSeparators.set(polarChart, separators);
+        }
+#else
         if (!activeSeparators.TryGetValue(polarChart, out var separators))
         {
             separators = new Dictionary<double, IVisualSeparator<TDrawingContext>>();
             activeSeparators[polarChart] = separators;
         }
+#endif
 
         var measured = new HashSet<IVisualSeparator<TDrawingContext>>();
 
@@ -317,7 +330,12 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
             // it seems that the bits storing that number (i) have the negative bit on
             var label = labeler(i - 1d + 1d);
 
+#if __WEB__
+            var visualSeparator = separators.get(i);
+            if (visualSeparator == null)
+#else
             if (!separators.TryGetValue(i, out var visualSeparator))
+#endif
             {
                 visualSeparator = _orientation == PolarAxisOrientation.Angle
                     ? new AxisVisualSeprator<TDrawingContext>() { Value = i }
@@ -440,29 +458,54 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
 
             if (visualSeparator.Geometry is not null)
             {
+#if __WEB__
+                if (visualSeparator is AxisVisualSeprator<TDrawingContext> lineSepartator)
+                {
+                    if (lineSepartator.Separator is not null)
+                    {
+#else
                 if (visualSeparator is AxisVisualSeprator<TDrawingContext> lineSepartator && lineSepartator.Separator is not null)
                 {
-                    var innerPos = scaler.ToPixels(visualSeparator.Value, scaler.MinRadius);
+#endif
+                        var innerPos = scaler.ToPixels(visualSeparator.Value, scaler.MinRadius);
 
-                    lineSepartator.Separator.X = innerPos.X;
-                    lineSepartator.Separator.X1 = location.X;
-                    lineSepartator.Separator.Y = innerPos.Y;
-                    lineSepartator.Separator.Y1 = location.Y;
+                        lineSepartator.Separator.X = innerPos.X;
+                        lineSepartator.Separator.X1 = location.X;
+                        lineSepartator.Separator.Y = innerPos.Y;
+                        lineSepartator.Separator.Y1 = location.Y;
 
-                    if (!_animatableBounds.HasPreviousState) lineSepartator.Separator.CompleteTransition(null);
+                        if (!_animatableBounds.HasPreviousState) lineSepartator.Separator.CompleteTransition(null);
+#if __WEB__
+                    }
                 }
+#else
+                }
+#endif
 
+#if __WEB__
+                if (visualSeparator is RadialAxisVisualSeparator<TDrawingContext> polarSeparator)
+                {
+                    if (polarSeparator.Circle is not null)
+                    {
+#else
                 if (visualSeparator is RadialAxisVisualSeparator<TDrawingContext> polarSeparator && polarSeparator.Circle is not null)
                 {
-                    var h = Math.Sqrt(Math.Pow(location.X - scaler.CenterX, 2) + Math.Pow(location.Y - scaler.CenterY, 2));
-                    var radius = (float)h;
-                    polarSeparator.Circle.X = scaler.CenterX - radius;
-                    polarSeparator.Circle.Y = scaler.CenterY - radius;
-                    polarSeparator.Circle.Width = radius * 2;
-                    polarSeparator.Circle.Height = radius * 2;
+#endif
+                        var h = Math.Sqrt(Math.Pow(location.X - scaler.CenterX, 2) +
+                                          Math.Pow(location.Y - scaler.CenterY, 2));
+                        var radius = (float)h;
+                        polarSeparator.Circle.X = scaler.CenterX - radius;
+                        polarSeparator.Circle.Y = scaler.CenterY - radius;
+                        polarSeparator.Circle.Width = radius * 2;
+                        polarSeparator.Circle.Height = radius * 2;
 
-                    if (!_animatableBounds.HasPreviousState) polarSeparator.Circle.CompleteTransition(null);
+                        if (!_animatableBounds.HasPreviousState) polarSeparator.Circle.CompleteTransition(null);
+#if __WEB__
+                    }
                 }
+#else
+                }
+#endif
 
                 visualSeparator.Geometry.Opacity = 1;
             }
@@ -470,13 +513,24 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
             if (visualSeparator.Label is not null || visualSeparator.Geometry is not null) _ = measured.Add(visualSeparator);
         }
 
-        foreach (var separator in separators.ToArray())
+#if __WEB__
+        foreach (var skey in separators.keys()) //TODO: use entries()
+        {
+            var separator = separators.get(skey)!;
+            if (measured.Contains(separator)) continue;
+
+            SoftDeleteSeparator(polarChart, separator, scaler);
+            _ = separators.delete(skey);
+        }
+#else
+        foreach (var separator in separators/*.ToArray()*/)
         {
             if (measured.Contains(separator.Value)) continue;
 
             SoftDeleteSeparator(polarChart, separator.Value, scaler);
             _ = separators.Remove(separator.Key);
         }
+#endif
     }
 
     /// <inheritdoc cref="IPlane{TDrawingContext}.GetNameLabelSize(Chart{TDrawingContext})"/>
@@ -594,7 +648,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
             _separatorsPaint.ClearGeometriesFromPaintTask(chart.Canvas);
         }
 
-        _ = activeSeparators.Remove(chart);
+        activeSeparators.Remove(chart);
     }
 
     /// <inheritdoc cref="IChartElement{TDrawingContext}.RemoveFromUI(Chart{TDrawingContext})"/>
@@ -602,7 +656,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
     {
         base.RemoveFromUI(chart);
         _animatableBounds = null!;
-        _ = activeSeparators.Remove(chart);
+        activeSeparators.Remove(chart);
     }
 
     /// <summary>

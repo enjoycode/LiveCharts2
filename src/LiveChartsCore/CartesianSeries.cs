@@ -194,11 +194,11 @@ public abstract class CartesianSeries<TModel, TVisual, TLabel, TDrawingContext>
         var primaryAxis = core.YAxes.Length > ScalesYAt ? core.YAxes[ScalesYAt] : null;
 
         var secondaryScale = secondaryAxis is null
-            ? new Scaler()
-            : new Scaler(core.DrawMarginLocation, core.DrawMarginSize, secondaryAxis);
+            ? Scaler.MakeDefault()
+            : Scaler.Make(core.DrawMarginLocation, core.DrawMarginSize, secondaryAxis);
         var primaryScale = primaryAxis is null
-            ? new Scaler()
-            : new Scaler(core.DrawMarginLocation, core.DrawMarginSize, primaryAxis);
+            ? Scaler.MakeDefault()
+            : Scaler.Make(core.DrawMarginLocation, core.DrawMarginSize, primaryAxis);
 
         var deleted = new List<ChartPoint>();
         foreach (var point in everFetched)

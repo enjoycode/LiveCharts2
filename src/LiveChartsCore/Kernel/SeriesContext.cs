@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel.Sketches;
@@ -42,12 +43,21 @@ public class SeriesContext<TDrawingContext>
     private int _stackedRowsCount = 0;
     private bool _areBarsIndexed = false;
 
+#if __WEB__
+    private readonly ObjectMap<int> _columnPositions = new();
+    private readonly ObjectMap<int> _rowPositions = new();
+    private readonly NumberMap<int> _stackColumnPositions = new();
+    private readonly NumberMap<int> _stackRowsPositions = new();
+
+    private readonly StringMap<Stacker<TDrawingContext>> _stackers = new();
+#else
     private readonly Dictionary<IChartSeries<TDrawingContext>, int> _columnPositions = new();
     private readonly Dictionary<IChartSeries<TDrawingContext>, int> _rowPositions = new();
     private readonly Dictionary<int, int> _stackColumnPositions = new();
     private readonly Dictionary<int, int> _stackRowsPositions = new();
 
     private readonly Dictionary<string, Stacker<TDrawingContext>> _stackers = new();
+#endif
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SeriesContext{TDrawingContext}"/> class.
@@ -67,9 +77,15 @@ public class SeriesContext<TDrawingContext>
     /// <returns></returns>
     public int GetColumnPostion(IChartSeries<TDrawingContext> series)
     {
+#if __WEB__
+        if (_areBarsIndexed) return _columnPositions.get(series);
+        IndexBars();
+        return _columnPositions.get(series);
+#else
         if (_areBarsIndexed) return _columnPositions[series];
         IndexBars();
         return _columnPositions[series];
+#endif
     }
 
     /// <summary>
@@ -90,9 +106,15 @@ public class SeriesContext<TDrawingContext>
     /// <returns></returns>
     public int GetRowPostion(IChartSeries<TDrawingContext> series)
     {
+#if __WEB__
+        if (_areBarsIndexed) return _rowPositions.get(series);
+        IndexBars();
+        return _rowPositions.get(series);
+#else
         if (_areBarsIndexed) return _rowPositions[series];
         IndexBars();
         return _rowPositions[series];
+#endif
     }
 
     /// <summary>
@@ -113,9 +135,15 @@ public class SeriesContext<TDrawingContext>
     /// <returns></returns>
     public int GetStackedColumnPostion(IChartSeries<TDrawingContext> series)
     {
+#if __WEB__
+        if (_areBarsIndexed) return _stackColumnPositions.get(series.GetStackGroup());
+        IndexBars();
+        return _stackColumnPositions.get(series.GetStackGroup());
+#else
         if (_areBarsIndexed) return _stackColumnPositions[series.GetStackGroup()];
         IndexBars();
         return _stackColumnPositions[series.GetStackGroup()];
+#endif
     }
 
     /// <summary>
@@ -136,9 +164,15 @@ public class SeriesContext<TDrawingContext>
     /// <returns></returns>
     public int GetStackedRowPostion(IChartSeries<TDrawingContext> series)
     {
+#if __WEB__
+        if (_areBarsIndexed) return _stackRowsPositions.get(series.GetStackGroup());
+        IndexBars();
+        return _stackRowsPositions.get(series.GetStackGroup());
+#else
         if (_areBarsIndexed) return _stackRowsPositions[series.GetStackGroup()];
         IndexBars();
         return _stackRowsPositions[series.GetStackGroup()];
+#endif
     }
 
     /// <summary>
@@ -165,6 +199,16 @@ public class SeriesContext<TDrawingContext>
 
             if (item.IsColumnSeries())
             {
+#if __WEB__
+                if (!item.IsStackedSeries())
+                {
+                    _columnPositions.set(item, _columnsCount++);
+                    continue;
+                }
+
+                if (!_stackColumnPositions.has(item.GetStackGroup()))
+                    _stackColumnPositions.set(item.GetStackGroup(), _stackedColumnsCount++);
+#else
                 if (!item.IsStackedSeries())
                 {
                     _columnPositions[item] = _columnsCount++;
@@ -173,12 +217,22 @@ public class SeriesContext<TDrawingContext>
 
                 if (!_stackColumnPositions.ContainsKey(item.GetStackGroup()))
                     _stackColumnPositions[item.GetStackGroup()] = _stackedColumnsCount++;
-
+#endif
                 continue;
             }
 
             if (item.IsRowSeries())
             {
+#if __WEB__
+                if (!item.IsRowSeries())
+                {
+                    _rowPositions.set(item, _rowsCount++);
+                    continue;
+                }
+
+                if (!_stackRowsPositions.has(item.GetStackGroup()))
+                    _stackRowsPositions.set(item.GetStackGroup(), _stackedRowsCount++);
+#else
                 if (!item.IsRowSeries())
                 {
                     _rowPositions[item] = _rowsCount++;
@@ -187,6 +241,7 @@ public class SeriesContext<TDrawingContext>
 
                 if (!_stackRowsPositions.ContainsKey(item.GetStackGroup()))
                     _stackRowsPositions[item.GetStackGroup()] = _stackedRowsCount++;
+#endif
 
                 continue;
             }
@@ -224,11 +279,20 @@ public class SeriesContext<TDrawingContext>
     {
         var key = $"{series.SeriesProperties}.{stackGroup}";
 
+#if __WEB__
+        var stacker = _stackers.get(key);
+        if (stacker == null)
+        {
+            stacker = new Stacker<TDrawingContext>();
+            _stackers.Add(key, stacker);
+        }
+#else
         if (!_stackers.TryGetValue(key, out var stacker))
         {
             stacker = new Stacker<TDrawingContext>();
             _stackers.Add(key, stacker);
         }
+#endif
 
         return stacker;
     }

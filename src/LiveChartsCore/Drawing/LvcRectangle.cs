@@ -39,17 +39,10 @@ public struct LvcRectangle
         IsEmpty = false;
     }
 
-    private LvcRectangle(bool empty)
-    {
-        Location = new LvcPoint();
-        Size = new LvcSize();
-        IsEmpty = empty;
-    }
-
     /// <summary>
     /// Gets an empty rectangle instance.
     /// </summary>
-    public static LvcRectangle Empty = new(true);
+    public static LvcRectangle Empty = new(new LvcPoint(0, 0), new LvcSize(0, 0)) { IsEmpty = true };
 
     /// <summary>
     /// Gets or sets the location.

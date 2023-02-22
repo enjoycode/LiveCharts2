@@ -45,14 +45,16 @@ public class ChartPointContext
         Entity = entity;
     }
 
-    internal ChartPointContext()
-    {
-        // dummy empty constructor..
-        // This is used only when the IChartEntity was null
-        Chart = null!;
-        Series = null!;
-        Entity = new MappedChartEntity();
-    }
+    //internal static ChartPointContext MakeDefault() => new (null!, null!, new MappedChartEntity());
+
+    // internal ChartPointContext()
+    // {
+    //     // dummy empty constructor..
+    //     // This is used only when the IChartEntity was null
+    //     Chart = null!;
+    //     Series = null!;
+    //     Entity = new MappedChartEntity();
+    // }
 
     /// <summary>
     /// Gets the chart.

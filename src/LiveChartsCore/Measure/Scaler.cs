@@ -34,23 +34,163 @@ public class Scaler
     private readonly double _deltaVal, _m, _mInv, _minPx, _maxPx, _deltaPx;
     private readonly AxisOrientation _orientation;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Scaler"/> class.
-    /// </summary>
-    /// <param name="drawMarginLocation">The draw margin location.</param>
-    /// <param name="drawMarginSize">Size of the draw margin.</param>
-    /// <param name="axis">The axis.</param>
-    /// <param name="bounds">Indicates the bounds to use.</param>
-    /// <exception cref="Exception">The axis is not ready to be scaled.</exception>
-    public Scaler(
-        LvcPoint drawMarginLocation,
-        LvcSize drawMarginSize,
-        ICartesianAxis axis,
-        Bounds? bounds = null)
-    {
-        if (axis.Orientation == AxisOrientation.Unknown) throw new Exception("The axis is not ready to be scaled.");
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="Scaler"/> class.
+    // /// </summary>
+    // /// <param name="drawMarginLocation">The draw margin location.</param>
+    // /// <param name="drawMarginSize">Size of the draw margin.</param>
+    // /// <param name="axis">The axis.</param>
+    // /// <param name="bounds">Indicates the bounds to use.</param>
+    // /// <exception cref="Exception">The axis is not ready to be scaled.</exception>
+    // public Scaler(
+    //     LvcPoint drawMarginLocation,
+    //     LvcSize drawMarginSize,
+    //     ICartesianAxis axis,
+    //     Bounds? bounds = null)
+    // {
+    //     if (axis.Orientation == AxisOrientation.Unknown) throw new Exception("The axis is not ready to be scaled.");
+    //
+    //     _orientation = axis.Orientation;
+    //
+    //     var actualBounds = axis.DataBounds;
+    //     var actualVisibleBounds = axis.VisibleDataBounds;
+    //     var maxLimit = axis.MaxLimit;
+    //     var minLimit = axis.MinLimit;
+    //
+    //     if (bounds != null)
+    //     {
+    //         actualBounds = bounds;
+    //         actualVisibleBounds = bounds;
+    //         minLimit = null;
+    //         maxLimit = null;
+    //     }
+    //
+    //     if (double.IsInfinity(actualBounds.Delta) || double.IsInfinity(actualVisibleBounds.Delta))
+    //     {
+    //         MaxVal = 0;
+    //         MinVal = 0;
+    //         _deltaVal = 0;
+    //
+    //         if (axis.Orientation == AxisOrientation.X)
+    //         {
+    //             _minPx = drawMarginLocation.X;
+    //             _maxPx = drawMarginLocation.X + drawMarginSize.Width;
+    //             _deltaPx = _maxPx - _minPx;
+    //         }
+    //         else
+    //         {
+    //             _minPx = drawMarginLocation.Y;
+    //             _maxPx = drawMarginLocation.Y + drawMarginSize.Height;
+    //             _deltaPx = _maxPx - _minPx;
+    //         }
+    //
+    //         _m = 0;
+    //         _mInv = 0;
+    //
+    //         return;
+    //     }
+    //
+    //     if (axis.Orientation == AxisOrientation.X)
+    //     {
+    //         _minPx = drawMarginLocation.X;
+    //         _maxPx = drawMarginLocation.X + drawMarginSize.Width;
+    //         _deltaPx = _maxPx - _minPx;
+    //
+    //         MaxVal = axis.IsInverted ? actualBounds.Min : actualBounds.Max;
+    //         MinVal = axis.IsInverted ? actualBounds.Max : actualBounds.Min;
+    //
+    //         if (maxLimit is not null || minLimit is not null)
+    //         {
+    //             MaxVal = axis.IsInverted ? minLimit ?? MinVal : maxLimit ?? MaxVal;
+    //             MinVal = axis.IsInverted ? maxLimit ?? MaxVal : minLimit ?? MinVal;
+    //         }
+    //         else
+    //         {
+    //             var visibleMax = axis.IsInverted ? actualVisibleBounds.Min : actualVisibleBounds.Max;
+    //             var visibleMin = axis.IsInverted ? actualVisibleBounds.Max : actualVisibleBounds.Min;
+    //
+    //             if (visibleMax != MaxVal || visibleMin != MinVal)
+    //             {
+    //                 MaxVal = visibleMax;
+    //                 MinVal = visibleMin;
+    //             }
+    //         }
+    //
+    //         _deltaVal = MaxVal - MinVal;
+    //     }
+    //     else
+    //     {
+    //         _minPx = drawMarginLocation.Y;
+    //         _maxPx = drawMarginLocation.Y + drawMarginSize.Height;
+    //         _deltaPx = _maxPx - _minPx;
+    //
+    //         MaxVal = axis.IsInverted ? actualBounds.Max : actualBounds.Min;
+    //         MinVal = axis.IsInverted ? actualBounds.Min : actualBounds.Max;
+    //
+    //         if (maxLimit is not null || minLimit is not null)
+    //         {
+    //             MaxVal = axis.IsInverted ? maxLimit ?? MinVal : minLimit ?? MaxVal;
+    //             MinVal = axis.IsInverted ? minLimit ?? MaxVal : maxLimit ?? MinVal;
+    //         }
+    //         else
+    //         {
+    //             var visibleMax = axis.IsInverted ? actualVisibleBounds.Max : actualVisibleBounds.Min;
+    //             var visibleMin = axis.IsInverted ? actualVisibleBounds.Min : actualVisibleBounds.Max;
+    //
+    //             if (visibleMax != MaxVal || visibleMin != MinVal)
+    //             {
+    //                 MaxVal = visibleMax;
+    //                 MinVal = visibleMin;
+    //             }
+    //         }
+    //
+    //         _deltaVal = MaxVal - MinVal;
+    //     }
+    //
+    //     _m = _deltaPx / _deltaVal;
+    //     _mInv = 1 / _m;
+    //
+    //     if (!double.IsNaN(_m) && !double.IsInfinity(_m)) return;
+    //     _m = 0;
+    //     _mInv = 0;
+    // }
 
-        _orientation = axis.Orientation;
+    private Scaler(double minPx, double maxPx, double deltaPx, double deltaVal, double m, double mInv,
+        AxisOrientation orientation)
+    {
+        _minPx = minPx;
+        _maxPx = maxPx;
+        _deltaPx = deltaPx;
+        _deltaVal = deltaVal;
+        _m = m;
+        _mInv = mInv;
+        _orientation = orientation;
+    }
+
+    public static Scaler MakeDefault()
+    {
+        const double minPx = 0d;
+        const double maxPx = 100d;
+        const double deltaPx = maxPx - minPx;
+
+        // MaxVal = 0;
+        // MinVal = 100;
+        const double deltaVal = 0d - 100d;
+
+        const double m = deltaPx / deltaVal;
+        const double mInv = 1 / m;
+        return new Scaler(minPx, maxPx, deltaPx, deltaVal, m, mInv, AxisOrientation.Unknown) {MaxVal = 0, MinVal = 100};
+    }
+
+    public static Scaler Make(LvcPoint drawMarginLocation, LvcSize drawMarginSize,
+        ICartesianAxis axis, Bounds? bounds = null)
+    {
+        if (axis.Orientation == AxisOrientation.Unknown)
+            throw new Exception("The axis is not ready to be scaled.");
+
+        var _orientation = axis.Orientation;
+        double _deltaVal, _m, _mInv, _minPx, _maxPx, _deltaPx;
+        double MaxVal, MinVal;
 
         var actualBounds = axis.DataBounds;
         var actualVisibleBounds = axis.VisibleDataBounds;
@@ -87,7 +227,7 @@ public class Scaler
             _m = 0;
             _mInv = 0;
 
-            return;
+            return new Scaler(_minPx, _maxPx, _deltaPx, _deltaVal, _m, _mInv, _orientation) {MaxVal = MaxVal, MinVal = MinVal};
         }
 
         if (axis.Orientation == AxisOrientation.X)
@@ -150,23 +290,11 @@ public class Scaler
         _m = _deltaPx / _deltaVal;
         _mInv = 1 / _m;
 
-        if (!double.IsNaN(_m) && !double.IsInfinity(_m)) return;
+        if (!double.IsNaN(_m) && !double.IsInfinity(_m))
+            return new Scaler(_minPx, _maxPx, _deltaPx, _deltaVal, _m, _mInv, _orientation) {MaxVal = MaxVal, MinVal = MinVal};
         _m = 0;
         _mInv = 0;
-    }
-
-    internal Scaler()
-    {
-        _minPx = 0;
-        _maxPx = 100;
-        _deltaPx = _maxPx - _minPx;
-
-        MaxVal = 0;
-        MinVal = 100;
-        _deltaVal = MaxVal - MinVal;
-
-        _m = _deltaPx / _deltaVal;
-        _mInv = 1 / _m;
+        return new Scaler(_minPx, _maxPx, _deltaPx, _deltaVal, _m, _mInv, _orientation) {MaxVal = MaxVal, MinVal = MinVal};
     }
 
     /// <summary>

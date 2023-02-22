@@ -30,13 +30,6 @@ public class Margin
     /// <summary>
     /// Initializes a new instance of the <see cref="Margin"/> class.
     /// </summary>
-    public Margin()
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Margin"/> class.
-    /// </summary>
     /// <param name="left">The left.</param>
     /// <param name="top">The top.</param>
     /// <param name="right">The right.</param>
@@ -49,18 +42,9 @@ public class Margin
         Bottom = bottom;
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Margin"/> class.
-    /// </summary>
-    /// <param name="all">The margin for top, left, right and bottom.</param>
-    public Margin(float all) : this(all, all, all, all) { }
+    public static Margin Empty() => new Margin(0, 0, 0, 0);
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Margin"/> class.
-    /// </summary>
-    /// <param name="x">The margin for left and right.</param>
-    /// <param name="y">The margin for top and bottom.</param>
-    public Margin(float x, float y) : this(x, y, x, y) { }
+    public static Margin All(float all) => new (all, all, all, all);
 
     /// <summary>
     /// Indicates that the margin should be calculated by the library.

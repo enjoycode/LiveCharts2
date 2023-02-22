@@ -30,7 +30,7 @@ namespace LiveChartsCore;
 /// Defines a draw margin frame visual in a chart.
 /// </summary>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
-public abstract class DrawMarginFrame<TDrawingContext> : ChartElement<TDrawingContext>, INotifyPropertyChanged
+public abstract class DrawMarginFrame<TDrawingContext> : ChartElement<TDrawingContext>/*, INotifyPropertyChanged*/
     where TDrawingContext : DrawingContext
 {
     private IPaint<TDrawingContext>? _stroke = null;
@@ -80,6 +80,7 @@ public abstract class DrawMarginFrame<TDrawingContext> : ChartElement<TDrawingCo
     }
 }
 
+#if !__WEB__
 /// <summary>
 /// Defines a draw margin frame visual in a chart.
 /// </summary>
@@ -163,3 +164,4 @@ public abstract class DrawMarginFrame<TSizedGeometry, TDrawingContext> : DrawMar
         }
     }
 }
+#endif

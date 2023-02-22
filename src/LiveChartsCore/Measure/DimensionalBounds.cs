@@ -36,7 +36,7 @@ public class DimensionalBounds
     /// Indicates if the intiial bounds should contain some values,
     /// just to prevent the chart to be in an invalid range when the control is initializes without any data.
     /// </param>
-    internal DimensionalBounds(bool setMinBounds)
+    internal DimensionalBounds(bool setMinBounds = false)
     {
         PrimaryBounds = new Bounds();
         SecondaryBounds = new Bounds();
@@ -62,12 +62,6 @@ public class DimensionalBounds
 
         IsEmpty = true;
     }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DimensionalBounds"/> class.
-    /// </summary>
-    public DimensionalBounds() : this(false)
-    { }
 
     internal bool IsEmpty { get; }
 

@@ -235,7 +235,7 @@ public class PolarChart<TDrawingContext> : Chart<TDrawingContext>
         }
 
         // get seriesBounds
-        SetDrawMargin(ControlSize, new Margin());
+        SetDrawMargin(ControlSize, Margin.Empty());
         foreach (var series in Series)
         {
             if (series.SeriesId == -1) series.SeriesId = _nextSeries++;
@@ -389,7 +389,7 @@ public class PolarChart<TDrawingContext> : Chart<TDrawingContext>
         else
         {
             // calculate draw margin
-            var m = new Margin();
+            var m = Margin.Empty();
             var ts = 0f;
             if (View.Title is not null)
             {

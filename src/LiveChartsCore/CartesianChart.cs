@@ -157,8 +157,8 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
         var xAxis = XAxes[xAxisIndex];
         var yAxis = YAxes[yAxisIndex];
 
-        var xScaler = new Scaler(DrawMarginLocation, DrawMarginSize, xAxis);
-        var yScaler = new Scaler(DrawMarginLocation, DrawMarginSize, yAxis);
+        var xScaler = Scaler.Make(DrawMarginLocation, DrawMarginSize, xAxis);
+        var yScaler = Scaler.Make(DrawMarginLocation, DrawMarginSize, yAxis);
 
         return new double[] { xScaler.ToChartValues(point.X), yScaler.ToChartValues(point.Y) };
     }
@@ -190,7 +190,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
             for (var index = 0; index < XAxes.Length; index++)
             {
                 var xi = XAxes[index];
-                var px = new Scaler(DrawMarginLocation, DrawMarginSize, xi).ToChartValues(pivot.X);
+                var px = Scaler.Make(DrawMarginLocation, DrawMarginSize, xi).ToChartValues(pivot.X);
 
                 var max = xi.MaxLimit is null ? xi.DataBounds.Max : xi.MaxLimit.Value;
                 var min = xi.MinLimit is null ? xi.DataBounds.Min : xi.MinLimit.Value;
@@ -246,7 +246,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
             for (var index = 0; index < YAxes.Length; index++)
             {
                 var yi = YAxes[index];
-                var px = new Scaler(DrawMarginLocation, DrawMarginSize, yi).ToChartValues(pivot.Y);
+                var px = Scaler.Make(DrawMarginLocation, DrawMarginSize, yi).ToChartValues(pivot.Y);
 
                 var max = yi.MaxLimit is null ? yi.DataBounds.Max : yi.MaxLimit.Value;
                 var min = yi.MinLimit is null ? yi.DataBounds.Min : yi.MinLimit.Value;
@@ -312,7 +312,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
             for (var index = 0; index < XAxes.Length; index++)
             {
                 var xi = XAxes[index];
-                var scale = new Scaler(DrawMarginLocation, DrawMarginSize, xi);
+                var scale = Scaler.Make(DrawMarginLocation, DrawMarginSize, xi);
                 var dx = scale.ToChartValues(-delta.X) - scale.ToChartValues(0);
 
                 var max = xi.MaxLimit is null ? xi.DataBounds.Max : xi.MaxLimit.Value;
@@ -345,7 +345,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
             for (var index = 0; index < YAxes.Length; index++)
             {
                 var yi = YAxes[index];
-                var scale = new Scaler(DrawMarginLocation, DrawMarginSize, yi);
+                var scale = Scaler.Make(DrawMarginLocation, DrawMarginSize, yi);
                 var dy = -(scale.ToChartValues(delta.Y) - scale.ToChartValues(0));
 
                 var max = yi.MaxLimit is null ? yi.DataBounds.Max : yi.MaxLimit.Value;
@@ -471,7 +471,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
         }
 
         // get seriesBounds
-        SetDrawMargin(ControlSize, new Margin());
+        SetDrawMargin(ControlSize, Margin.Empty());
         foreach (var series in Series)
         {
             if (series.SeriesId == -1) series.SeriesId = _nextSeries++;
@@ -556,7 +556,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
 
         // calculate draw margin
         var title = View.Title;
-        var m = new Margin();
+        var m = Margin.Empty();
         float ts = 0f, bs = 0f, ls = 0f, rs = 0f;
         if (title is not null)
         {
@@ -732,7 +732,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
             }
         }
 
-        var rm = viewDrawMargin ?? new Margin(Margin.Auto);
+        var rm = viewDrawMargin ?? Margin.All(Margin.Auto);
 
         var actualMargin = new Margin(
             Margin.IsAuto(rm.Left) ? m.Left : rm.Left,
@@ -771,7 +771,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
             // apply padding
             if (axis.MinLimit is null)
             {
-                var s = new Scaler(DrawMarginLocation, DrawMarginSize, axis);
+                var s = Scaler.Make(DrawMarginLocation, DrawMarginSize, axis);
                 // correction by geometry size
                 var p = Math.Abs(s.ToChartValues(axis.DataBounds.RequestedGeometrySize) - s.ToChartValues(0));
                 if (axis.DataBounds.PaddingMin > p) p = axis.DataBounds.PaddingMin;
@@ -785,7 +785,7 @@ public class CartesianChart<TDrawingContext> : Chart<TDrawingContext>
             // apply padding
             if (axis.MaxLimit is null)
             {
-                var s = new Scaler(DrawMarginLocation, DrawMarginSize, axis);
+                var s = Scaler.Make(DrawMarginLocation, DrawMarginSize, axis);
                 // correction by geometry size
                 var p = Math.Abs(s.ToChartValues(axis.DataBounds.RequestedGeometrySize) - s.ToChartValues(0));
                 if (axis.DataBounds.PaddingMax > p) p = axis.DataBounds.PaddingMax;

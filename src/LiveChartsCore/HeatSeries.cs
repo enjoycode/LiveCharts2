@@ -53,7 +53,7 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
         LvcColor.FromArgb(255, 95, 207, 249) // hot (max value)
     };
     private double[]? _colorStops;
-    private Padding _pointPadding = new(4);
+    private Padding _pointPadding = Padding.All(4f);
 
     protected readonly Func<TVisual> _visualFactory;
     protected readonly Func<TLabel> _labelFactory;
@@ -375,8 +375,14 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
     /// <inheritdoc cref="ChartSeries{TModel, TVisual, TLabel, TDrawingContext}.MiniatureEquals(IChartSeries{TDrawingContext})"/>
     public override bool MiniatureEquals(IChartSeries<TDrawingContext> instance)
     {
+#if __WEB__
+        if (instance is HeatSeries<TModel, TVisual, TLabel, TDrawingContext> hSeries)
+            return Name == instance.Name && HeatMap == hSeries.HeatMap;
+        return false;
+#else
         return instance is HeatSeries<TModel, TVisual, TLabel, TDrawingContext> hSeries
             && Name == instance.Name && HeatMap == hSeries.HeatMap;
+#endif
     }
 
     /// <inheritdoc cref="ChartElement{TDrawingContext}.GetPaintTasks"/>

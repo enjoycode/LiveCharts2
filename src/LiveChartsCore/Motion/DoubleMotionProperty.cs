@@ -27,23 +27,23 @@ namespace LiveChartsCore.Motion;
 /// </summary>
 public class DoubleMotionProperty : MotionProperty<double>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DoubleMotionProperty"/> class.
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    public DoubleMotionProperty(string propertyName)
-        : base(propertyName)
-    {
-        fromValue = 0;
-        toValue = 0;
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="DoubleMotionProperty"/> class.
+    // /// </summary>
+    // /// <param name="propertyName">Name of the property.</param>
+    // public DoubleMotionProperty(string propertyName)
+    //     : base(propertyName)
+    // {
+    //     fromValue = 0;
+    //     toValue = 0;
+    // }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DoubleMotionProperty"/> class.
     /// </summary>
     /// <param name="propertyName">Name of the property.</param>
     /// <param name="value">The value.</param>
-    public DoubleMotionProperty(string propertyName, double value)
+    public DoubleMotionProperty(string propertyName, double value = 0)
         : base(propertyName)
     {
         fromValue = value;

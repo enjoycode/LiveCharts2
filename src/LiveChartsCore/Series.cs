@@ -320,7 +320,7 @@ public abstract class Series<TModel, TVisual, TLabel, TDrawingContext>
     }
 
     /// <inheritdoc cref="ISeries.Fetch(IChart)"/>
-    protected IEnumerable<ChartPoint> Fetch(IChart chart)
+    public IEnumerable<ChartPoint> Fetch(IChart chart)
     {
         _ = subscribedTo.Add(chart);
         return DataFactory.Fetch(this, chart);
@@ -333,10 +333,10 @@ public abstract class Series<TModel, TVisual, TLabel, TDrawingContext>
         ChartPointPointerDown?.Invoke(chart, new ChartPoint<TModel, TVisual, TLabel>(points.FindClosestTo<TModel, TVisual, TLabel>(pointer)!));
     }
 
-    IEnumerable<ChartPoint> ISeries.Fetch(IChart chart)
-    {
-        return Fetch(chart);
-    }
+    // IEnumerable<ChartPoint> ISeries.Fetch(IChart chart)
+    // {
+    //     return Fetch(chart);
+    // }
 
     IEnumerable<ChartPoint> ISeries.FindHitPoints(IChart chart, LvcPoint pointerPosition, TooltipFindingStrategy strategy)
     {
@@ -354,7 +354,11 @@ public abstract class Series<TModel, TVisual, TLabel, TDrawingContext>
                 x.Context.HoverArea.IsPointerOver(pointerPosition, strategy));
 
         var s = (int)strategy;
+#if __WEB__
+        if (s >= 4 && s <= 6)
+#else
         if (s is >= 4 and <= 6)
+#endif
         {
             // if select closest...
             query = query

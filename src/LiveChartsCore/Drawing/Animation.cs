@@ -41,53 +41,53 @@ public class Animation
         EasingFunction = t => t;
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Animation"/> class.
-    /// </summary>
-    /// <param name="easingFunction">The easing function.</param>
-    /// <param name="duration">The duration.</param>
-    public Animation(Func<float, float>? easingFunction, TimeSpan duration)
-    {
-        EasingFunction = easingFunction;
-        _duration = (long)duration.TotalMilliseconds;
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="Animation"/> class.
+    // /// </summary>
+    // /// <param name="easingFunction">The easing function.</param>
+    // /// <param name="duration">The duration.</param>
+    // public Animation(Func<float, float>? easingFunction, TimeSpan duration)
+    // {
+    //     EasingFunction = easingFunction;
+    //     _duration = (long)duration.TotalMilliseconds;
+    // }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Animation"/> class.
-    /// </summary>
-    /// <param name="easingFunction">The easing function.</param>
-    /// <param name="duration">The duration.</param>
-    /// <param name="repeatTimes">The repeat times.</param>
-    public Animation(Func<float, float> easingFunction, TimeSpan duration, int repeatTimes)
-    {
-        EasingFunction = easingFunction;
-        _duration = (long)duration.TotalMilliseconds;
-        _repeatTimes = repeatTimes;
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="Animation"/> class.
+    // /// </summary>
+    // /// <param name="easingFunction">The easing function.</param>
+    // /// <param name="duration">The duration.</param>
+    // /// <param name="repeatTimes">The repeat times.</param>
+    // public Animation(Func<float, float> easingFunction, TimeSpan duration, int repeatTimes)
+    // {
+    //     EasingFunction = easingFunction;
+    //     _duration = (long)duration.TotalMilliseconds;
+    //     _repeatTimes = repeatTimes;
+    // }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Animation"/> class.
-    /// </summary>
-    /// <param name="easingFunction">The easing function.</param>
-    /// <param name="duration">The duration.</param>
-    /// <param name="repeatTimes">The repeat times.</param>
-    public Animation(Func<float, float> easingFunction, long duration, int repeatTimes)
-    {
-        EasingFunction = easingFunction;
-        _duration = duration;
-        _repeatTimes = repeatTimes;
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="Animation"/> class.
+    // /// </summary>
+    // /// <param name="easingFunction">The easing function.</param>
+    // /// <param name="duration">The duration.</param>
+    // /// <param name="repeatTimes">The repeat times.</param>
+    // public Animation(Func<float, float> easingFunction, long duration, int repeatTimes)
+    // {
+    //     EasingFunction = easingFunction;
+    //     _duration = duration;
+    //     _repeatTimes = repeatTimes;
+    // }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Animation"/> class.
-    /// </summary>
-    /// <param name="animation">The animation.</param>
-    public Animation(Animation animation)
-    {
-        EasingFunction = animation.EasingFunction;
-        _duration = animation._duration;
-        _repeatTimes = animation._repeatTimes;
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="Animation"/> class.
+    // /// </summary>
+    // /// <param name="animation">The animation.</param>
+    // public Animation(Animation animation)
+    // {
+    //     EasingFunction = animation.EasingFunction;
+    //     _duration = animation._duration;
+    //     _repeatTimes = animation._repeatTimes;
+    // }
 
     /// <summary>
     /// Gets or sets the easing function.
@@ -100,7 +100,7 @@ public class Animation
     public long Duration { get => _duration; set => _duration = value; }
 
     /// <summary>
-    /// Gets or sets how many times the animation needs to repeat before it is completed, 
+    /// Gets or sets how many times the animation needs to repeat before it is completed,
     /// use int.MaxValue to repeat it indefinitely number of times.
     /// </summary>
     public int Repeat { get => _repeatTimes; set => _repeatTimes = value; }
@@ -127,16 +127,16 @@ public class Animation
         return this;
     }
 
-    /// <summary>
-    /// Sets the duration.
-    /// </summary>
-    /// <param name="duration">The duration.</param>
-    /// <returns>The animation instance</returns>
-    public Animation WithDuration(long duration)
-    {
-        _duration = duration;
-        return this;
-    }
+    // /// <summary>
+    // /// Sets the duration.
+    // /// </summary>
+    // /// <param name="duration">The duration.</param>
+    // /// <returns>The animation instance</returns>
+    // public Animation WithDuration(long duration)
+    // {
+    //     _duration = duration;
+    //     return this;
+    // }
 
     /// <summary>
     /// Sets the repeats times.

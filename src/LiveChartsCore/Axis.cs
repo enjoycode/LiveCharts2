@@ -59,7 +59,11 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     /// <summary>
     /// The active separators
     /// </summary>
+#if __WEB__
+    protected readonly ObjectMap<StringMap<AxisVisualSeprator<TDrawingContext>>> activeSeparators = new();
+#else
     protected readonly Dictionary<IChart, Dictionary<string, AxisVisualSeprator<TDrawingContext>>> activeSeparators = new();
+#endif
 
     internal float _xo = 0f, _yo = 0f;
     internal LvcSize _size;
@@ -79,7 +83,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     private double? _maxLimit = null;
     private IPaint<TDrawingContext>? _namePaint;
     private double _nameTextSize = 20;
-    private Padding _namePadding = new(5);
+    private Padding _namePadding = Padding.All(5f);
     private IPaint<TDrawingContext>? _labelsPaint;
     private double _unitWidth = 1;
     private double _textSize = 16;
@@ -406,11 +410,20 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
         var hasRotation = Math.Abs(r) > 0.01f;
 
         var start = Math.Truncate(min / s) * s;
+#if __WEB__
+        var separators = activeSeparators.get(cartesianChart);
+        if (separators == null)
+        {
+            separators = new StringMap<AxisVisualSeprator<TDrawingContext>>();
+            activeSeparators.set(cartesianChart, separators);
+        }
+#else
         if (!activeSeparators.TryGetValue(cartesianChart, out var separators))
         {
             separators = new Dictionary<string, AxisVisualSeprator<TDrawingContext>>();
             activeSeparators[cartesianChart] = separators;
         }
+#endif
 
         if (Name is not null && NamePaint is not null)
             DrawName(cartesianChart, (float)NameTextSize, lxi, lxj, lyi, lyj);
@@ -521,11 +534,20 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
                 yc = actualScale.ToPixels(i);
             }
 
+#if __WEB__
+            var visualSeparator = separators.get(separatorKey);
+            if (visualSeparator == null)
+            {
+                visualSeparator = new AxisVisualSeprator<TDrawingContext>() { Value = i };
+                separators.Add(separatorKey, visualSeparator);
+            }
+#else
             if (!separators.TryGetValue(separatorKey, out var visualSeparator))
             {
                 visualSeparator = new AxisVisualSeprator<TDrawingContext>() { Value = i };
                 separators.Add(separatorKey, visualSeparator);
             }
+#endif
 
             #region Initialize shapes
 
@@ -607,7 +629,42 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 #endif
         }
 
-        foreach (var separatorValueKey in separators.ToArray())
+#if __WEB__
+        foreach (var separatorKey in separators.keys()) //TODO: use entries()
+        {
+            var separator = separators.get(separatorKey)!;
+            if (measured.Contains(separator)) continue;
+
+            float x, y;
+            if (_orientation == AxisOrientation.X)
+            {
+                x = scale.ToPixels(separator.Value);
+                y = yoo;
+            }
+            else
+            {
+                x = xoo;
+                y = scale.ToPixels(separator.Value);
+            }
+
+            if (separator.Separator is not null)
+                UpdateSeparator(separator.Separator, x + sxco, y + syco, lxi, lxj, lyi, lyj, UpdateMode.UpdateAndRemove);
+            if (separator.Subseparators is not null)
+                UpdateSubseparators(
+                    separator.Subseparators, scale, s, x + sxco, y + syco, lxi, lxj, lyi, lyj, UpdateMode.UpdateAndRemove);
+            if (separator.Tick is not null)
+                UpdateTick(separator.Tick, _tickLength, x + txco, y + tyco, UpdateMode.UpdateAndRemove);
+            if (separator.Subticks is not null)
+                UpdateSubticks(separator.Subticks, scale, s, x + txco, y + tyco, UpdateMode.UpdateAndRemove);
+            if (separator.Label is not null)
+                UpdateLabel(
+                    separator.Label, x, y + tyco, TryGetLabelOrLogError(labeler, separator.Value - 1d + 1d), hasRotation, r,
+                    UpdateMode.UpdateAndRemove);
+
+            separators.Remove(separatorKey);
+        }
+#else
+        foreach (var separatorValueKey in separators/*.ToArray()*/)
         {
             var separator = separatorValueKey.Value;
             if (measured.Contains(separator)) continue;
@@ -640,6 +697,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 
             _ = separators.Remove(separatorValueKey.Key);
         }
+#endif
     }
 
     /// <inheritdoc cref="ICartesianAxis{TDrawingContext}.InvalidateCrosshair(Chart{TDrawingContext}, LvcPoint)"/>
@@ -1289,8 +1347,13 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
         {
             actualRotatation %= 180;
             if (actualRotatation < 0) actualRotatation += 360;
+#if __WEB__
+            if (actualRotatation > 90 && actualRotatation < 180) actualRotatation += 180;
+            if (actualRotatation > 180 && actualRotatation < 270) actualRotatation += 180;
+#else
             if (actualRotatation is > 90 and < 180) actualRotatation += 180;
             if (actualRotatation is > 180 and < 270) actualRotatation += 180;
+#endif
 
             var actualAlignment = _labelsAlignment == null
               ? (_position == AxisPosition.Start ? Align.End : Align.Start)

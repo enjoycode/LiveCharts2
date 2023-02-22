@@ -488,10 +488,18 @@ public abstract class FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometr
     /// <inheritdoc cref="IChartSeries{TDrawingContext}.MiniatureEquals(IChartSeries{TDrawingContext})"/>
     public override bool MiniatureEquals(IChartSeries<TDrawingContext> series)
     {
+#if __WEB__
+        if (series is FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDrawingContext> financial)
+            return Name == series.Name &&
+                UpFill == financial.UpFill && UpStroke == financial.UpStroke &&
+                DownFill == financial.DownFill && DownStroke == financial.DownStroke;
+        return false;
+#else
         return series is FinancialSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDrawingContext> financial &&
             Name == series.Name &&
             UpFill == financial.UpFill && UpStroke == financial.UpStroke &&
             DownFill == financial.DownFill && DownStroke == financial.DownStroke;
+#endif
     }
 
     /// <inheritdoc cref="Series{TModel, TVisual, TLabel, TDrawingContext}.GetMiniatresSketch"/>

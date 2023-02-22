@@ -45,7 +45,7 @@ public abstract class ChartSeries<TModel, TVisual, TLabel, TDrawingContext>
     private IPaint<TDrawingContext>? _dataLabelsPaint;
     private double _dataLabelsSize = 16;
     private double _dataLabelsRotation = 0;
-    private Padding _dataLabelsPadding = new() { Left = 6, Top = 8, Right = 6, Bottom = 8 };
+    private Padding _dataLabelsPadding = new (6, 8, 6, 8);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ChartSeries{TModel, TVisual, TLabel, TDrawingContext}"/> class.

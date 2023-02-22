@@ -37,11 +37,11 @@ public class ObservableValue : IChartEntity, INotifyPropertyChanged
     private double? _value;
     private int _entityIndex;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ObservableValue"/> class.
-    /// </summary>
-    public ObservableValue()
-    { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="ObservableValue"/> class.
+    // /// </summary>
+    // public ObservableValue()
+    // { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObservableValue"/> class.
@@ -118,6 +118,6 @@ public class ObservableValue : IChartEntity, INotifyPropertyChanged
     {
         Coordinate = _value is null
             ? Coordinate.Empty
-            : new(EntityIndex, _value.Value);
+            : Coordinate.MakeByXY(EntityIndex, _value.Value);
     }
 }

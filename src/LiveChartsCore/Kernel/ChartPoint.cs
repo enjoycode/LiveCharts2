@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using System;
+using LiveChartsCore.Defaults;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel.Sketches;
 
@@ -38,6 +39,8 @@ public class ChartPoint
     /// </summary>
     protected bool IsLocalEmpty;
 
+    internal bool IsLocalEmptyInternal => IsLocalEmpty;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ChartPoint"/> class.
     /// </summary>
@@ -49,24 +52,24 @@ public class ChartPoint
         Context = new ChartPointContext(chart, series, entity);
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ChartPoint"/> class.
-    /// </summary>
-    /// <param name="point">The point.</param>
-    protected ChartPoint(ChartPoint point) : this(point.Context.Chart, point.Context.Series, point.Context.Entity)
-    {
-        IsLocalEmpty = point.IsLocalEmpty;
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="ChartPoint"/> class.
+    // /// </summary>
+    // /// <param name="point">The point.</param>
+    // protected ChartPoint(ChartPoint point) : this(point.Context.Chart, point.Context.Series, point.Context.Entity)
+    // {
+    //     IsLocalEmpty = point.IsLocalEmpty;
+    // }
 
-    private ChartPoint()
-    {
-        Context = new ChartPointContext();
-    }
+    // private ChartPoint()
+    // {
+    //     Context = ChartPointContext.MakeDefault();
+    // }
 
     /// <summary>
     /// Gets a new instance of an empty chart point.
     /// </summary>
-    public static ChartPoint Empty => new() { IsLocalEmpty = true };
+    public static ChartPoint Empty => new (null!, null!, new MappedChartEntity()) { IsLocalEmpty = true }; //new() { IsLocalEmpty = true };
 
     /// <summary>
     /// Gets or sets a value indicating whether this instance is empty.
@@ -208,8 +211,10 @@ public class ChartPoint<TModel, TVisual, TLabel> : ChartPoint
     /// Initializes a new instance of the <see cref="ChartPoint{TModel, TVisual, TLabel}"/> class.
     /// </summary>
     /// <param name="point">The point.</param>
-    public ChartPoint(ChartPoint point) : base(point)
+    public ChartPoint(ChartPoint point) : base(point.Context.Chart, point.Context.Series, point.Context.Entity) //base(point)
     {
+        IsLocalEmpty = point.IsLocalEmptyInternal;
+
         StackedValue = point.StackedValue;
         Context.DataSource = point.Context.DataSource;
         Context.Visual = point.Context.Visual;

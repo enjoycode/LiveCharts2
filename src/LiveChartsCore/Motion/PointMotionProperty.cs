@@ -29,13 +29,13 @@ namespace LiveChartsCore.Motion;
 /// </summary>
 public class PointMotionProperty : MotionProperty<LvcPoint>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PointMotionProperty"/> class.
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    public PointMotionProperty(string propertyName)
-        : base(propertyName)
-    { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="PointMotionProperty"/> class.
+    // /// </summary>
+    // /// <param name="propertyName">Name of the property.</param>
+    // public PointMotionProperty(string propertyName)
+    //     : base(propertyName)
+    // { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PointMotionProperty"/> class.

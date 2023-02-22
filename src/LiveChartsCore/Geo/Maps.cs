@@ -32,6 +32,7 @@ namespace LiveChartsCore.Geo;
 /// </summary>
 public static class Maps
 {
+#if !__WEB__
     /// <summary>
     /// Gets the world map.
     /// </summary>
@@ -70,6 +71,7 @@ public static class Maps
     {
         return new CoreMap<TDrawingContext>(stream, "default");
     }
+#endif
 
     /// <summary>
     /// Builds a projector with the given parameters.

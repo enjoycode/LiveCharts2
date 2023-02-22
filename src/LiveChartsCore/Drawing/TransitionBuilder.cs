@@ -60,6 +60,7 @@ public class TransitionBuilder
     /// </summary>
     /// <param name="animationBuilder">The animation builder.</param>
     /// <returns>The transition</returns>
+    [PixUI.TSRename("WithAnimationBuilder")]
     public TransitionBuilder WithAnimation(Action<Animation> animationBuilder)
     {
         var animation = new Animation();
@@ -72,6 +73,7 @@ public class TransitionBuilder
     /// </summary>
     /// <param name="chart">The chart.</param>
     /// <returns>The transition</returns>
+    [PixUI.TSRename("WithAnimationFromChart")]
     public TransitionBuilder WithAnimation(IChart chart)
     {
         return WithAnimation(new Animation()

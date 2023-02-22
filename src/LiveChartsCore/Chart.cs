@@ -583,11 +583,19 @@ public abstract class Chart<TDrawingContext> : IChart
                 // this is the preferred method (drawn legends)
                 imageLegend.Measure(this);
 
+#if __WEB__
+                if (LegendPosition == LegendPosition.Left || LegendPosition == LegendPosition.Right)
+                    ControlSize = new(ControlSize.Width - imageLegend.Size.Width, ControlSize.Height);
+
+                if (LegendPosition == LegendPosition.Top || LegendPosition == LegendPosition.Bottom)
+                    ControlSize = new(ControlSize.Width, ControlSize.Height - imageLegend.Size.Height);
+#else
                 if (LegendPosition is LegendPosition.Left or LegendPosition.Right)
                     ControlSize = new(ControlSize.Width - imageLegend.Size.Width, ControlSize.Height);
 
                 if (LegendPosition is LegendPosition.Top or LegendPosition.Bottom)
                     ControlSize = new(ControlSize.Width, ControlSize.Height - imageLegend.Size.Height);
+#endif
 
                 // reset for cases when legend is hidden or changes postion
                 Canvas.StartPoint = new LvcPoint(0, 0);

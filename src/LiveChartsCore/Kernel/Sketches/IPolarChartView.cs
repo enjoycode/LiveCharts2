@@ -31,6 +31,7 @@ namespace LiveChartsCore.Kernel.Sketches;
 /// </summary>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="IPolarChartView{TDrawingContext}" />
+[PixUI.TSInterfaceOf]
 public interface IPolarChartView<TDrawingContext> : IChartView<TDrawingContext>
     where TDrawingContext : DrawingContext
 {

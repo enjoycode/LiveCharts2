@@ -176,7 +176,7 @@ public static class Extensions
     /// <param name="axis">The axis.</param>
     /// <param name="chart">The chart.</param>
     /// <param name="bounds">The bounds.</param>
-    /// <returns></returns> 
+    /// <returns></returns>
     public static AxisTick GetTick<TDrawingContext>(this IPolarAxis axis, PolarChart<TDrawingContext> chart, Bounds? bounds = null)
         where TDrawingContext : DrawingContext
     {
@@ -389,7 +389,7 @@ public static class Extensions
     public static Scaler GetNextScaler<TDrawingContext>(this ICartesianAxis axis, CartesianChart<TDrawingContext> chart)
         where TDrawingContext : DrawingContext
     {
-        return new Scaler(chart.DrawMarginLocation, chart.DrawMarginSize, axis);
+        return Scaler.Make(chart.DrawMarginLocation, chart.DrawMarginSize, axis);
     }
 
     /// <summary>
@@ -405,7 +405,7 @@ public static class Extensions
     {
         return !axis.ActualBounds.HasPreviousState
             ? null
-            : new Scaler(
+            : Scaler.Make(
                 chart.ActualBounds.Location,
                 chart.ActualBounds.Size,
                 axis,

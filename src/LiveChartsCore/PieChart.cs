@@ -77,7 +77,11 @@ public class PieChart<TDrawingContext> : Chart<TDrawingContext>
     /// The drawable series.
     /// </value>
     public override IEnumerable<IChartSeries<TDrawingContext>> ChartSeries
+#if __WEB__
+        => Series.Where(x => !x.IsFillSeries);
+#else
         => Series.Where(x => (x is IPieSeries<TDrawingContext> pieSeries) && !pieSeries.IsFillSeries);
+#endif
 
     /// <summary>
     /// Gets the view.
@@ -118,10 +122,17 @@ public class PieChart<TDrawingContext> : Chart<TDrawingContext>
     /// <returns></returns>
     public override IEnumerable<ChartPoint> FindHoveredPointsBy(LvcPoint pointerPosition)
     {
+#if __WEB__
+        return _chartView.Series
+            .Where(series => series is IPieSeries<TDrawingContext> && !((IPieSeries<TDrawingContext>)series).IsFillSeries)
+            .Where(series => series.IsHoverable)
+            .SelectMany(series => series.FindHitPoints(this, pointerPosition, TooltipFindingStrategy.CompareAll));
+#else
         return _chartView.Series
             .Where(series => (series is IPieSeries<TDrawingContext> pieSeries) && !pieSeries.IsFillSeries)
             .Where(series => series.IsHoverable)
             .SelectMany(series => series.FindHitPoints(this, pointerPosition, TooltipFindingStrategy.CompareAll));
+#endif
     }
 
     /// <summary>
@@ -212,7 +223,7 @@ public class PieChart<TDrawingContext> : Chart<TDrawingContext>
         DrawLegend(seriesInLegend);
 
         var title = View.Title;
-        var m = new Margin();
+        var m = Margin.Empty();
         var ts = 0f;
         if (title is not null)
         {
@@ -221,7 +232,7 @@ public class PieChart<TDrawingContext> : Chart<TDrawingContext>
             ts = titleSize.Height;
         }
 
-        var rm = viewDrawMargin ?? new Margin(Margin.Auto);
+        var rm = viewDrawMargin ?? Margin.All(Margin.Auto);
         var actualMargin = new Margin(
             Margin.IsAuto(rm.Left) ? m.Left : rm.Left,
             Margin.IsAuto(rm.Top) ? m.Top : rm.Top,

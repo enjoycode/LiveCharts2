@@ -34,7 +34,7 @@ public struct LvcColor
     /// <param name="green">The green component from 0 to 255.</param>
     /// <param name="blue">The blue component from 0 to 255.</param>
     /// <param name="alpha">The alpha channel component from 0 to 255.</param>
-    public LvcColor(byte red, byte green, byte blue, byte alpha)
+    public LvcColor(byte red, byte green, byte blue, byte alpha = 255)
     {
         R = red;
         G = green;
@@ -44,26 +44,9 @@ public struct LvcColor
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LvcColor"/> struct.
-    /// </summary>
-    /// <param name="red">The red component from 0 to 255.</param>
-    /// <param name="green">The green component from 0 to 255.</param>
-    /// <param name="blue">The blue component from 0 to 255.</param>
-    public LvcColor(byte red, byte green, byte blue) : this(red, green, blue, 255) { }
-
-    internal LvcColor(bool isEmpty)
-    {
-        R = 255;
-        G = 255;
-        B = 255;
-        A = 0;
-        IsEmpty = isEmpty;
-    }
-
-    /// <summary>
     /// Gets an empty color.
     /// </summary>
-    public static LvcColor Empty => new(true);
+    public static LvcColor Empty => new (255, 255, 255, 0) { IsEmpty = true };
 
     /// <summary>
     /// Gets or sets the red component.
@@ -134,18 +117,6 @@ public struct LvcColor
     /// <summary>
     /// Creates a new instance of the <see cref="LvcColor"/> class with the given components.
     /// </summary>
-    /// <param name="red">The red component from 0 to 255.</param>
-    /// <param name="green">The green component from 0 to 255.</param>
-    /// <param name="blue">The blue component from 0 to 255.</param>
-    /// <returns></returns>
-    public static LvcColor FromRGB(byte red, byte green, byte blue)
-    {
-        return new LvcColor(red, green, blue);
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="LvcColor"/> class with the given components.
-    /// </summary>
     /// <param name="alpha">The alpha channel component from 0 to 255.</param>
     /// <param name="red">The red component from 0 to 255.</param>
     /// <param name="green">The green component from 0 to 255.</param>
@@ -162,6 +133,7 @@ public struct LvcColor
     /// <param name="alpha">The alpha channel component from 0 to 255.</param>
     /// <param name="color">The red color.</param>
     /// <returns></returns>
+    [PixUI.TSRename("FromColorWithAlpha")]
     public static LvcColor FromArgb(byte alpha, LvcColor color)
     {
         return new LvcColor(color.R, color.G, color.B, alpha);

@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using LiveChartsCore.Motion;
 
@@ -58,7 +59,11 @@ public interface IAnimatable
     /// <summary>
     /// Gets the motion properties.
     /// </summary>
+#if __WEB__
+    StringMap<IMotionProperty> MotionProperties { get; }
+#else
     Dictionary<string, IMotionProperty> MotionProperties { get; }
+#endif
 
     /// <summary>
     /// Sets a property transition for the specified property or properties.

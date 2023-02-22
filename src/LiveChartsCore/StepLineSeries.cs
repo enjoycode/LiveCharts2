@@ -288,8 +288,15 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
                 var x = secondaryScale.ToPixels(point.SecondaryValue);
                 var y = primaryScale.ToPixels(point.PrimaryValue + s);
 
+#if __WEB__
+                visual.Geometry.MotionProperties.get(nameof(visual.Geometry.X))!
+                    .CopyFrom(visual.StepSegment.MotionProperties.get(nameof(visual.StepSegment.Xj))!);
+                visual.Geometry.MotionProperties.get(nameof(visual.Geometry.Y))!
+                    .CopyFrom(visual.StepSegment.MotionProperties.get(nameof(visual.StepSegment.Yj))!);
+#else
                 visual.Geometry.MotionProperties[nameof(visual.Geometry.X)].CopyFrom(visual.StepSegment.MotionProperties[nameof(visual.StepSegment.Xj)]);
                 visual.Geometry.MotionProperties[nameof(visual.Geometry.Y)].CopyFrom(visual.StepSegment.MotionProperties[nameof(visual.StepSegment.Yj)]);
+#endif
                 visual.Geometry.TranslateTransform = new LvcPoint(-hgs, -hgs);
 
                 visual.Geometry.Width = gs;
@@ -429,11 +436,20 @@ public class StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeome
     /// <inheritdoc cref="IChartSeries{TDrawingContext}.MiniatureEquals(IChartSeries{TDrawingContext})"/>
     public override bool MiniatureEquals(IChartSeries<TDrawingContext> series)
     {
+#if __WEB__
+        if (series is StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint> stepSeries)
+            return Name == series.Name &&
+                   !((ISeries)this).PaintsChanged &&
+                   Fill == stepSeries.Fill && Stroke == stepSeries.Stroke &&
+                   GeometryFill == stepSeries.GeometryFill && GeometryStroke == stepSeries.GeometryStroke;
+        return false;
+#else
         return series is StepLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry, TVisualPoint> stepSeries &&
             Name == series.Name &&
             !((ISeries)this).PaintsChanged &&
             Fill == stepSeries.Fill && Stroke == stepSeries.Stroke &&
             GeometryFill == stepSeries.GeometryFill && GeometryStroke == stepSeries.GeometryStroke;
+#endif
     }
 
     /// <inheritdoc cref="Series{TModel, TVisual, TLabel, TDrawingContext}.SetDefaultPointTransitions(ChartPoint)"/>

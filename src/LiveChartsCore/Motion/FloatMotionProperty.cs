@@ -27,23 +27,23 @@ namespace LiveChartsCore.Motion;
 /// </summary>
 public class FloatMotionProperty : MotionProperty<float>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FloatMotionProperty"/> class.
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    public FloatMotionProperty(string propertyName)
-        : base(propertyName)
-    {
-        fromValue = 0;
-        toValue = 0;
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="FloatMotionProperty"/> class.
+    // /// </summary>
+    // /// <param name="propertyName">Name of the property.</param>
+    // public FloatMotionProperty(string propertyName)
+    //     : base(propertyName)
+    // {
+    //     fromValue = 0;
+    //     toValue = 0;
+    // }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FloatMotionProperty"/> class.
     /// </summary>
     /// <param name="propertyName">Name of the property.</param>
     /// <param name="value">The value.</param>
-    public FloatMotionProperty(string propertyName, float value)
+    public FloatMotionProperty(string propertyName, float value = 0)
         : base(propertyName)
     {
         fromValue = value;

@@ -34,21 +34,22 @@ namespace LiveChartsCore.Geo;
 public class CoreMap<TDrawingContext> : IDisposable
     where TDrawingContext : DrawingContext
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CoreMap{TDrawingContext}"/> class.
-    /// </summary>
-    public CoreMap() { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="CoreMap{TDrawingContext}"/> class.
+    // /// </summary>
+    // public CoreMap() { }
+    //
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="CoreMap{TDrawingContext}"/> class, with the given layer.
+    // /// </summary>
+    // /// <param name="path">The path to the GeoJson file for the layer.</param>
+    // /// <param name="layerName">The layer name.</param>
+    // public CoreMap(string path, string layerName = "default") : this(new StreamReader(path), layerName)
+    // {
+    //     _ = AddLayerFromDirectory(path, layerName);
+    // }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CoreMap{TDrawingContext}"/> class, with the given layer.
-    /// </summary>
-    /// <param name="path">The path to the GeoJson file for the layer.</param>
-    /// <param name="layerName">The layer name.</param>
-    public CoreMap(string path, string layerName = "default") : this(new StreamReader(path), layerName)
-    {
-        _ = AddLayerFromDirectory(path, layerName);
-    }
-
+#if !__WEB__
     /// <summary>
     /// Initializes a new instance of the <see cref="CoreMap{TDrawingContext}"/> class, with the given layer.
     /// </summary>
@@ -58,11 +59,16 @@ public class CoreMap<TDrawingContext> : IDisposable
     {
         _ = AddLayerFromStreamReader(streamReader, layerName);
     }
+#endif
 
     /// <summary>
     /// Gets the map layers dictionary.
     /// </summary>
+#if __WEB__
+    public StringMap<MapLayer<TDrawingContext>> Layers { get; protected set; } = new();
+#else
     public Dictionary<string, MapLayer<TDrawingContext>> Layers { get; protected set; } = new();
+#endif
 
     /// <summary>
     /// Finds a land by short name.
@@ -72,9 +78,14 @@ public class CoreMap<TDrawingContext> : IDisposable
     /// <returns>The land, null if not found.</returns>
     public LandDefinition? FindLand(string shortName, string layerName = "default")
     {
+#if __WEB__
+        return Layers.get(layerName)!.Lands.get(shortName);
+#else
         return Layers[layerName].Lands.TryGetValue(shortName, out var land) ? land : null;
+#endif
     }
 
+#if !__WEB__
     /// <summary>
     /// Adds a layer to the map from a directory.
     /// </summary>
@@ -90,17 +101,17 @@ public class CoreMap<TDrawingContext> : IDisposable
         return AddLayerFromStreamReader(sr, stroke, fill, layerName);
     }
 
-    /// <summary>
-    /// Adds a layer to the map from a directory.
-    /// </summary>
-    /// <param name="path">The path to the GeoJson file for the layer.</param>
-    /// <param name="layerName">The layer name.</param>
-    /// <returns>The added layer.</returns>
-    public MapLayer<TDrawingContext> AddLayerFromDirectory(string path, string layerName = "default")
-    {
-        var defaultPaint = (IPaint<TDrawingContext>)LiveCharts.DefaultPaint;
-        return AddLayerFromDirectory(path, defaultPaint, defaultPaint, layerName);
-    }
+    // /// <summary>
+    // /// Adds a layer to the map from a directory.
+    // /// </summary>
+    // /// <param name="path">The path to the GeoJson file for the layer.</param>
+    // /// <param name="layerName">The layer name.</param>
+    // /// <returns>The added layer.</returns>
+    // public MapLayer<TDrawingContext> AddLayerFromDirectory(string path, string layerName = "default")
+    // {
+    //     var defaultPaint = (IPaint<TDrawingContext>)LiveCharts.DefaultPaint;
+    //     return AddLayerFromDirectory(path, defaultPaint, defaultPaint, layerName);
+    // }
 
     /// <summary>
     /// Adds a layer to the map from a stream reader.
@@ -200,6 +211,7 @@ public class CoreMap<TDrawingContext> : IDisposable
         var defaultPaint = (IPaint<TDrawingContext>)LiveCharts.DefaultPaint;
         return Task.Run(() => AddLayerFromStreamReader(streamReader, defaultPaint, defaultPaint, layerName));
     }
+#endif
 
     /// <summary>
     /// Disposes the map.

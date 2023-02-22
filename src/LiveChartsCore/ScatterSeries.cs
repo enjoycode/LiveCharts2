@@ -90,8 +90,8 @@ public class ScatterSeries<TModel, TVisual, TLabel, TDrawingContext>
 
         var drawLocation = cartesianChart.DrawMarginLocation;
         var drawMarginSize = cartesianChart.DrawMarginSize;
-        var xScale = new Scaler(drawLocation, drawMarginSize, secondaryAxis);
-        var yScale = new Scaler(drawLocation, drawMarginSize, primaryAxis);
+        var xScale = Scaler.Make(drawLocation, drawMarginSize, secondaryAxis);
+        var yScale = Scaler.Make(drawLocation, drawMarginSize, primaryAxis);
 
         var actualZIndex = ZIndex == 0 ? ((ISeries)this).SeriesId : ZIndex;
         if (Fill is not null)

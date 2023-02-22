@@ -35,41 +35,45 @@ public readonly struct Coordinate
     /// <param name="tertiaryValue">The tertiary value.</param>
     /// <param name="quaternaryValue">The quaternary value.</param>
     /// <param name="quinaryValue">The quinary value.</param>
-    public Coordinate(double primaryValue, double secondaryValue, double tertiaryValue, double quaternaryValue, double quinaryValue) : this()
+    public Coordinate(double primaryValue, double secondaryValue, double tertiaryValue, double quaternaryValue, double quinaryValue, bool isEmpty = false)
     {
         PrimaryValue = primaryValue;
         SecondaryValue = secondaryValue;
         TertiaryValue = tertiaryValue;
         QuaternaryValue = quaternaryValue;
         QuinaryValue = quinaryValue;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Coordinate"/> struct.
-    /// </summary>
-    /// <param name="x">The X coordinate.</param>
-    /// <param name="y">The Y coordinate.</param>
-    public Coordinate(double x, double y) : this(y, x, 0, 0, 0)
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Coordinate"/> struct.
-    /// </summary>
-    /// <param name="x">The X coordinate.</param>
-    /// <param name="y">The Y coordinate.</param>
-    /// <param name="weight">The weight of the pint.</param>
-    public Coordinate(double x, double y, double weight) : this(y, x, weight, 0, 0)
-    { }
-
-    private Coordinate(bool isEmpty) : this(0, 0, 0, 0, 0)
-    {
         IsEmpty = isEmpty;
     }
+
+    public static Coordinate MakeByXY(double x, double y, double weight = 0)
+        => new (y, x, weight, 0, 0);
+
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="Coordinate"/> struct.
+    // /// </summary>
+    // /// <param name="x">The X coordinate.</param>
+    // /// <param name="y">The Y coordinate.</param>
+    // public Coordinate(double x, double y) : this(y, x, 0, 0, 0)
+    // { }
+
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="Coordinate"/> struct.
+    // /// </summary>
+    // /// <param name="x">The X coordinate.</param>
+    // /// <param name="y">The Y coordinate.</param>
+    // /// <param name="weight">The weight of the pint.</param>
+    // public Coordinate(double x, double y, double weight) : this(y, x, weight, 0, 0)
+    // { }
+
+    // private Coordinate(bool isEmpty) : this(0, 0, 0, 0, 0)
+    // {
+    //     IsEmpty = isEmpty;
+    // }
 
     /// <summary>
     /// Gets an empty coordinate instance.
     /// </summary>
-    public static Coordinate Empty => new(true);
+    public static Coordinate Empty => new (0, 0, 0, 0, 0, true);
 
     /// <summary>
     /// Evaluates whether the instance is empty.

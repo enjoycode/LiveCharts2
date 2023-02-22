@@ -69,7 +69,7 @@ public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDr
     /// <summary>
     /// Gets or sets the padding.
     /// </summary>
-    public Padding Padding { get; set; } = new();
+    public Padding Padding { get; set; } = new (0, 0, 0, 0);
 
     /// <summary>
     /// Gets or sets the background paint.

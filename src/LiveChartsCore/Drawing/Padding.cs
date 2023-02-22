@@ -30,40 +30,6 @@ public class Padding
     /// <summary>
     /// Initializes a new instance of the <see cref="Padding"/> class.
     /// </summary>
-    public Padding()
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Padding"/> class.
-    /// </summary>
-    /// <param name="padding">The padding.</param>
-    public Padding(double padding)
-    {
-        var p = (float)padding;
-        Left = p;
-        Top = p;
-        Right = p;
-        Bottom = p;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Padding"/> class.
-    /// </summary>
-    /// <param name="x">The x.</param>
-    /// <param name="y">The y.</param>
-    public Padding(double x, double y)
-    {
-        var px = (float)x;
-        var py = (float)y;
-        Left = px;
-        Top = py;
-        Right = px;
-        Bottom = py;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Padding"/> class.
-    /// </summary>
     /// <param name="left">The left.</param>
     /// <param name="top">The top.</param>
     /// <param name="right">The right.</param>
@@ -76,10 +42,12 @@ public class Padding
         Bottom = (float)bottom;
     }
 
+    public static Padding All(float padding) => new Padding(padding, padding, padding, padding);
+
     /// <summary>
     /// The default padding.
     /// </summary>
-    public static Padding Default = new();
+    public static readonly Padding Default = new (0, 0, 0, 0);
 
     /// <summary>
     /// Gets or sets the left.

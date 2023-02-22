@@ -37,11 +37,11 @@ public class DateTimePoint : IChartEntity, INotifyPropertyChanged
     private DateTime _dateTime;
     private double? _value;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DateTimePoint"/> class.
-    /// </summary>
-    public DateTimePoint()
-    { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="DateTimePoint"/> class.
+    // /// </summary>
+    // public DateTimePoint()
+    // { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DateTimePoint"/> class.
@@ -52,7 +52,7 @@ public class DateTimePoint : IChartEntity, INotifyPropertyChanged
     {
         DateTime = dateTime;
         Value = value;
-        Coordinate = value is null ? Coordinate.Empty : new(dateTime.Ticks, value.Value);
+        Coordinate = value is null ? Coordinate.Empty :  Coordinate.MakeByXY(dateTime.Ticks, value.Value);
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public class DateTimePoint : IChartEntity, INotifyPropertyChanged
     /// <param name="propertyName">Name of the property.</param>
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        Coordinate = _value is null ? Coordinate.Empty : new(_dateTime.Ticks, _value.Value);
+        Coordinate = _value is null ? Coordinate.Empty : Coordinate.MakeByXY(_dateTime.Ticks, _value.Value);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -38,11 +38,11 @@ public class WeightedPoint : IChartEntity, INotifyPropertyChanged
     private double? _y;
     private double? _weight;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="WeightedPoint"/> class.
-    /// </summary>
-    public WeightedPoint()
-    { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="WeightedPoint"/> class.
+    // /// </summary>
+    // public WeightedPoint()
+    // { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeightedPoint"/> class.
@@ -119,7 +119,7 @@ public class WeightedPoint : IChartEntity, INotifyPropertyChanged
     {
         Coordinate = _x is null || _y is null
             ? Coordinate.Empty
-            : new(_x ?? 0, _y ?? 0, _weight ?? 0);
+            : Coordinate.MakeByXY(_x ?? 0, _y ?? 0, _weight ?? 0);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

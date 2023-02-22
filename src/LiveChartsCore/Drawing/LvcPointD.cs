@@ -39,16 +39,6 @@ public struct LvcPointD
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LvcPointD"/> struct.
-    /// </summary>
-    /// <param name="point">The point coordinate.</param>
-    public LvcPointD(LvcPoint point)
-    {
-        X = point.X;
-        Y = point.Y;
-    }
-
-    /// <summary>
     /// Gets or sets the X coordinate.
     /// </summary>
     public double X { get; set; }

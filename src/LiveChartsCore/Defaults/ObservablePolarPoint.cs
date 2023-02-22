@@ -36,11 +36,11 @@ public class ObservablePolarPoint : IChartEntity, INotifyPropertyChanged
     private double? _angle;
     private double? _radius;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ObservablePoint"/> class.
-    /// </summary>
-    public ObservablePolarPoint()
-    { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="ObservablePoint"/> class.
+    // /// </summary>
+    // public ObservablePolarPoint()
+    // { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObservablePoint"/> class.
@@ -99,7 +99,7 @@ public class ObservablePolarPoint : IChartEntity, INotifyPropertyChanged
     {
         Coordinate = _radius is null || _angle is null
             ? Coordinate.Empty
-            : new(_angle.Value, _radius.Value);
+            : Coordinate.MakeByXY(_angle.Value, _radius.Value);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

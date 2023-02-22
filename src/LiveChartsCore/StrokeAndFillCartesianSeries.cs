@@ -88,7 +88,13 @@ public abstract class StrokeAndFillCartesianSeries<TModel, TVisual, TLabel, TDra
     /// <inheritdoc cref="IChartSeries{TDrawingContext}.MiniatureEquals(IChartSeries{TDrawingContext})"/>
     public override bool MiniatureEquals(IChartSeries<TDrawingContext> series)
     {
+#if __WEB__
+        if (series is StrokeAndFillCartesianSeries<TModel, TVisual, TLabel, TDrawingContext> sfSeries)
+            return Name == series.Name && !((ISeries)this).PaintsChanged && Fill == sfSeries.Fill && Stroke == sfSeries.Stroke;
+        return false;
+#else
         return series is StrokeAndFillCartesianSeries<TModel, TVisual, TLabel, TDrawingContext> sfSeries &&
             Name == series.Name && !((ISeries)this).PaintsChanged && Fill == sfSeries.Fill && Stroke == sfSeries.Stroke;
+#endif
     }
 }

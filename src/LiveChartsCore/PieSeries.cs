@@ -445,7 +445,12 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
                 if (DataLabelsPosition == PolarLabelsPosition.Outer)
                 {
                     var a = start + initialRotation + sweep * 0.5;
+#if __WEB__
+                    var mod = a % 360;
+                    var isStart = mod < 90 || (mod > 270 && mod < 360);
+#else
                     var isStart = a % 360 is < 90 or (> 270 and < 360);
+#endif
                     label.HorizontalAlign = label.HorizontalAlign = isStart ? Align.Start : Align.End;
                 }
 
@@ -464,7 +469,7 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
             i++;
         }
 
-        var u = new Scaler(); // dummy scaler, this is not used in the SoftDeleteOrDisposePoint method.
+        var u = Scaler.MakeDefault(); // dummy scaler, this is not used in the SoftDeleteOrDisposePoint method.
         pointsCleanup.CollectPoints(everFetched, pieChart.View, u, u, SoftDeleteOrDisposePoint);
     }
 
@@ -529,8 +534,14 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
     /// <inheritdoc cref="IChartSeries{TDrawingContext}.MiniatureEquals(IChartSeries{TDrawingContext})"/>
     public override bool MiniatureEquals(IChartSeries<TDrawingContext> instance)
     {
+#if __WEB__
+        if (instance is PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDrawingContext> pieSeries)
+            return Name == pieSeries.Name && Fill == pieSeries.Fill && Stroke == pieSeries.Stroke;
+        return false;
+#else
         return instance is PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDrawingContext> pieSeries &&
-           Name == pieSeries.Name && Fill == pieSeries.Fill && Stroke == pieSeries.Stroke;
+               Name == pieSeries.Name && Fill == pieSeries.Fill && Stroke == pieSeries.Stroke;
+#endif
     }
 
     /// <summary>
@@ -669,7 +680,7 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
     public override void SoftDeleteOrDispose(IChartView chart)
     {
         var core = ((IPieChartView<TDrawingContext>)chart).Core;
-        var u = new Scaler();
+        var u = Scaler.MakeDefault();
 
         var toDelete = new List<ChartPoint>();
         foreach (var point in everFetched)

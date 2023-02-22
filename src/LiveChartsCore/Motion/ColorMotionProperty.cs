@@ -29,27 +29,35 @@ namespace LiveChartsCore.Motion;
 /// </summary>
 public class ColorMotionProperty : MotionProperty<LvcColor>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ColorMotionProperty"/> class.
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    public ColorMotionProperty(string propertyName)
-        : base(propertyName)
-    {
-        fromValue = LvcColor.FromArgb(0, 0, 0, 0);
-        toValue = LvcColor.FromArgb(0, 0, 0, 0);
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="ColorMotionProperty"/> class.
+    // /// </summary>
+    // /// <param name="propertyName">Name of the property.</param>
+    // public ColorMotionProperty(string propertyName)
+    //     : base(propertyName)
+    // {
+    //     fromValue = LvcColor.FromArgb(0, 0, 0, 0);
+    //     toValue = LvcColor.FromArgb(0, 0, 0, 0);
+    // }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ColorMotionProperty"/> class.
     /// </summary>
     /// <param name="propertyName">Name of the property.</param>
     /// <param name="value">The value.</param>
-    public ColorMotionProperty(string propertyName, LvcColor value)
+    public ColorMotionProperty(string propertyName, LvcColor? value = null)
         : base(propertyName)
     {
-        fromValue = value;
-        toValue = value;
+        if (value.HasValue)
+        {
+            fromValue = value.Value;
+            toValue = value.Value;
+        }
+        else
+        {
+            fromValue = new LvcColor(0,0,0,0);
+            toValue = new LvcColor(0, 0, 0, 0);
+        }
     }
 
     /// <inheritdoc cref="MotionProperty{T}.OnGetMovement(float)" />

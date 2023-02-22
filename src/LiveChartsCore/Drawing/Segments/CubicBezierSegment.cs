@@ -81,6 +81,17 @@ public class CubicBezierSegment : Animatable, IConsecutivePathSegment
         CurrentTime = segment.CurrentTime;
         RemoveOnCompleted = segment.RemoveOnCompleted;
 
+#if __WEB__
+        var xProp = segment.MotionProperties.get(nameof(IConsecutivePathSegment.Xj))!;
+        var yProp = segment.MotionProperties.get(nameof(IConsecutivePathSegment.Yj))!;
+
+        MotionProperties.get(nameof(Xi))!.CopyFrom(xProp);
+        MotionProperties.get(nameof(Xm))!.CopyFrom(xProp);
+        MotionProperties.get(nameof(Xj))!.CopyFrom(xProp);
+        MotionProperties.get(nameof(Yi))!.CopyFrom(yProp);
+        MotionProperties.get(nameof(Ym))!.CopyFrom(yProp);
+        MotionProperties.get(nameof(Yj))!.CopyFrom(yProp);
+#else
         var xProp = segment.MotionProperties[nameof(IConsecutivePathSegment.Xj)];
         var yProp = segment.MotionProperties[nameof(IConsecutivePathSegment.Yj)];
 
@@ -90,5 +101,6 @@ public class CubicBezierSegment : Animatable, IConsecutivePathSegment
         MotionProperties[nameof(Yi)].CopyFrom(yProp);
         MotionProperties[nameof(Ym)].CopyFrom(yProp);
         MotionProperties[nameof(Yj)].CopyFrom(yProp);
+#endif
     }
 }

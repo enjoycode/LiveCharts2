@@ -37,11 +37,11 @@ public class TimeSpanPoint : IChartEntity, INotifyPropertyChanged
     private TimeSpan _timeSpan;
     private double? _value;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TimeSpanPoint"/> class.
-    /// </summary>
-    public TimeSpanPoint()
-    { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="TimeSpanPoint"/> class.
+    // /// </summary>
+    // public TimeSpanPoint()
+    // { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TimeSpanPoint"/> class.
@@ -108,7 +108,7 @@ public class TimeSpanPoint : IChartEntity, INotifyPropertyChanged
     {
         Coordinate = _value is null
             ? Coordinate.Empty
-            : new(_timeSpan.Ticks, _value ?? 0d);
+            : Coordinate.MakeByXY(_timeSpan.Ticks, _value ?? 0d);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

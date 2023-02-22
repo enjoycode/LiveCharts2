@@ -33,20 +33,20 @@ public class Bounds
     public Bounds()
     { }
 
-    /// <summary>
-    /// Creates a new instance of the <see cref="Bounds"/> class. based on the given <see cref="Bounds"/>.
-    /// </summary>
-    /// <param name="bounds"></param>
-    public Bounds(Bounds bounds)
-    {
-        IsEmpty = bounds.IsEmpty;
-        Max = bounds.Max;
-        Min = bounds.Min;
-        PaddingMax = bounds.PaddingMax;
-        PaddingMin = bounds.PaddingMin;
-        RequestedGeometrySize = bounds.RequestedGeometrySize;
-        MinDelta = bounds.MinDelta;
-    }
+    // /// <summary>
+    // /// Creates a new instance of the <see cref="Bounds"/> class. based on the given <see cref="Bounds"/>.
+    // /// </summary>
+    // /// <param name="bounds"></param>
+    // public Bounds(Bounds bounds)
+    // {
+    //     IsEmpty = bounds.IsEmpty;
+    //     Max = bounds.Max;
+    //     Min = bounds.Min;
+    //     PaddingMax = bounds.PaddingMax;
+    //     PaddingMin = bounds.PaddingMin;
+    //     RequestedGeometrySize = bounds.RequestedGeometrySize;
+    //     MinDelta = bounds.MinDelta;
+    // }
 
     /// <summary>
     /// Gets whether the bounds are empty.
@@ -113,6 +113,7 @@ public class Bounds
     /// if the given value is less than the current instance <see cref="Min"/> property then the given value is set at <see cref="Min"/> property.
     /// </summary>
     /// <param name="bounds">the bounds to append</param>
+    [PixUI.TSRename("AppendValueByBounds")]
     internal void AppendValue(Bounds bounds)
     {
         if (Max <= bounds.Max) Max = bounds.Max;

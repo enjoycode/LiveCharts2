@@ -37,11 +37,11 @@ public class ObservablePoint : IChartEntity, INotifyPropertyChanged
     private double? _x;
     private double? _y;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ObservablePoint"/> class.
-    /// </summary>
-    public ObservablePoint()
-    { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="ObservablePoint"/> class.
+    // /// </summary>
+    // public ObservablePoint()
+    // { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObservablePoint"/> class.
@@ -108,7 +108,7 @@ public class ObservablePoint : IChartEntity, INotifyPropertyChanged
     {
         Coordinate = _x is null || _y is null
             ? Coordinate.Empty
-            : new Coordinate(_x.Value, _y.Value);
+            : Coordinate.MakeByXY(_x.Value, _y.Value);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

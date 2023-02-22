@@ -217,8 +217,8 @@ public abstract class Section<TSizedGeometry, TDrawingContext> : Section<TDrawin
         var primaryAxis = cartesianChart.YAxes[ScalesYAt];
         var secondaryAxis = cartesianChart.XAxes[ScalesXAt];
 
-        var secondaryScale = new Scaler(drawLocation, drawMarginSize, secondaryAxis);
-        var primaryScale = new Scaler(drawLocation, drawMarginSize, primaryAxis);
+        var secondaryScale = Scaler.Make(drawLocation, drawMarginSize, secondaryAxis);
+        var primaryScale = Scaler.Make(drawLocation, drawMarginSize, primaryAxis);
 
         var xi = Xi is null ? drawLocation.X : secondaryScale.ToPixels(Xi.Value);
         var xj = Xj is null ? drawLocation.X + drawMarginSize.Width : secondaryScale.ToPixels(Xj.Value);

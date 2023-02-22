@@ -40,11 +40,11 @@ public class FinancialPoint : IChartEntity, INotifyPropertyChanged
     private double? _low;
     private DateTime _date;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FinancialPoint"/> class.
-    /// </summary>
-    public FinancialPoint()
-    { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="FinancialPoint"/> class.
+    // /// </summary>
+    // public FinancialPoint()
+    // { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FinancialPoint"/> class.

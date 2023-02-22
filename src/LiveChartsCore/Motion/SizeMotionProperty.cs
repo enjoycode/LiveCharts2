@@ -29,13 +29,13 @@ namespace LiveChartsCore.Motion;
 /// </summary>
 public class SizeMotionProperty : MotionProperty<LvcSize>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SizeMotionProperty"/> class.
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    public SizeMotionProperty(string propertyName)
-        : base(propertyName)
-    { }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="SizeMotionProperty"/> class.
+    // /// </summary>
+    // /// <param name="propertyName">Name of the property.</param>
+    // public SizeMotionProperty(string propertyName)
+    //     : base(propertyName)
+    // { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SizeMotionProperty"/> class.
