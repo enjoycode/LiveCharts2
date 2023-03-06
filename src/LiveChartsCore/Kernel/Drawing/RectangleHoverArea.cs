@@ -37,20 +37,20 @@ public class RectangleHoverArea : HoverArea
     /// </summary>
     public RectangleHoverArea() { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RectangleHoverArea"/> class.
-    /// </summary>
-    /// <param name="x">The x.</param>
-    /// <param name="y">The y.</param>
-    /// <param name="width">The width.</param>
-    /// <param name="height">The height.</param>
-    public RectangleHoverArea(float x, float y, float width, float height)
-    {
-        X = x;
-        Y = y;
-        Width = width;
-        Height = height;
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="RectangleHoverArea"/> class.
+    // /// </summary>
+    // /// <param name="x">The x.</param>
+    // /// <param name="y">The y.</param>
+    // /// <param name="width">The width.</param>
+    // /// <param name="height">The height.</param>
+    // public RectangleHoverArea(float x, float y, float width, float height)
+    // {
+    //     X = x;
+    //     Y = y;
+    //     Width = width;
+    //     Height = height;
+    // }
 
     /// <summary>
     /// Gets or sets the x location.
@@ -120,6 +120,24 @@ public class RectangleHoverArea : HoverArea
         var isInX = pointerLocation.X > X && pointerLocation.X < X + w;
         var isInY = pointerLocation.Y > Y && pointerLocation.Y < Y + h;
 
+#if __WEB__
+        switch (strategy)
+        {
+            case TooltipFindingStrategy.CompareOnlyX:
+            case TooltipFindingStrategy.CompareOnlyXTakeClosest:
+                return isInX;
+            case TooltipFindingStrategy.CompareOnlyY:
+            case TooltipFindingStrategy.CompareOnlyYTakeClosest:
+                return isInY;
+            case TooltipFindingStrategy.CompareAll:
+            case TooltipFindingStrategy.CompareAllTakeClosest:
+                return isInX && isInY;
+            case TooltipFindingStrategy.Automatic:
+                throw new Exception($"The strategy {strategy} is not supported.");
+            default:
+                throw new NotImplementedException();
+        }
+#else
         return strategy switch
         {
             TooltipFindingStrategy.CompareOnlyX or TooltipFindingStrategy.CompareOnlyXTakeClosest => isInX,
@@ -128,6 +146,7 @@ public class RectangleHoverArea : HoverArea
             TooltipFindingStrategy.Automatic => throw new Exception($"The strategy {strategy} is not supported."),
             _ => throw new NotImplementedException()
         };
+#endif
     }
 
     /// <inheritdoc cref="HoverArea.SuggestTooltipPlacement(TooltipPlacementContext)"/>

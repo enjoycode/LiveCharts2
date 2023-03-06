@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.Kernel.Sketches;
@@ -47,7 +48,11 @@ public sealed class MappedChartEntity : IChartEntity
 #else
     [Newtonsoft.Json.JsonIgnore]
 #endif
+#if __WEB__
+    public ObjectMap<ChartPoint>? ChartPoints { get; set; }
+#else
     public Dictionary<IChartView, ChartPoint>? ChartPoints { get; set; }
+#endif
 
     /// <inheritdoc cref="IChartEntity.Coordinate"/>
 #if NET5_0_OR_GREATER

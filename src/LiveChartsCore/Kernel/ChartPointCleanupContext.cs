@@ -75,6 +75,7 @@ internal class ChartPointCleanupContext
         }
     }
 
+    [PixUI.TSRename("CollectPointsForPolar")]
     public void CollectPoints(
         HashSet<ChartPoint> points,
         IChartView chartView,

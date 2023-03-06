@@ -36,19 +36,25 @@ namespace LiveChartsCore.Kernel.Providers;
 /// </summary>
 /// <typeparam name="TModel"></typeparam>
 /// <typeparam name="TDrawingContext"></typeparam>
-public class DataFactory<TModel, TDrawingContext>
+public sealed class DataFactory<TModel, TDrawingContext>
     where TDrawingContext : DrawingContext
 {
+
+#if __WEB__
+    private bool _isTModelChartEntity = false;
+    private readonly ObjectMap<ObjectMap<MappedChartEntity>> _chartRefEntityMap = new();
+#else
     private readonly bool _isTModelChartEntity = false;
     private readonly bool _isValueType = false;
     private readonly Dictionary<object, Dictionary<int, MappedChartEntity>> _chartIndexEntityMap = new();
     private readonly Dictionary<object, Dictionary<TModel, MappedChartEntity>> _chartRefEntityMap = new();
+#endif
     private ISeries? _series;
 
     /// <summary>
     /// Gets or sets the previous known bounds.
     /// </summary>
-    protected DimensionalBounds PreviousKnownBounds { get; set; } = new DimensionalBounds(true);
+    private DimensionalBounds PreviousKnownBounds { get; set; } = new DimensionalBounds(true);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataFactory{TModel, TDrawingContext}"/> class.
@@ -58,10 +64,12 @@ public class DataFactory<TModel, TDrawingContext>
         var bounds = new DimensionalBounds(true);
         PreviousKnownBounds = bounds;
 
+#if !__WEB__
         var t = typeof(TModel);
         _isValueType = t.IsValueType;
 
         _isTModelChartEntity = typeof(IChartEntity).IsAssignableFrom(typeof(TModel));
+#endif
     }
 
     /// <summary>
@@ -70,7 +78,7 @@ public class DataFactory<TModel, TDrawingContext>
     /// <param name="series">The series.</param>
     /// <param name="chart">The chart.</param>
     /// <returns></returns>
-    public virtual IEnumerable<ChartPoint> Fetch(ISeries<TModel> series, IChart chart)
+    public IEnumerable<ChartPoint> Fetch(ISeries<TModel> series, IChart chart)
     {
         if (series.Values is null) yield break;
         _series = series;
@@ -83,7 +91,11 @@ public class DataFactory<TModel, TDrawingContext>
                 continue;
             }
 
+#if __WEB__
+            yield return value.ChartPoints?.get(chart.View) ?? ChartPoint.Empty;
+#else
             yield return value.ChartPoints?.GetPointForView(chart.View) ?? ChartPoint.Empty;
+#endif
         }
     }
 
@@ -92,12 +104,20 @@ public class DataFactory<TModel, TDrawingContext>
     /// </summary>
     /// <param name="point">The point.</param>
     /// <returns></returns>
-    public virtual void DisposePoint(ChartPoint point)
+    public void DisposePoint(ChartPoint point)
     {
         if (_isTModelChartEntity) return;
 
         var canvas = (MotionCanvas<TDrawingContext>)point.Context.Chart.CoreChart.Canvas;
 
+#if __WEB__
+        var d = _chartRefEntityMap.get(canvas.Sync);
+        var map = d;
+        if (map == null) return;
+        var src = (TModel?)point.Context.DataSource;
+        if (src == null) return;
+        map.Remove(src);
+#else
         if (_isValueType)
         {
             _ = _chartIndexEntityMap.TryGetValue(canvas.Sync, out var d);
@@ -114,17 +134,22 @@ public class DataFactory<TModel, TDrawingContext>
             if (src is null) return;
             _ = map.Remove(src);
         }
+#endif
     }
 
     /// <summary>
     /// Disposes the data provider from the given chart.
     /// </summary>
     /// <param name="chart"></param>
-    public virtual void Dispose(IChart chart)
+    public void Dispose(IChart chart)
     {
         _series = null;
         if (_isTModelChartEntity) return;
 
+#if __WEB__
+        var canvas = (MotionCanvas<TDrawingContext>)chart.Canvas;
+        _chartRefEntityMap.Remove(canvas.Sync);
+#else
         if (_isValueType)
         {
             var canvas = (MotionCanvas<TDrawingContext>)chart.Canvas;
@@ -135,6 +160,7 @@ public class DataFactory<TModel, TDrawingContext>
             var canvas = (MotionCanvas<TDrawingContext>)chart.Canvas;
             _ = _chartRefEntityMap.Remove(canvas.Sync);
         }
+#endif
     }
 
     /// <summary>
@@ -145,7 +171,7 @@ public class DataFactory<TModel, TDrawingContext>
     /// <param name="plane1">The x.</param>
     /// <param name="plane2">The y.</param>
     /// <returns></returns>
-    public virtual SeriesBounds GetCartesianBounds(
+    public SeriesBounds GetCartesianBounds(
         Chart<TDrawingContext> chart,
         IChartSeries<TDrawingContext> series,
         IPlane plane1,
@@ -210,7 +236,7 @@ public class DataFactory<TModel, TDrawingContext>
     /// <param name="x">The x.</param>
     /// <param name="y">The y.</param>
     /// <returns></returns>
-    public virtual SeriesBounds GetFinancialBounds(
+    public SeriesBounds GetFinancialBounds(
         CartesianChart<TDrawingContext> chart,
         IChartSeries<TDrawingContext> series,
         ICartesianAxis x,
@@ -271,7 +297,7 @@ public class DataFactory<TModel, TDrawingContext>
     /// <param name="series">The series.</param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException">Unexpected null stacker</exception>
-    public virtual SeriesBounds GetPieBounds(
+    public SeriesBounds GetPieBounds(
         PieChart<TDrawingContext> chart, IPieSeries<TDrawingContext> series)
     {
         var stack = chart.SeriesContext.GetStackPosition(series, series.GetStackGroup());
@@ -307,6 +333,9 @@ public class DataFactory<TModel, TDrawingContext>
     /// </summary>
     public void RestartVisuals()
     {
+#if __WEB__
+        throw new NotImplementedException("DataFactory.RestartVisuals");
+#else
         if (_series is not null && _series.Values is IEnumerable<IChartEntity> entities)
         {
             foreach (var entity in entities)
@@ -344,15 +373,23 @@ public class DataFactory<TModel, TDrawingContext>
             }
         }
         _chartRefEntityMap.Clear();
+#endif
     }
 
     private IEnumerable<IChartEntity?> GetEntities(ISeries<TModel> series, IChart chart)
     {
+#if __WEB__
+        _isTModelChartEntity = series.Values!.First(t => t != null) is IChartEntity;
+        return _isTModelChartEntity
+            ? EnumerateChartEntities(series, chart)
+            : EnumerateByRefEntities(series, chart);
+#else
         return _isTModelChartEntity
             ? EnumerateChartEntities(series, chart)
             : (_isValueType
                 ? EnumerateByValEntities(series, chart)
                 : EnumerateByRefEntities(series, chart));
+#endif
     }
 
     private IEnumerable<IChartEntity> EnumerateChartEntities(ISeries<TModel> series, IChart chart)
@@ -370,12 +407,23 @@ public class DataFactory<TModel, TDrawingContext>
                 continue;
             }
 
+#if __WEB__
+            entity.ChartPoints ??= new ObjectMap<ChartPoint>();
+            var point = entity.ChartPoints.get(chart.View);
+            if (point == null)
+            {
+                point = new ChartPoint(chart.View, series, entity);
+                entity.ChartPoints.set(chart.View, point);
+            }
+#else
             entity.ChartPoints ??= new Dictionary<IChartView, ChartPoint>();
             if (!entity.ChartPoints.TryGetValue(chart.View, out var point))
             {
                 point = new ChartPoint(chart.View, series, entity);
                 entity.ChartPoints[chart.View] = point;
             }
+#endif
+
 
             point.Context.DataSource = entity;
             entity.EntityIndex = index++;
@@ -384,6 +432,7 @@ public class DataFactory<TModel, TDrawingContext>
         }
     }
 
+#if !__WEB__
     private IEnumerable<IChartEntity?> EnumerateByValEntities(ISeries<TModel> series, IChart chart)
     {
         if (series.Values is null) yield break;
@@ -432,21 +481,36 @@ public class DataFactory<TModel, TDrawingContext>
             yield return entity;
         }
     }
+#endif
 
     private IEnumerable<IChartEntity?> EnumerateByRefEntities(ISeries<TModel> series, IChart chart)
     {
         if (series.Values is null) yield break;
 
         var canvas = (MotionCanvas<TDrawingContext>)chart.Canvas;
+#if __WEB__
+        var mapper = series.Mapping;
+        if (mapper == null) throw new Exception("series has no mapper");
+#else
         var mapper = series.Mapping ?? LiveCharts.DefaultSettings.GetMap<TModel>();
+#endif
         var index = 0;
 
+#if __WEB__
+        var d = _chartRefEntityMap.get(canvas.Sync);
+        if (d == null)
+        {
+            d = new ObjectMap<MappedChartEntity>();
+            _chartRefEntityMap.set(canvas.Sync, d);
+        }
+#else
         _ = _chartRefEntityMap.TryGetValue(canvas.Sync, out var d);
         if (d is null)
         {
             d = new Dictionary<TModel, MappedChartEntity>();
             _chartRefEntityMap[canvas.Sync] = d;
         }
+#endif
         var IndexEntityMap = d;
 
         foreach (var item in series.Values)
@@ -458,6 +522,21 @@ public class DataFactory<TModel, TDrawingContext>
                 continue;
             }
 
+#if __WEB__
+            var entity = IndexEntityMap.get(item);
+            if (entity == null)
+            {
+                entity = new MappedChartEntity() { ChartPoints = new ObjectMap<ChartPoint>() };
+                IndexEntityMap.set(item, entity);
+            }
+
+            var point = entity.ChartPoints.get(chart.View);
+            if (point == null)
+            {
+                point = new ChartPoint(chart.View, series, entity);
+                entity.ChartPoints.set(chart.View, point);
+            }
+#else
             if (!IndexEntityMap.TryGetValue(item, out var entity))
             {
                 IndexEntityMap[item] = entity = new MappedChartEntity
@@ -471,6 +550,7 @@ public class DataFactory<TModel, TDrawingContext>
                 point = new ChartPoint(chart.View, series, entity);
                 entity.ChartPoints[chart.View] = point;
             }
+#endif
 
             point.Context.DataSource = item;
             entity.EntityIndex = index++;

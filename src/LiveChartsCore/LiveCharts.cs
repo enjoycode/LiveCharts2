@@ -95,6 +95,7 @@ public static class LiveCharts
         configuration(DefaultSettings);
     }
 
+#if !__WEB__
     /// <summary>
     /// Defines a mapper for the given type.
     /// </summary>
@@ -105,4 +106,5 @@ public static class LiveCharts
     {
         return DefaultSettings.HasMap(mapper);
     }
+#endif
 }

@@ -84,7 +84,11 @@ public class TimeSpanPoint : IChartEntity, INotifyPropertyChanged
 #else
     [Newtonsoft.Json.JsonIgnore]
 #endif
+#if __WEB__
+    public ObjectMap<ChartPoint>? ChartPoints { get; set; }
+#else
     public Dictionary<IChartView, ChartPoint>? ChartPoints { get; set; }
+#endif
 
     /// <inheritdoc cref="IChartEntity.Coordinate"/>
 #if NET5_0_OR_GREATER

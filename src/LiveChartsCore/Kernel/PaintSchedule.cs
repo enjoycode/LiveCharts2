@@ -32,16 +32,16 @@ namespace LiveChartsCore.Kernel;
 public class PaintSchedule<TDrawingContext>
     where TDrawingContext : DrawingContext
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PaintSchedule{TDrawingContext}"/> class.
-    /// </summary>
-    /// <param name="task">The task.</param>
-    /// <param name="geometries">The geometries.</param>
-    public PaintSchedule(IPaint<TDrawingContext> task, HashSet<IDrawable<TDrawingContext>> geometries)
-    {
-        PaintTask = task;
-        Geometries = geometries;
-    }
+    // /// <summary>
+    // /// Initializes a new instance of the <see cref="PaintSchedule{TDrawingContext}"/> class.
+    // /// </summary>
+    // /// <param name="task">The task.</param>
+    // /// <param name="geometries">The geometries.</param>
+    // public PaintSchedule(IPaint<TDrawingContext> task, HashSet<IDrawable<TDrawingContext>> geometries)
+    // {
+    //     PaintTask = task;
+    //     Geometries = geometries;
+    // }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PaintSchedule{TDrawingContext}"/> class.

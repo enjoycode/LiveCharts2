@@ -57,7 +57,7 @@ public static class Extensions
     {
         LvcPoint? location = null;
 
-        if (chart is CartesianChart<TDrawingContext> or PolarChart<TDrawingContext>)
+        if (chart is CartesianChart<TDrawingContext> || chart is PolarChart<TDrawingContext>)
             location = _getCartesianTooltipLocation(foundPoints, chart.TooltipPosition, tooltipSize, chart.DrawMarginSize);
         if (chart is PieChart<TDrawingContext>)
             location = _getPieTooltipLocation(foundPoints, tooltipSize);
@@ -177,6 +177,7 @@ public static class Extensions
     /// <param name="chart">The chart.</param>
     /// <param name="bounds">The bounds.</param>
     /// <returns></returns>
+    [PixUI.TSRename("GetTickForPolar")]
     public static AxisTick GetTick<TDrawingContext>(this IPolarAxis axis, PolarChart<TDrawingContext> chart, Bounds? bounds = null)
         where TDrawingContext : DrawingContext
     {
@@ -338,6 +339,7 @@ public static class Extensions
     /// <param name="points">The points to look into.</param>
     /// <param name="point">The location in pixels.</param>
     /// <returns></returns>
+    [PixUI.TSRename("FindClosestTo1")]
     public static ChartPoint? FindClosestTo(this IEnumerable<ChartPoint> points, LvcPoint point)
     {
         var fp = new LvcPoint((float)point.X, (float)point.Y);
@@ -359,6 +361,7 @@ public static class Extensions
     /// <param name="source">The visuals to look into.</param>
     /// <param name="point">The location in pixels.</param>
     /// <returns></returns>
+    [PixUI.TSRename("FindClosestTo2")]
     public static VisualElement<T>? FindClosestTo<T>(this IEnumerable<VisualElement<T>> source, LvcPoint point)
         where T : DrawingContext
     {
@@ -433,6 +436,7 @@ public static class Extensions
         }
     }
 
+#if !__WEB__
     /// <summary>
     /// Gets the point for the given view.
     /// </summary>
@@ -443,6 +447,7 @@ public static class Extensions
     {
         return dictionary.TryGetValue(view, out var point) ? point : null;
     }
+#endif
 
     /// <summary>
     /// Splits an enumerable of chartpoints by each null gap.

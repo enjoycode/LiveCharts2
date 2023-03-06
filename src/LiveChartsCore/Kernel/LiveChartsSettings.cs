@@ -36,7 +36,9 @@ namespace LiveChartsCore.Kernel;
 public class LiveChartsSettings
 {
     private object? _currentProvider;
+#if !__WEB__
     private readonly Dictionary<Type, object> _mappers = new();
+#endif
     private object _theme = new();
 
     /// <summary>
@@ -149,6 +151,7 @@ public class LiveChartsSettings
     /// </value>
     public TimeSpan UpdateThrottlingTimeout { get; set; } = TimeSpan.FromMilliseconds(50);
 
+#if !__WEB__
     /// <summary>
     /// Adds or replaces a mapping for a given type, the mapper defines how a type is mapped to a<see cref="ChartPoint"/> instance,
     /// then the <see cref="ChartPoint"/> will be drawn as a point in our chart.
@@ -172,6 +175,7 @@ public class LiveChartsSettings
                 $"method to call {nameof(HasMap)}() with the type you are trying to plot.")
             : (Action<TModel, ChartPoint>)mapper;
     }
+#endif
 
     public LiveChartsSettings HasProvider<TDrawingContext>(ChartEngine<TDrawingContext> factory)
         where TDrawingContext : DrawingContext
@@ -318,6 +322,7 @@ public class LiveChartsSettings
         return this;
     }
 
+#if !__WEB__
     /// <summary>
     /// Removes a map from the settings.
     /// </summary>
@@ -328,6 +333,7 @@ public class LiveChartsSettings
         _ = _mappers.Remove(typeof(TModel));
         return this;
     }
+#endif
 
     /// <summary>
     /// Adds the default styles.
@@ -358,6 +364,7 @@ public class LiveChartsSettings
         return (Theme<TDrawingContext>?)_theme ?? throw new Exception("A theme is required.");
     }
 
+#if !__WEB__
     /// <summary>
     /// Enables LiveCharts to be able to plot short, int, long, float, double, decimal, short?, int?, long?, float?, double?, decimal?,
     /// <see cref="WeightedPoint"/>, <see cref="ObservableValue"/>, <see cref="ObservablePoint"/>, <see cref="DateTimePoint"/> and
@@ -434,4 +441,5 @@ public class LiveChartsSettings
                 point.SecondaryValue = point.Context.Entity.EntityIndex;
             });
     }
+#endif
 }

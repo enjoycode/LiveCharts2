@@ -28,7 +28,7 @@ using System.ComponentModel;
 namespace LiveChartsCore.Kernel;
 
 /// <summary>
-/// A helper class that tracks both, <see cref="INotifyCollectionChanged.CollectionChanged"/> and 
+/// A helper class that tracks both, <see cref="INotifyCollectionChanged.CollectionChanged"/> and
 /// <see cref="INotifyPropertyChanged.PropertyChanged"/> events.
 /// </summary>
 /// <typeparam name="T"></typeparam>
@@ -141,11 +141,13 @@ public class CollectionDeepObserver<T>
                         item.PropertyChanged -= _onItemPropertyChanged;
                     }
                     _itemsListening.Clear();
-                    if (sender is not IEnumerable<T> s) break;
-                    foreach (var item in GetINotifyPropertyChangedItems(s))
+                    if (sender is IEnumerable<T> s)
                     {
-                        item.PropertyChanged += _onItemPropertyChanged;
-                        _ = _itemsListening.Remove(item);
+                        foreach (var item in GetINotifyPropertyChangedItems(s))
+                        {
+                            item.PropertyChanged += _onItemPropertyChanged;
+                            _itemsListening.Remove(item);
+                        }
                     }
                     break;
                 case NotifyCollectionChangedAction.Move:
@@ -164,8 +166,7 @@ public class CollectionDeepObserver<T>
 
         foreach (var item in source)
         {
-            if (item is not INotifyPropertyChanged inpc) continue;
-            yield return inpc;
+            if (item is INotifyPropertyChanged inpc) yield return inpc;
         }
     }
 }

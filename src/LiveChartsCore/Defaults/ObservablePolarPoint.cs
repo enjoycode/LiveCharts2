@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -77,7 +78,11 @@ public class ObservablePolarPoint : IChartEntity, INotifyPropertyChanged
 #else
     [Newtonsoft.Json.JsonIgnore]
 #endif
+#if __WEB__
+    public ObjectMap<ChartPoint>? ChartPoints { get; set; }
+#else
     public Dictionary<IChartView, ChartPoint>? ChartPoints { get; set; }
+#endif
 
     /// <inheritdoc cref="IChartEntity.Coordinate"/>
 #if NET5_0_OR_GREATER
