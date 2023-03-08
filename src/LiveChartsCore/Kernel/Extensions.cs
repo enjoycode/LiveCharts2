@@ -533,51 +533,52 @@ public static class Extensions
         builder.Finished = true;
     }
 
-    private class GapsBuilder : IDisposable
+}
+
+internal sealed class GapsBuilder : IDisposable
+{
+    public GapsBuilder(IEnumerator<ChartPoint> enumerator)
     {
-        public GapsBuilder(IEnumerator<ChartPoint> enumerator)
-        {
-            Enumerator = enumerator;
-        }
-
-        public IEnumerator<ChartPoint> Enumerator { get; }
-
-        public bool IsEmpty { get; set; } = true;
-
-        public bool Finished { get; set; } = false;
-
-        public void Dispose()
-        {
-            Enumerator.Dispose();
-        }
+        Enumerator = enumerator;
     }
 
-    internal class SplineData
+    public IEnumerator<ChartPoint> Enumerator { get; }
+
+    public bool IsEmpty { get; set; } = true;
+
+    public bool Finished { get; set; } = false;
+
+    public void Dispose()
     {
-        public SplineData(ChartPoint start)
-        {
-            Previous = start;
-            Current = start;
-            Next = start;
-            AfterNext = start;
-        }
+        Enumerator.Dispose();
+    }
+}
 
-        public ChartPoint Previous { get; set; }
+internal sealed class SplineData
+{
+    public SplineData(ChartPoint start)
+    {
+        Previous = start;
+        Current = start;
+        Next = start;
+        AfterNext = start;
+    }
 
-        public ChartPoint Current { get; set; }
+    public ChartPoint Previous { get; set; }
 
-        public ChartPoint Next { get; set; }
+    public ChartPoint Current { get; set; }
 
-        public ChartPoint AfterNext { get; set; }
+    public ChartPoint Next { get; set; }
 
-        public bool IsFirst { get; set; } = true;
+    public ChartPoint AfterNext { get; set; }
 
-        public void GoNext(ChartPoint point)
-        {
-            Previous = Current;
-            Current = Next;
-            Next = AfterNext;
-            AfterNext = point;
-        }
+    public bool IsFirst { get; set; } = true;
+
+    public void GoNext(ChartPoint point)
+    {
+        Previous = Current;
+        Current = Next;
+        Next = AfterNext;
+        AfterNext = point;
     }
 }

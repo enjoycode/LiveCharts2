@@ -32,18 +32,13 @@ namespace LiveChartsCore;
 /// </summary>
 public static class Labelers
 {
-    static Labelers()
-    {
-        Default = Log10_6;
-    }
-
     /// <summary>
     /// Gets the default labeler.
     /// </summary>
     /// <value>
     /// The default.
     /// </value>
-    public static Func<double, string> Default { get; private set; }
+    public static Func<double, string> Default { get; private set; } = Log10_6;
 
     /// <summary>
     /// Gets the seven representative digits labeler.
@@ -59,8 +54,13 @@ public static class Labelers
     /// <value>
     /// The currency.
     /// </value>
+#if __WEB__
+    public static Func<double, string> Currency =>
+        value => value.ToString();
+#else
     public static Func<double, string> Currency =>
         value => FormatCurrency(value, ",", ".", NumberFormatInfo.CurrentInfo.CurrencySymbol);
+#endif
 
     /// <summary>
     /// Sets the default labeler.
@@ -81,6 +81,10 @@ public static class Labelers
     /// <returns></returns>
     public static string FormatCurrency(double value, string thousands, string decimals, string symbol)
     {
+#if __WEB__
+        //TODO:
+        return value.ToString();
+#else
         var l = value == 0 ? 0 : (int)Math.Log10(Math.Abs(value));
         var u = "";
 
@@ -106,6 +110,7 @@ public static class Labelers
         }
 
         return value.ToString($"{symbol}#{thousands}###{thousands}##0{decimals}## {u}");
+#endif
     }
 
     /// <summary>
@@ -120,6 +125,10 @@ public static class Labelers
 
     private static string Log10_6(double value)
     {
+#if __WEB__
+        //TODO:
+        return value.ToString();
+#else
         var l = value == 0 ? 0 : (int)Math.Log10(Math.Abs(value));
 
         if (l >= 6)
@@ -135,5 +144,6 @@ public static class Labelers
         }
 
         return value.ToString($"######0.#######");
+#endif
     }
 }
