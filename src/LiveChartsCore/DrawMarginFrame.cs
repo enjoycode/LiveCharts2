@@ -80,12 +80,12 @@ public abstract class DrawMarginFrame<TDrawingContext> : ChartElement<TDrawingCo
     }
 }
 
-#if !__WEB__
 /// <summary>
 /// Defines a draw margin frame visual in a chart.
 /// </summary>
 /// <typeparam name="TSizedGeometry">The type of the sized geometry.</typeparam>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
+[PixUI.TSRename("DrawMarginFrame2")]
 public abstract class DrawMarginFrame<TSizedGeometry, TDrawingContext> : DrawMarginFrame<TDrawingContext>
     where TDrawingContext : DrawingContext
     where TSizedGeometry : ISizedGeometry<TDrawingContext>, new()
@@ -164,4 +164,3 @@ public abstract class DrawMarginFrame<TSizedGeometry, TDrawingContext> : DrawMar
         }
     }
 }
-#endif
