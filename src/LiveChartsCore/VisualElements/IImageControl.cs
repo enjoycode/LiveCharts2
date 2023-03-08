@@ -28,6 +28,7 @@ namespace LiveChartsCore.VisualElements;
 /// <summary>
 /// An image control
 /// </summary>
+[PixUI.TSInterfaceOf]
 public interface IImageControl
 {
     /// <summary>

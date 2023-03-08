@@ -78,7 +78,7 @@ public struct LvcPointD
     /// <param name="l"></param>
     /// <param name="r"></param>
     /// <returns></returns>
-    public static bool operator ==(LvcPointD l, LvcPointD r) => l.Equals(r);
+    public static bool operator ==(LvcPointD l, LvcPointD r) => l.X == r.X && l.Y == r.Y;
 
     /// <summary>
     /// Compares two <see cref="LvcPointD"/> instances.

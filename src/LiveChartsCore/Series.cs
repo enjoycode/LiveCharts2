@@ -147,7 +147,9 @@ public abstract class Series<TModel, TVisual, TLabel, TDrawingContext>
         }
     }
 
+#if !__WEB__
     IEnumerable? ISeries.Values { get => Values; set => Values = (IEnumerable<TModel>?)value; }
+#endif
 
     /// <inheritdoc cref="ISeries.Pivot"/>
     public double Pivot { get => pivot; set => SetProperty(ref pivot, (float)value); }

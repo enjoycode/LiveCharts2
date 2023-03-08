@@ -79,7 +79,7 @@ public class ActionThrottler
             _isWaiting = true;
         }
 
-        await Task.Delay(ThrottlerTimeSpan);
+        await Task.Delay((int)ThrottlerTimeSpan.TotalMilliseconds);
 
         // notice it is important that the unlock comes before invoking the Action
         // this way we can call the throttler again from the Action

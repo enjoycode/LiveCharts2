@@ -187,10 +187,10 @@ public class LiveChartsSettings
     internal ChartEngine<TDrawingContext> GetProvider<TDrawingContext>()
         where TDrawingContext : DrawingContext
     {
-        return _currentProvider is null
-            ? throw new NotImplementedException(
-                $"There is no a {nameof(ChartEngine<TDrawingContext>)} registered.")
-            : (ChartEngine<TDrawingContext>)_currentProvider;
+        if (_currentProvider == null)
+            throw new NotImplementedException( $"There is no a {nameof(ChartEngine<TDrawingContext>)} registered.");
+
+        return (ChartEngine<TDrawingContext>)_currentProvider;
     }
 
     /// <summary>
@@ -361,7 +361,9 @@ public class LiveChartsSettings
     public Theme<TDrawingContext> GetTheme<TDrawingContext>()
         where TDrawingContext : DrawingContext
     {
-        return (Theme<TDrawingContext>?)_theme ?? throw new Exception("A theme is required.");
+        if (_theme == null)
+            throw new Exception("A theme is required.");
+        return (Theme<TDrawingContext>)_theme;
     }
 
 #if !__WEB__

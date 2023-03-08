@@ -103,11 +103,27 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
 
     float IPolarAxis.Ro { get; set; }
 
-    Bounds IPlane.DataBounds => _dataBounds ?? throw new Exception("bounds not found");
+    public Bounds DataBounds
+    {
+        get
+        {
+            if (_dataBounds == null)
+                throw new Exception("bounds not found");
+            return _dataBounds;
+        }
+    }
 
-    Bounds IPlane.VisibleDataBounds => _visibleDataBounds ?? throw new Exception("bounds not found");
+    public Bounds VisibleDataBounds
+    {
+        get
+        {
+            if (_visibleDataBounds == null)
+                throw new Exception("bounds not found");
+            return _visibleDataBounds;
+        }
+    }
 
-    AnimatableAxisBounds IPlane.ActualBounds => _animatableBounds;
+    public AnimatableAxisBounds ActualBounds => _animatableBounds;
 
     /// <inheritdoc cref="IPlane.Name"/>
     public string? Name { get; set; } = null;
@@ -448,7 +464,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
                     actualRotation += 180;
 
                 visualSeparator.Label.RotateTransform = actualRotation;
-                visualSeparator.Label.Opacity = string.IsNullOrWhiteSpace(label) ? 0 : 1; // workaround to prevent the last label overlaps the first label
+                visualSeparator.Label.Opacity = string.IsNullOrEmpty(label) /*string.IsNullOrWhiteSpace(label)*/ ? 0 : 1; // workaround to prevent the last label overlaps the first label
 
                 visualSeparator.Label.X = location.X;
                 visualSeparator.Label.Y = location.Y;
@@ -536,7 +552,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
     /// <inheritdoc cref="IPlane{TDrawingContext}.GetNameLabelSize(Chart{TDrawingContext})"/>
     public LvcSize GetNameLabelSize(Chart<TDrawingContext> chart)
     {
-        if (NamePaint is null || string.IsNullOrWhiteSpace(Name)) return new LvcSize(0, 0);
+        if (NamePaint is null || string.IsNullOrEmpty(Name) /*string.IsNullOrWhiteSpace(Name)*/) return new LvcSize(0, 0);
 
         // var textGeometry = new TTextGeometry
         // {

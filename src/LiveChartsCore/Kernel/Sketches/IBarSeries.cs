@@ -30,7 +30,7 @@ namespace LiveChartsCore.Kernel.Sketches;
 /// </summary>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="IChartSeries{TDrawingContext}" />
-public interface IBarSeries<TDrawingContext> : IChartSeries<TDrawingContext>, IStrokedAndFilled<TDrawingContext>, ICartesianSeries<TDrawingContext>
+public interface IBarSeries<TDrawingContext> : IStrokedAndFilled<TDrawingContext>, ICartesianSeries<TDrawingContext>
     where TDrawingContext : DrawingContext
 {
     /// <summary>
@@ -50,15 +50,6 @@ public interface IBarSeries<TDrawingContext> : IChartSeries<TDrawingContext>, IS
     double Ry { get; set; }
 
     /// <summary>
-    /// Gets or sets the padding for each group of bars that share the same secondary coordinate.
-    /// </summary>
-    /// <value>
-    /// The bar group padding.
-    /// </value>
-    [Obsolete($"Replace by {nameof(Padding)} property.")]
-    double GroupPadding { get; set; }
-
-    /// <summary>
     /// Gets or sets the padding for each bar in the series.
     /// </summary>
     /// <value>
@@ -75,7 +66,7 @@ public interface IBarSeries<TDrawingContext> : IChartSeries<TDrawingContext>, IS
     double MaxBarWidth { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the bar position respects the other bars that share 
+    /// Gets or sets a value indicating whether the bar position respects the other bars that share
     /// the same <see cref="ChartPoint.SecondaryValue"/>.
     /// </summary>
     bool IgnoresBarPosition { get; set; }

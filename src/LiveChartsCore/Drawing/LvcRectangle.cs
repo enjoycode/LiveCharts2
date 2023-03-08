@@ -36,13 +36,12 @@ public struct LvcRectangle
     {
         Location = location;
         Size = size;
-        IsEmpty = false;
     }
 
     /// <summary>
     /// Gets an empty rectangle instance.
     /// </summary>
-    public static LvcRectangle Empty = new(new LvcPoint(0, 0), new LvcSize(0, 0)) { IsEmpty = true };
+    public static readonly LvcRectangle Empty = new(new LvcPoint(0, 0), new LvcSize(0, 0));
 
     /// <summary>
     /// Gets or sets the location.
@@ -74,10 +73,10 @@ public struct LvcRectangle
     /// </summary>
     public float Height => Size.Height;
 
-    /// <summary>
-    /// Gets or sets whether the instance is empty.
-    /// </summary>
-    private bool IsEmpty { get; set; }
+    // /// <summary>
+    // /// Gets or sets whether the instance is empty.
+    // /// </summary>
+    // private bool IsEmpty { get; set; }
 
     /// <summary>
     /// Determines whether the instance is equals to the given instance.
@@ -87,8 +86,8 @@ public struct LvcRectangle
     public override bool Equals(object? obj)
     {
         return obj is LvcRectangle rectangle
-            && ((IsEmpty && rectangle.IsEmpty) ||
-                (Location == rectangle.Location && Size == rectangle.Size));
+               && ( /*(IsEmpty && rectangle.IsEmpty) ||*/
+                   (Location == rectangle.Location && Size == rectangle.Size));
     }
 
     /// <summary>
@@ -100,7 +99,7 @@ public struct LvcRectangle
         var hashCode = 574998336;
         hashCode = hashCode * -1521134295 + Location.GetHashCode();
         hashCode = hashCode * -1521134295 + Size.GetHashCode();
-        hashCode = hashCode * -1521134295 + IsEmpty.GetHashCode();
+        // hashCode = hashCode * -1521134295 + IsEmpty.GetHashCode();
         return hashCode;
     }
 
@@ -110,7 +109,8 @@ public struct LvcRectangle
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns></returns>
-    public static bool operator ==(LvcRectangle left, LvcRectangle right) => left.Equals(right);
+    public static bool operator ==(LvcRectangle left, LvcRectangle right) =>
+        left.Location == right.Location && left.Size == right.Size;
 
     /// <summary>
     /// Compares 2 <see cref="LvcRectangle"/> instances.
@@ -119,4 +119,9 @@ public struct LvcRectangle
     /// <param name="right"></param>
     /// <returns></returns>
     public static bool operator !=(LvcRectangle left, LvcRectangle right) => !(left == right);
+
+#if __WEB__
+    public LvcRectangle Clone() =>
+        new LvcRectangle(new LvcPoint(Location.X, Location.Y), new LvcSize(Size.Width, Size.Height));
+#endif
 }

@@ -167,7 +167,10 @@ public class PieChart<TDrawingContext> : Chart<TDrawingContext>
         var viewDrawMargin = _chartView.DrawMargin;
         ControlSize = _chartView.ControlSize;
 
-        var actualSeries = (_chartView.Series ?? Enumerable.Empty<ISeries>()).Where(x => x.IsVisible);
+        //var actualSeries = (_chartView.Series ?? Enumerable.Empty<ISeries>()).Where(x => x.IsVisible);
+        IEnumerable<ISeries> actualSeries = _chartView.Series == null
+            ? Array.Empty<ISeries>()
+            : _chartView.Series.Where(x => x.IsVisible);
 
         Series = actualSeries
             .Cast<IPieSeries<TDrawingContext>>()
@@ -264,7 +267,11 @@ public class PieChart<TDrawingContext> : Chart<TDrawingContext>
         InvokeOnUpdateStarted();
         IsFirstDraw = false;
         ThemeId = LiveCharts.DefaultSettings.CurrentThemeId;
+#if __WEB__
+        PreviousSeriesAtLegend = Series.Where(x => x.IsVisibleAtLegend).ToArray();
+#else
         PreviousSeriesAtLegend = Series.Where(x => x.IsVisibleAtLegend).ToList();
+#endif
         PreviousLegendPosition = LegendPosition;
 
         Canvas.Invalidate();

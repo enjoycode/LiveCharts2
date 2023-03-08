@@ -29,7 +29,7 @@ namespace LiveChartsCore.Kernel.Sketches;
 /// </summary>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="IChartSeries{TDrawingContext}" />
-public interface IStackedBarSeries<TDrawingContext> : IChartSeries<TDrawingContext>, IStrokedAndFilled<TDrawingContext>, ICartesianSeries<TDrawingContext>
+public interface IStackedBarSeries<TDrawingContext> : IStrokedAndFilled<TDrawingContext>, ICartesianSeries<TDrawingContext>
     where TDrawingContext : DrawingContext
 {
     /// <summary>
@@ -48,13 +48,13 @@ public interface IStackedBarSeries<TDrawingContext> : IChartSeries<TDrawingConte
     /// </value>
     double Ry { get; set; }
 
-    /// <summary>
-    /// Gets or sets the padding for each group of bars that share the same secondary coordinate.
-    /// </summary>
-    /// <value>
-    /// The bar group padding.
-    /// </value>
-    double GroupPadding { get; set; }
+    // /// <summary>
+    // /// Gets or sets the padding for each group of bars that share the same secondary coordinate.
+    // /// </summary>
+    // /// <value>
+    // /// The bar group padding.
+    // /// </value>
+    // double GroupPadding { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum width of the bar.

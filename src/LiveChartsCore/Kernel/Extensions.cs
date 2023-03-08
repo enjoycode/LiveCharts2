@@ -38,7 +38,9 @@ public static class Extensions
 {
     private const double Cf = 3d;
 
+#if !__WEB__
     private static readonly Type s_nullableType = typeof(Nullable<>);
+#endif
 
     /// <summary>
     /// Calculates the tooltip location.
@@ -109,8 +111,8 @@ public static class Extensions
             TooltipPosition.Left => new LvcPoint(placementContext.MostLeft - tooltipSize.Width, avrgY),
             TooltipPosition.Right => new LvcPoint(placementContext.MostRight, avrgY),
             TooltipPosition.Center => new LvcPoint(avrgX, avrgY),
-            TooltipPosition.Hidden => new LvcPoint(),
-            _ => new LvcPoint(),
+            TooltipPosition.Hidden => new LvcPoint(0, 0),
+            _ => new LvcPoint(0, 0),
         };
     }
     private static LvcPoint? _getPieTooltipLocation(
@@ -157,8 +159,8 @@ public static class Extensions
         if (range == 0) range = min;
 
         var separations = axis.Orientation == AxisOrientation.Y
-            ? Math.Round(controlSize.Height / h, 0)
-            : Math.Round(controlSize.Width / w, 0);
+            ? Math.Round(controlSize.Height / h)
+            : Math.Round(controlSize.Width / w);
 
         var minimum = range / separations;
 
@@ -193,8 +195,8 @@ public static class Extensions
 
         var range = max - min;
         var separations = axis.Orientation == PolarAxisOrientation.Angle
-            ? Math.Round(c / (10 * Cf), 0)
-            : Math.Round(radius / (30 * Cf), 0);
+            ? Math.Round(c / (10 * Cf))
+            : Math.Round(radius / (30 * Cf));
         var minimum = range / separations;
 
         var magnitude = Math.Pow(10, Math.Floor(Math.Log(minimum) / Math.Log(10)));
@@ -342,7 +344,7 @@ public static class Extensions
     [PixUI.TSRename("FindClosestTo1")]
     public static ChartPoint? FindClosestTo(this IEnumerable<ChartPoint> points, LvcPoint point)
     {
-        var fp = new LvcPoint((float)point.X, (float)point.Y);
+        var fp = new LvcPoint(point.X, point.Y);
 
         return points
             .Select(p => new
@@ -497,6 +499,7 @@ public static class Extensions
         yield return data;
     }
 
+#if !__WEB__
     /// <summary>
     /// Returns <see langword="true" /> when the given type is either a reference type or of type <see cref="Nullable{T}"/>.
     /// </summary>
@@ -505,6 +508,7 @@ public static class Extensions
     {
         return !type.IsValueType || (type.IsGenericType && type.GetGenericTypeDefinition() == s_nullableType);
     }
+#endif
 
     private static IEnumerable<ChartPoint> YieldReturnUntilNextNullChartPoint(
         GapsBuilder builder,

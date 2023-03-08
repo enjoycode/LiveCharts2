@@ -77,35 +77,34 @@ public static class Maps
     /// Builds a projector with the given parameters.
     /// </summary>
     /// <param name="projection">The projection.</param>
-    /// <param name="mapSize">Size of the map.</param>
     /// <returns></returns>
-    public static MapProjector BuildProjector(MapProjection projection, float[] mapSize)
+    public static MapProjector BuildProjector(MapProjection projection, float mapWidth, float mapHeight)
     {
         var mapRatio =
             projection == MapProjection.Default
             ? ControlCoordinatesProjector.PreferredRatio
             : MercatorProjector.PreferredRatio;
 
-        var normalizedW = mapSize[0] / mapRatio[0];
-        var normalizedH = mapSize[1] / mapRatio[1];
+        var normalizedW = mapWidth / mapRatio[0];
+        var normalizedH = mapHeight / mapRatio[1];
         float ox = 0f, oy = 0f;
 
         if (normalizedW < normalizedH)
         {
-            var h = mapSize[0] * mapRatio[1] / mapRatio[0];
-            oy = (float)(mapSize[1] - h) * 0.5f;
-            mapSize[1] = h;
+            var h = mapWidth * mapRatio[1] / mapRatio[0];
+            oy = (mapHeight - h) * 0.5f;
+            mapHeight = h;
         }
         else
         {
-            var w = mapSize[1] * mapRatio[0] / mapRatio[1];
-            ox = (float)(mapSize[0] - w) * 0.5f;
-            mapSize[0] = w;
+            var w = mapHeight * mapRatio[0] / mapRatio[1];
+            ox = (mapWidth - w) * 0.5f;
+            mapWidth = w;
         }
 
         return
             projection == MapProjection.Default
-            ? new ControlCoordinatesProjector(mapSize[0], mapSize[1], ox, oy)
-            : new MercatorProjector(mapSize[0], mapSize[1], ox, oy);
+            ? new ControlCoordinatesProjector(mapWidth, mapHeight, ox, oy)
+            : new MercatorProjector(mapWidth, mapHeight, ox, oy);
     }
 }

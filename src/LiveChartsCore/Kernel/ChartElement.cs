@@ -172,7 +172,9 @@ public abstract class ChartElement<TDrawingContext> : IChartElement<TDrawingCont
         // only invoke property change event when the user set the property.
         if (_isInternalSet) return;
 
-        _ = _userSets.Add(propertyName ?? throw new ArgumentNullException(nameof(propertyName)));
+        if (propertyName == null)
+            throw new ArgumentNullException(nameof(propertyName));
+        _userSets.Add(propertyName);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

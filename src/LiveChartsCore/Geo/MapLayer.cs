@@ -67,12 +67,12 @@ public class MapLayer<TDrawingContext>
     /// <summary>
     /// Gets or sets the stroke.
     /// </summary>
-    public IPaint<TDrawingContext>? Stroke { get; set; } = (IPaint<TDrawingContext>)LiveCharts.DefaultPaint;
+    public IPaint<TDrawingContext>? Stroke { get; set; } //= (IPaint<TDrawingContext>)LiveCharts.DefaultPaint;
 
     /// <summary>
     /// Gets or sets the fill.
     /// </summary>
-    public IPaint<TDrawingContext>? Fill { get; set; } = (IPaint<TDrawingContext>)LiveCharts.DefaultPaint;
+    public IPaint<TDrawingContext>? Fill { get; set; } //= (IPaint<TDrawingContext>)LiveCharts.DefaultPaint;
 
     /// <summary>
     /// Gets or sets the X bounds.
@@ -98,6 +98,7 @@ public class MapLayer<TDrawingContext>
     /// </summary>
     public Func<LandDefinition, CoreMap<TDrawingContext>, bool>? AddLandWhen { get; set; }
 
+#if !__WEB__
     /// <summary>
     /// Adds a GeoJson file to the layer.
     /// </summary>
@@ -141,4 +142,5 @@ public class MapLayer<TDrawingContext>
             Lands.Add(shortName, definition);
         }
     }
+#endif
 }

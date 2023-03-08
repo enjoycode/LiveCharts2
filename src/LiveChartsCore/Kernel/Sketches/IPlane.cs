@@ -108,7 +108,7 @@ public interface IPlane
     double UnitWidth { get; set; }
 
     /// <summary>
-    /// Gets or sets the minimum value visible in the axis, any point less than this value will be hidden, 
+    /// Gets or sets the minimum value visible in the axis, any point less than this value will be hidden,
     /// set it to null to use a value based on the smaller value in the chart.
     /// </summary>
     /// <value>
@@ -117,7 +117,7 @@ public interface IPlane
     double? MinLimit { get; set; }
 
     /// <summary>
-    /// Gets or sets the maximum value visible in the axis, any point greater than this value will be hidden, 
+    /// Gets or sets the maximum value visible in the axis, any point greater than this value will be hidden,
     /// set it null to use a value based on the greater value in the chart.
     /// </summary>
     /// <value>
@@ -197,6 +197,7 @@ public interface IPlane
 /// </summary>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="IDisposable" />
+[PixUI.TSRename("IPlane1")]
 public interface IPlane<TDrawingContext> : IPlane, IChartElement<TDrawingContext>
     where TDrawingContext : DrawingContext
 {

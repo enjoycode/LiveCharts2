@@ -465,9 +465,9 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
     public virtual SeriesBounds GetBounds(
         PolarChart<TDrawingContext> chart, IPolarAxis angleAxis, IPolarAxis radiusAxis)
     {
-        var baseSeriesBounds = DataFactory is null
-            ? throw new Exception("A data provider is required")
-            : DataFactory.GetCartesianBounds(chart, this, angleAxis, radiusAxis);
+        if (DataFactory == null)
+            throw new Exception("A data provider is required");
+        var baseSeriesBounds = DataFactory.GetCartesianBounds(chart, this, angleAxis, radiusAxis);
 
         if (baseSeriesBounds.HasData) return baseSeriesBounds;
         var baseBounds = baseSeriesBounds.Bounds;

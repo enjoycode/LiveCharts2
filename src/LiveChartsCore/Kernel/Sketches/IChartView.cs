@@ -114,6 +114,7 @@ public interface IChartView
     /// </value>
     TooltipPosition TooltipPosition { get; set; }
 
+#if !__WEB__
     /// <summary>
     /// Occurs when the pointer goes down over a chart point(s).
     /// </summary>
@@ -123,6 +124,7 @@ public interface IChartView
     /// Occurs when the pointer goes down over a chart point, if there are multiple points, the closest one will be selected.
     /// </summary>
     event ChartPointHandler? ChartPointPointerDown;
+#endif
 
     /// <summary>
     /// Called when the pointer goes down on a data point or points.
@@ -153,6 +155,7 @@ public interface IChartView
 /// Defines a chart view.
 /// </summary>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
+[PixUI.TSRename("IChartView1")]
 public interface IChartView<TDrawingContext> : IChartView
     where TDrawingContext : DrawingContext
 {
@@ -191,6 +194,7 @@ public interface IChartView<TDrawingContext> : IChartView
     /// </summary>
     VisualElement<TDrawingContext>? Title { get; set; }
 
+#if !__WEB__
     /// <summary>
     /// Occurs before the chart is measured, this is the first step before the chart updates.
     /// </summary>
@@ -210,6 +214,7 @@ public interface IChartView<TDrawingContext> : IChartView
     /// Occurs when the pointer goes down over a visual element.
     /// </summary>
     event VisualElementHandler<TDrawingContext> VisualElementsPointerDown;
+#endif
 
     /// <summary>
     /// Gets or sets a value indicating whether the automatic updates are enabled.

@@ -27,6 +27,7 @@ namespace LiveChartsCore.Drawing;
 /// </summary>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="ISizedVisualChartPoint{TDrawingContext}" />
+[PixUI.TSInterfaceOf]
 public interface IRoundedRectangleChartPoint<TDrawingContext> : ISizedVisualChartPoint<TDrawingContext>
     where TDrawingContext : DrawingContext
 {

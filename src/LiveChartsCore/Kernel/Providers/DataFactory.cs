@@ -301,7 +301,7 @@ public sealed class DataFactory<TModel, TDrawingContext>
         PieChart<TDrawingContext> chart, IPieSeries<TDrawingContext> series)
     {
         var stack = chart.SeriesContext.GetStackPosition(series, series.GetStackGroup());
-        if (stack is null) throw new NullReferenceException("Unexpected null stacker");
+        if (stack is null) throw new Exception("Unexpected null stacker");
 
         var bounds = new DimensionalBounds();
         var hasData = false;

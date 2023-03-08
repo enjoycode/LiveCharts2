@@ -46,7 +46,11 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
     private IPaint<TDrawingContext>? _paintTaks;
     private Bounds _weightBounds = new();
     private int _heatKnownLength = 0;
+#if __WEB__
+    private List<ColorStop> _heatStops = new();
+#else
     private List<Tuple<double, LvcColor>> _heatStops = new();
+#endif
     private LvcColor[] _heatMap =
     {
         LvcColor.FromArgb(255, 87, 103, 222), // cold (min value)
@@ -55,8 +59,8 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
     private double[]? _colorStops;
     private Padding _pointPadding = Padding.All(4f);
 
-    protected readonly Func<TVisual> _visualFactory;
-    protected readonly Func<TLabel> _labelFactory;
+    private readonly Func<TVisual> _visualFactory;
+    private readonly Func<TLabel> _labelFactory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HeatSeries{TModel, TVisual, TLabel, TDrawingContext}"/> class.
@@ -391,3 +395,17 @@ public abstract class HeatSeries<TModel, TVisual, TLabel, TDrawingContext>
         return new[] { _paintTaks, hoverPaint };
     }
 }
+
+#if __WEB__
+public sealed class ColorStop
+{
+    public ColorStop(double value, LvcColor color)
+    {
+        Value = value;
+        Color = color;
+    }
+
+    public readonly double Value;
+    public readonly LvcColor Color;
+}
+#endif

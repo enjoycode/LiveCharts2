@@ -42,7 +42,9 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
     where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
     where TDrawingContext : DrawingContext
 {
+#if !__WEB__
     private readonly bool _isRounded = false;
+#endif
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RowSeries{TModel, TVisual, TLabel, TDrawingContext}"/> class.
@@ -53,7 +55,9 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
               SeriesProperties.Solid | SeriesProperties.PrefersYStrategyTooltips | (isStacked ? SeriesProperties.Stacked : 0),
               visualFactory, labelFactory)
     {
+#if !__WEB__
         _isRounded = typeof(IRoundedRectangleChartPoint<TDrawingContext>).IsAssignableFrom(typeof(TVisual));
+#endif
     }
 
     /// <inheritdoc cref="ChartElement{TDrawingContext}.Invalidate(Chart{TDrawingContext})"/>
@@ -72,12 +76,12 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
 
         var isStacked = (SeriesProperties & SeriesProperties.Stacked) == SeriesProperties.Stacked;
 
-        var helper = new MeasureHelper(secondaryScale, cartesianChart, this, secondaryAxis, primaryScale.ToPixels(pivot),
+        var helper = new MeasureHelper<TDrawingContext>(secondaryScale, cartesianChart, this, secondaryAxis, primaryScale.ToPixels(pivot),
             cartesianChart.DrawMarginLocation.X, cartesianChart.DrawMarginLocation.X + cartesianChart.DrawMarginSize.Width, isStacked);
 
         var pHelper = previousSecondaryScale == null || previousPrimaryScale == null
             ? null
-            : new MeasureHelper(
+            : new MeasureHelper<TDrawingContext>(
                 previousSecondaryScale, cartesianChart, this, secondaryAxis, previousPrimaryScale.ToPixels(pivot),
                 cartesianChart.DrawMarginLocation.X, cartesianChart.DrawMarginLocation.X + cartesianChart.DrawMarginSize.Width, isStacked);
 
@@ -162,12 +166,20 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
                 r.Width = hi;
                 r.Height = uwi;
 
+#if __WEB__
+                if (r is IRoundedRectangleChartPoint<TDrawingContext> rr1)
+                {
+                    rr1.Rx = rx;
+                    rr1.Ry = ry;
+                }
+#else
                 if (_isRounded)
                 {
                     var rounded = (IRoundedRectangleChartPoint<TDrawingContext>)r;
                     rounded.Rx = rx;
                     rounded.Ry = ry;
                 }
+#endif
 
                 visual = r;
                 point.Context.Visual = visual;
@@ -209,12 +221,20 @@ public class RowSeries<TModel, TVisual, TLabel, TDrawingContext> : BarSeries<TMo
             visual.Width = b;
             visual.Height = helper.uw;
 
+#if __WEB__
+            if (visual is IRoundedRectangleChartPoint<TDrawingContext> rr2)
+            {
+                rr2.Rx = rx;
+                rr2.Ry = ry;
+            }
+#else
             if (_isRounded)
             {
                 var rounded = (IRoundedRectangleChartPoint<TDrawingContext>)visual;
                 rounded.Rx = rx;
                 rounded.Ry = ry;
             }
+#endif
             visual.RemoveOnCompleted = false;
 
 #if __WEB__

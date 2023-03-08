@@ -41,7 +41,9 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
     where TDrawingContext : DrawingContext
     where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
 {
+#if !__WEB__
     private readonly bool _isRounded = false;
+#endif
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnSeries{TModel, TVisual, TLabel, TDrawingContext}"/> class.
@@ -53,7 +55,9 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
               visualFactory, labelFactory)
     {
         DataPadding = new LvcPoint(0, 1);
+#if !__WEB__
         _isRounded = typeof(IRoundedRectangleChartPoint<TDrawingContext>).IsAssignableFrom(typeof(TVisual));
+#endif
     }
 
     /// <inheritdoc cref="ChartElement{TDrawingContext}.Invalidate(Chart{TDrawingContext})"/>
@@ -72,11 +76,11 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
 
         var isStacked = (SeriesProperties & SeriesProperties.Stacked) == SeriesProperties.Stacked;
 
-        var helper = new MeasureHelper(secondaryScale, cartesianChart, this, secondaryAxis, primaryScale.ToPixels(pivot),
+        var helper = new MeasureHelper<TDrawingContext>(secondaryScale, cartesianChart, this, secondaryAxis, primaryScale.ToPixels(pivot),
             cartesianChart.DrawMarginLocation.Y, cartesianChart.DrawMarginLocation.Y + cartesianChart.DrawMarginSize.Height, isStacked);
         var pHelper = previousSecondaryScale == null || previousPrimaryScale == null
             ? null
-            : new MeasureHelper(
+            : new MeasureHelper<TDrawingContext>(
                 previousSecondaryScale, cartesianChart, this, secondaryAxis, previousPrimaryScale.ToPixels(pivot),
                 cartesianChart.DrawMarginLocation.Y, cartesianChart.DrawMarginLocation.Y + cartesianChart.DrawMarginSize.Height, isStacked);
 
@@ -161,12 +165,20 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
                 r.Width = uwi;
                 r.Height = hi;
 
+#if __WEB__
+                if (r is IRoundedRectangleChartPoint<TDrawingContext> rr1)
+                {
+                    rr1.Rx = rx;
+                    rr1.Ry = ry;
+                }
+#else
                 if (_isRounded)
                 {
                     var rounded = (IRoundedRectangleChartPoint<TDrawingContext>)r;
                     rounded.Rx = rx;
                     rounded.Ry = ry;
                 }
+#endif
 
                 visual = r;
                 point.Context.Visual = visual;
@@ -208,12 +220,20 @@ public abstract class ColumnSeries<TModel, TVisual, TLabel, TDrawingContext> : B
             visual.Width = helper.uw;
             visual.Height = b;
 
+#if __WEB__
+            if (visual is IRoundedRectangleChartPoint<TDrawingContext> rr2)
+            {
+                rr2.Rx = rx;
+                rr2.Ry = ry;
+            }
+#else
             if (_isRounded)
             {
                 var rounded = (IRoundedRectangleChartPoint<TDrawingContext>)visual;
                 rounded.Rx = rx;
                 rounded.Ry = ry;
             }
+#endif
             visual.RemoveOnCompleted = false;
 
 #if __WEB__

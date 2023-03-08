@@ -32,7 +32,7 @@ public struct LvcSize
     /// </summary>
     /// <param name="width">The width.</param>
     /// <param name="height">The height.</param>
-    public LvcSize(float width, float height)
+    public LvcSize(float width = 0, float height = 0)
     {
         Width = width;
         Height = height;
@@ -56,8 +56,8 @@ public struct LvcSize
     public override bool Equals(object? obj)
     {
         return obj is LvcSize size &&
-            Width == size.Width &&
-            Height == size.Height;
+               Width == size.Width &&
+               Height == size.Height;
     }
 
     /// <summary>
@@ -78,7 +78,8 @@ public struct LvcSize
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns></returns>
-    public static bool operator ==(LvcSize left, LvcSize right) => left.Equals(right);
+    public static bool operator ==(LvcSize left, LvcSize right) =>
+        left.Width == right.Width && left.Height == right.Height;
 
     /// <summary>
     /// Compares two <see cref="LvcSize"/> instances.
@@ -87,4 +88,10 @@ public struct LvcSize
     /// <param name="right"></param>
     /// <returns></returns>
     public static bool operator !=(LvcSize left, LvcSize right) => !(left == right);
+
+#if __WEB__
+    public static readonly LvcSize Empty = new LvcSize(0, 0);
+
+    public LvcSize Clone() => new LvcSize(Width, Height);
+#endif
 }

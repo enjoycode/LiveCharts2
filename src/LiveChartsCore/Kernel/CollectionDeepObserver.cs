@@ -63,7 +63,11 @@ public class CollectionDeepObserver<T>
             return;
         }
 
+#if __WEB__
+        this.checkINotifyPropertyChanged = true;
+#else
         this.checkINotifyPropertyChanged = typeof(INotifyPropertyChanged).IsAssignableFrom(typeof(T));
+#endif
     }
 
     /// <summary>

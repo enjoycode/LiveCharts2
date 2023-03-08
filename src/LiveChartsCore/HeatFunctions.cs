@@ -43,7 +43,11 @@ public static class HeatFunctions
     /// or
     /// At least 2 colors are required in a heat map.
     /// </exception>
+#if __WEB__
+    public static List<ColorStop> BuildColorStops(LvcColor[] heatMap, double[]? colorStops)
+#else
     public static List<Tuple<double, LvcColor>> BuildColorStops(LvcColor[] heatMap, double[]? colorStops)
+#endif
     {
         if (heatMap.Length < 2) throw new Exception("At least 2 colors are required in a heat map.");
 
@@ -62,6 +66,15 @@ public static class HeatFunctions
         if (colorStops.Length != heatMap.Length)
             throw new Exception($"ColorStops and HeatMap must have the same length.");
 
+#if __WEB__
+        var heatStops = new List<ColorStop>();
+        for (var i = 0; i < colorStops.Length; i++)
+        {
+            heatStops.Add(new ColorStop(colorStops[i], heatMap[i]));
+        }
+
+        return heatStops;
+#else
         var heatStops = new List<Tuple<double, LvcColor>>();
         for (var i = 0; i < colorStops.Length; i++)
         {
@@ -69,6 +82,7 @@ public static class HeatFunctions
         }
 
         return heatStops;
+#endif
     }
 
     /// <summary>
@@ -79,7 +93,11 @@ public static class HeatFunctions
     /// <param name="heatMap">The heat map.</param>
     /// <param name="heatStops">The heat stops.</param>
     /// <returns></returns>
+#if __WEB__
+    public static LvcColor InterpolateColor(float weight, Bounds weightBounds, LvcColor[] heatMap, List<ColorStop> heatStops)
+#else
     public static LvcColor InterpolateColor(float weight, Bounds weightBounds, LvcColor[] heatMap, List<Tuple<double, LvcColor>> heatStops)
+#endif
     {
         var range = weightBounds.Max - weightBounds.Min;
         if (range == 0) range = double.Epsilon;
@@ -93,6 +111,21 @@ public static class HeatFunctions
         {
             var next = heatStops[i];
 
+#if __WEB__
+            if (next.Value < p)
+            {
+                previous = heatStops[i];
+                continue;
+            }
+
+            var px = (p - previous.Value) / (next.Value - previous.Value);
+
+            return LvcColor.FromArgb(
+                (byte)(previous.Color.A + px * (next.Color.A - previous.Color.A)),
+                (byte)(previous.Color.R + px * (next.Color.R - previous.Color.R)),
+                (byte)(previous.Color.G + px * (next.Color.G - previous.Color.G)),
+                (byte)(previous.Color.B + px * (next.Color.B - previous.Color.B)));
+#else
             if (next.Item1 < p)
             {
                 previous = heatStops[i];
@@ -106,6 +139,7 @@ public static class HeatFunctions
                 (byte)(previous.Item2.R + px * (next.Item2.R - previous.Item2.R)),
                 (byte)(previous.Item2.G + px * (next.Item2.G - previous.Item2.G)),
                 (byte)(previous.Item2.B + px * (next.Item2.B - previous.Item2.B)));
+#endif
         }
 
         return heatMap[heatMap.Length - 1];

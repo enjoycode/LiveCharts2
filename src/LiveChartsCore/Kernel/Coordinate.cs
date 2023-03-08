@@ -78,7 +78,7 @@ public readonly struct Coordinate
     /// <summary>
     /// Evaluates whether the instance is empty.
     /// </summary>
-    public readonly bool IsEmpty { get; }
+    public bool IsEmpty { get; }
 
     /// <summary>
     /// Gets or sets the primary value, normally the Y coordinate or the value in a gauge.
@@ -86,7 +86,7 @@ public readonly struct Coordinate
     /// <value>
     /// The primary value.
     /// </value>
-    public readonly double PrimaryValue { get; }
+    public double PrimaryValue { get; }
 
     /// <summary>
     /// Gets or sets the secondary value, normally the X coordinate.
@@ -94,7 +94,7 @@ public readonly struct Coordinate
     /// <value>
     /// The secondary value.
     /// </value>
-    public readonly double SecondaryValue { get; }
+    public double SecondaryValue { get; }
 
     /// <summary>
     /// Gets or sets the tertiary value, normally used on weighted or financial series.
@@ -102,7 +102,7 @@ public readonly struct Coordinate
     /// <value>
     /// The tertiary value.
     /// </value>
-    public readonly double TertiaryValue { get; }
+    public double TertiaryValue { get; }
 
     /// <summary>
     /// Gets or sets the quaternary value, normally used on financial series.
@@ -110,7 +110,7 @@ public readonly struct Coordinate
     /// <value>
     /// The quaternary value.
     /// </value>
-    public readonly double QuaternaryValue { get; }
+    public double QuaternaryValue { get; }
 
     /// <summary>
     /// Gets or sets the quinary value, normally used on financial series.
@@ -118,5 +118,5 @@ public readonly struct Coordinate
     /// <value>
     /// The quinary value.
     /// </value>
-    public readonly double QuinaryValue { get; }
+    public double QuinaryValue { get; }
 }

@@ -65,10 +65,6 @@ public abstract class BarSeries<TModel, TVisual, TLabel, TDrawingContext>
         _labelFactory = labelFactory;
     }
 
-    /// <inheritdoc cref="IBarSeries{TDrawingContext}.GroupPadding"/>
-    [Obsolete($"Replace by {nameof(Padding)} property.")]
-    public double GroupPadding { get => _pading; set => SetProperty(ref _pading, value); }
-
     /// <inheritdoc cref="IBarSeries{TDrawingContext}.Padding"/>
     public double Padding { get => _pading; set => SetProperty(ref _pading, value); }
 
@@ -103,7 +99,7 @@ public abstract class BarSeries<TModel, TVisual, TLabel, TDrawingContext>
     /// <summary>
     /// A mesure helper class.
     /// </summary>
-    protected class MeasureHelper
+    protected class MeasureHelper<T> where T: DrawingContext
     {
         /// <summary>
         /// Initializes a new instance of the measue helper class.
@@ -118,8 +114,8 @@ public abstract class BarSeries<TModel, TVisual, TLabel, TDrawingContext>
         /// <param name="isStacked">Indicates whether the series is stacked or not.</param>
         public MeasureHelper(
             Scaler scaler,
-            CartesianChart<TDrawingContext> cartesianChart,
-            IBarSeries<TDrawingContext> barSeries,
+            CartesianChart<T> cartesianChart,
+            IBarSeries<T> barSeries,
             ICartesianAxis axis,
             float p,
             float minP,
@@ -133,14 +129,15 @@ public abstract class BarSeries<TModel, TVisual, TLabel, TDrawingContext>
             uw = scaler.MeasureInPixels(axis.UnitWidth);
             actualUw = uw;
 
-            var gp = (float)barSeries.GroupPadding;
+            var gp = (float)barSeries.Padding;
 
             if (uw - gp < 1) gp -= uw - gp;
 
             uw -= gp;
             uwm = 0.5f * uw;
 
-            int pos, count;
+            int pos;
+            int count;
 
             if (isStacked)
             {

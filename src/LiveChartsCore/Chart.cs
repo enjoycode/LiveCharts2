@@ -32,6 +32,7 @@ using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.Measure;
 using LiveChartsCore.Motion;
 using LiveChartsCore.VisualElements;
+using PixUI;
 
 namespace LiveChartsCore;
 
@@ -58,8 +59,12 @@ public abstract class Chart<TDrawingContext> : IChart
     private LvcPoint _pointerPreviousPanningPosition = new(-10, -10);
     private bool _isPanning = false;
     private bool _isPointerIn;
+#if __WEB__
+    private readonly ObjectMap<object> _activePoints = new();
+#else
     private readonly Dictionary<ChartPoint, object> _activePoints = new();
-    private LvcSize _previousSize = new();
+#endif
+    private LvcSize _previousSize;
 
     #endregion
 
@@ -172,12 +177,13 @@ public abstract class Chart<TDrawingContext> : IChart
     /// </value>
     public abstract IChartView<TDrawingContext> View { get; }
 
+    [TSIgnorePropertyDeclaration]
     IChartView IChart.View => View;
 
     /// <summary>
     /// The series context
     /// </summary>
-    public SeriesContext<TDrawingContext> SeriesContext { get; protected set; } = new(Enumerable.Empty<IChartSeries<TDrawingContext>>());
+    public SeriesContext<TDrawingContext> SeriesContext { get; protected set; } = new(Array.Empty<IChartSeries<TDrawingContext>>());
 
     /// <summary>
     /// Gets the size of the control.
@@ -185,7 +191,7 @@ public abstract class Chart<TDrawingContext> : IChart
     /// <value>
     /// The size of the control.
     /// </value>
-    public LvcSize ControlSize { get; protected set; } = new();
+    public LvcSize ControlSize { get; protected set; }
 
     /// <summary>
     /// Gets the draw margin location.
@@ -193,7 +199,7 @@ public abstract class Chart<TDrawingContext> : IChart
     /// <value>
     /// The draw margin location.
     /// </value>
-    public LvcPoint DrawMarginLocation { get; protected set; } = new();
+    public LvcPoint DrawMarginLocation { get; protected set; }
 
     /// <summary>
     /// Gets the size of the draw margin.
@@ -201,7 +207,7 @@ public abstract class Chart<TDrawingContext> : IChart
     /// <value>
     /// The size of the draw margin.
     /// </value>
-    public LvcSize DrawMarginSize { get; protected set; } = new();
+    public LvcSize DrawMarginSize { get; protected set; }
 
     /// <summary>
     /// Gets the legend position.
@@ -275,8 +281,13 @@ public abstract class Chart<TDrawingContext> : IChart
     /// <summary>
     /// Gets the previous series.
     /// </summary>
+#if __WEB__
+    public IChartSeries<TDrawingContext>[] PreviousSeriesAtLegend { get; protected set; } = Array.Empty<IChartSeries<TDrawingContext>>();
+#else
     public IReadOnlyList<IChartSeries<TDrawingContext>> PreviousSeriesAtLegend { get; protected set; } = Array.Empty<IChartSeries<TDrawingContext>>();
+#endif
 
+    [TSIgnorePropertyDeclaration]
     object IChart.Canvas => Canvas;
 
     #endregion region
@@ -332,7 +343,12 @@ public abstract class Chart<TDrawingContext> : IChart
     {
         foreach (var point in _activePoints.Keys.ToArray())
         {
+#if __WEB__
+            var cp = (ChartPoint)point;
+            cp.Context.Series.OnPointerLeft(cp);
+#else
             point.Context.Series.OnPointerLeft(point);
+#endif
             _ = _activePoints.Remove(point);
         }
 
@@ -459,6 +475,26 @@ public abstract class Chart<TDrawingContext> : IChart
     /// <param name="newSeries">The new series.</param>
     /// <param name="position">The legend position.</param>
     /// <returns></returns>
+#if __WEB__
+    protected virtual bool SeriesMiniatureChanged(IChartSeries<TDrawingContext>[] newSeries, LegendPosition position)
+    {
+        if (position == LegendPosition.Hidden && PreviousLegendPosition == LegendPosition.Hidden) return false;
+        if (position != PreviousLegendPosition) return true;
+        if (PreviousSeriesAtLegend.Length != newSeries.Length) return true;
+
+        for (var i = 0; i < newSeries.Length; i++)
+        {
+            if (i + 1 > PreviousSeriesAtLegend.Length) return true;
+
+            var a = PreviousSeriesAtLegend[i];
+            var b = newSeries[i];
+
+            if (!a.MiniatureEquals(b)) return true;
+        }
+
+        return false;
+    }
+#else
     protected virtual bool SeriesMiniatureChanged(IReadOnlyList<IChartSeries<TDrawingContext>> newSeries, LegendPosition position)
     {
         if (position == LegendPosition.Hidden && PreviousLegendPosition == LegendPosition.Hidden) return false;
@@ -477,6 +513,7 @@ public abstract class Chart<TDrawingContext> : IChart
 
         return false;
     }
+#endif
 
     /// <summary>
     /// Called when the updated the throttler is unlocked.
@@ -665,13 +702,23 @@ public abstract class Chart<TDrawingContext> : IChart
                      foreach (var tooltipPoint in points)
                      {
                          tooltipPoint.Context.Series.OnPointerEnter(tooltipPoint);
+#if __WEB__
+                         _activePoints.set(tooltipPoint, o);
+#else
                          _activePoints[tooltipPoint] = o;
+#endif
                      }
 
                      foreach (var point in _activePoints.Keys.ToArray())
                      {
+#if __WEB__
+                         if (_activePoints.get(point) == o) continue;
+                         var cp = (ChartPoint)point;
+                         cp.Context.Series.OnPointerLeft(cp);
+#else
                          if (_activePoints[point] == o) continue;
                          point.Context.Series.OnPointerLeft(point);
+#endif
                          _ = _activePoints.Remove(point);
                      }
 

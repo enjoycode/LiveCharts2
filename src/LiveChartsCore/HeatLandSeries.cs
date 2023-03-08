@@ -114,37 +114,43 @@ public class HeatLandSeries<TDrawingContext> : IGeoSeries<TDrawingContext>, INot
         _heatPaint.ZIndex = i + 1;
 
         var bounds = new Bounds();
-        foreach (var shape in Lands ?? Enumerable.Empty<IWeigthedMapLand>())
+        if (Lands != null)
         {
-            bounds.AppendValue(shape.Value);
+            foreach (var shape in Lands)
+            {
+                bounds.AppendValue(shape.Value);
+            }
         }
 
         var heatStops = HeatFunctions.BuildColorStops(HeatMap, ColorStops);
-        var shapeContext = new MapShapeContext<TDrawingContext>(context.View, _heatPaint, heatStops, bounds);
+        //var shapeContext = new MapShapeContext<TDrawingContext>(context.View, _heatPaint, heatStops, bounds);
         var toRemove = new HashSet<LandDefinition>(_everUsed);
 
-        foreach (var land in Lands ?? Enumerable.Empty<IWeigthedMapLand>())
+        if (Lands != null)
         {
-            var projector = Maps.BuildProjector(
-                context.View.MapProjection, new[] { context.View.Width, context.View.Height });
-
-            var heat = HeatFunctions.InterpolateColor((float)land.Value, bounds, HeatMap, heatStops);
-
-            var mapLand = context.View.ActiveMap.FindLand(land.Name);
-            if (mapLand is null) return;
-
-            var shapesQuery = mapLand.Data
-                .Select(x => x.Shape)
-                .Where(x => x is not null)
-                .Cast<IHeatPathShape>();
-
-            foreach (var pathShape in shapesQuery)
+            foreach (var land in Lands)
             {
-                pathShape.FillColor = heat;
-            }
+                var projector = Maps.BuildProjector(
+                    context.View.MapProjection, context.View.Width, context.View.Height);
 
-            _ = _everUsed.Add(mapLand);
-            _ = toRemove.Remove(mapLand);
+                var heat = HeatFunctions.InterpolateColor((float)land.Value, bounds, HeatMap, heatStops);
+
+                var mapLand = context.View.ActiveMap.FindLand(land.Name);
+                if (mapLand is null) return;
+
+                var shapesQuery = mapLand.Data
+                    .Select(x => x.Shape)
+                    .Where(x => x is not null)
+                    .Cast<IHeatPathShape>();
+
+                foreach (var pathShape in shapesQuery)
+                {
+                    pathShape.FillColor = heat;
+                }
+
+                _ = _everUsed.Add(mapLand);
+                _ = toRemove.Remove(mapLand);
+            }
         }
 
         ClearHeat(toRemove);

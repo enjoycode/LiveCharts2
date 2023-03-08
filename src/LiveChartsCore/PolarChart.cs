@@ -195,7 +195,10 @@ public class PolarChart<TDrawingContext> : Chart<TDrawingContext>
         InnerRadius = (float)_chartView.InnerRadius;
         InitialRotation = (float)_chartView.InitialRotation;
 
-        var actualSeries = (_chartView.Series ?? Enumerable.Empty<ISeries>()).Where(x => x.IsVisible);
+        //var actualSeries = (_chartView.Series ?? Enumerable.Empty<ISeries>()).Where(x => x.IsVisible);
+        IEnumerable<ISeries> actualSeries = _chartView.Series == null
+            ? Array.Empty<ISeries>()
+            : _chartView.Series.Where(x => x.IsVisible);
 
         Series = actualSeries
             .Cast<IPolarSeries<TDrawingContext>>()
@@ -520,7 +523,11 @@ public class PolarChart<TDrawingContext> : Chart<TDrawingContext>
 
         IsFirstDraw = false;
         ThemeId = LiveCharts.DefaultSettings.CurrentThemeId;
+#if __WEB__
+        PreviousSeriesAtLegend = Series.Where(x => x.IsVisibleAtLegend).ToArray();
+#else
         PreviousSeriesAtLegend = Series.Where(x => x.IsVisibleAtLegend).ToList();
+#endif
         PreviousLegendPosition = LegendPosition;
 
         Canvas.Invalidate();

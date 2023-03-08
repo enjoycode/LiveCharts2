@@ -148,6 +148,7 @@ public class CoreMap<TDrawingContext> : IDisposable
         return layer;
     }
 
+#if !__WEB__
     /// <summary>
     /// Adds a layer to the map from a stream reader.
     /// </summary>
@@ -159,6 +160,7 @@ public class CoreMap<TDrawingContext> : IDisposable
         var defaultPaint = (IPaint<TDrawingContext>)LiveCharts.DefaultPaint;
         return AddLayerFromStreamReader(streamReader, defaultPaint, defaultPaint, layerName);
     }
+#endif
 
     /// <summary>
     /// Adds a layer to the map from a directory asynchronously.

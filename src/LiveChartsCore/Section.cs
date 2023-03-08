@@ -182,6 +182,7 @@ public abstract class Section<TDrawingContext> : ChartElement<TDrawingContext>, 
 /// <typeparam name="TSizedGeometry">The type of the sized geometry.</typeparam>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="ChartElement{TDrawingContext}" />
+[PixUI.TSRename("Section2")]
 public abstract class Section<TSizedGeometry, TDrawingContext> : Section<TDrawingContext>
     where TDrawingContext : DrawingContext
     where TSizedGeometry : ISizedGeometry<TDrawingContext>/*, new()*/

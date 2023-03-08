@@ -32,7 +32,7 @@ public struct LvcPoint
     /// </summary>
     /// <param name="x">The x coordinate.</param>
     /// <param name="y">The y coordinate.</param>
-    public LvcPoint(float x, float y)
+    public LvcPoint(float x = 0, float y = 0)
     {
         X = x;
         Y = y;
@@ -78,7 +78,7 @@ public struct LvcPoint
     /// <param name="l"></param>
     /// <param name="r"></param>
     /// <returns></returns>
-    public static bool operator ==(LvcPoint l, LvcPoint r) => l.Equals(r);
+    public static bool operator ==(LvcPoint l, LvcPoint r) => l.X == r.X && l.Y == r.Y;
 
     /// <summary>
     /// Compares two <see cref="LvcPoint"/> instances.
@@ -87,4 +87,10 @@ public struct LvcPoint
     /// <param name="r"></param>
     /// <returns></returns>
     public static bool operator !=(LvcPoint l, LvcPoint r) => !(l == r);
+
+#if __WEB__
+    public static readonly LvcPoint Empty = new LvcPoint(0, 0);
+
+    public LvcPoint Clone() => new LvcPoint(X, Y);
+#endif
 }

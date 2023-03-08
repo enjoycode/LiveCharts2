@@ -123,16 +123,19 @@ public interface ICartesianAxis : IPlane, INotifyPropertyChanged
     /// <param name="orientation">The orientation.</param>
     void Initialize(AxisOrientation orientation);
 
+#if !__WEB__
     /// <summary>
     /// Occurs when the axis is initialized.
     /// </summary>
     event Action<ICartesianAxis>? Initialized;
+#endif
 }
 
 /// <summary>
 /// Defines an Axis in a Cartesian chart.
 /// </summary>
 /// <typeparam name="TDrawingContext"></typeparam>
+[PixUI.TSRename("ICartesianAxis1")]
 public interface ICartesianAxis<TDrawingContext> : ICartesianAxis
     where TDrawingContext : DrawingContext
 {

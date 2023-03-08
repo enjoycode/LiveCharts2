@@ -240,7 +240,7 @@ public class GeoMap<TDrawingContext>
 
         var context = new MapContext<TDrawingContext>(
             this, View, View.ActiveMap,
-            Maps.BuildProjector(View.MapProjection, new[] { View.Width, View.Height }));
+            Maps.BuildProjector(View.MapProjection, View.Width, View.Height ));
 
         _mapFactory.GenerateLands(context);
 

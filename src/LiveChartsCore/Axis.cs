@@ -74,7 +74,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
 
     private double _minStep = 0;
     private double _labelsRotation;
-    private LvcRectangle _labelsDesiredSize = new(), _nameDesiredSize = new();
+    private LvcRectangle _labelsDesiredSize, _nameDesiredSize;
     private TTextGeometry? _nameGeometry;
     private AxisPosition _position = AxisPosition.Start;
     private Func<double, string> _labeler = Labelers.Default;
@@ -839,10 +839,11 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
         chart.Canvas.Invalidate();
     }
 
-    private static ChartPoint? FindClosestPoint(
+    private static ChartPoint? FindClosestPoint<T>(
         LvcPoint pointerPosition,
-        CartesianChart<TDrawingContext> cartesianChart,
-        IEnumerable<ICartesianSeries<TDrawingContext>> allSeries)
+        CartesianChart<T> cartesianChart,
+        IEnumerable<ICartesianSeries<T>> allSeries)
+        where T: DrawingContext
     {
         ChartPoint? closestPoint = null;
         foreach (var series in allSeries)
@@ -864,7 +865,7 @@ public abstract class Axis<TDrawingContext, TTextGeometry, TLineGeometry>
     /// <inheritdoc cref="IPlane{TDrawingContext}.GetNameLabelSize(Chart{TDrawingContext})"/>
     public LvcSize GetNameLabelSize(Chart<TDrawingContext> chart)
     {
-        if (NamePaint is null || string.IsNullOrWhiteSpace(Name)) return new LvcSize(0, 0);
+        if (NamePaint is null || string.IsNullOrEmpty(Name) /*string.IsNullOrWhiteSpace(Name)*/) return new LvcSize(0, 0);
 
         // var textGeometry = new TTextGeometry
         // {

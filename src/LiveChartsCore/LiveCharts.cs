@@ -53,10 +53,12 @@ public static class LiveCharts
     /// </value>
     public static LiveChartsSettings DefaultSettings { get; } = new();
 
+#if !__WEB__
     /// <summary>
     /// Gets the default paint.
     /// </summary>
     public static object DefaultPaint { get; set; } = new();
+#endif
 
     /// <summary>
     /// Gets the hover key.
@@ -89,7 +91,7 @@ public static class LiveCharts
     /// <exception cref="NullReferenceException">$"{nameof(LiveChartsSettings)} must not be null.</exception>
     public static void Configure(Action<LiveChartsSettings> configuration)
     {
-        if (configuration is null) throw new NullReferenceException($"{nameof(LiveChartsSettings)} must not be null.");
+        if (configuration is null) throw new Exception($"{nameof(LiveChartsSettings)} must not be null.");
 
         IsConfigured = true;
         configuration(DefaultSettings);

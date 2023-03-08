@@ -30,7 +30,9 @@ namespace LiveChartsCore.Motion;
 /// <typeparam name="T"></typeparam>
 public abstract class MotionProperty<T> : IMotionProperty
 {
+#if !__WEB__
     private static readonly bool s_canBeNull = Kernel.Extensions.CanBeNull(typeof(T));
+#endif
 
     /// <summary>
     /// From value
@@ -125,7 +127,11 @@ public abstract class MotionProperty<T> : IMotionProperty
         // For some reason JITter can't remove value type boxing when started under PerfView Run command
         // Emitted IL has boxing originally, but JITter should be able to optimize it to 'false' or 'Nullable<T>.HasValue'
         // When s_canBeNull is false JITter should remove second check from generated code
+#if __WEB__
+        var fromValueIsNull = fromValue is null;
+#else
         var fromValueIsNull = s_canBeNull && fromValue is null;
+#endif
         if (Animation is null || Animation.EasingFunction is null || fromValueIsNull || IsCompleted) return OnGetMovement(1);
 
         if (_requiresToInitialize || _startTime == long.MinValue)
@@ -138,7 +144,13 @@ public abstract class MotionProperty<T> : IMotionProperty
         // at this points we are sure that the animatable has not finished at least with this property.
         animatable.IsValid = false;
 
+#if __WEB__
+        float t1 = animatable.CurrentTime - _startTime;
+        float t2 = _endTime - _startTime;
+        var p = t1 / t2;
+#else
         var p = (animatable.CurrentTime - _startTime) / unchecked((float)(_endTime - _startTime));
+#endif
 
         if (p >= 1)
         {
@@ -167,7 +179,9 @@ public abstract class MotionProperty<T> : IMotionProperty
     {
         unchecked
         {
-            var p = (animatable.CurrentTime - _startTime) / (float)(_endTime - _startTime);
+            float t1 = animatable.CurrentTime - _startTime;
+            float t2 = _endTime - _startTime;
+            var p = t1 / t2;
             if (p >= 1) p = 1;
             if (animatable.CurrentTime == long.MinValue) p = 0;
             var fp = Animation?.EasingFunction?.Invoke(p) ?? 1;

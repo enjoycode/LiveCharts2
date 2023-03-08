@@ -32,13 +32,13 @@ namespace LiveChartsCore.Drawing;
 public interface IStepLineVisualChartPoint<TDrawingContext> : IVisualChartPoint<TDrawingContext>
     where TDrawingContext : DrawingContext
 {
-    /// <summary>
-    /// Gets the geometry.
-    /// </summary>
-    /// <value>
-    /// The geometry.
-    /// </value>
-    ISizedGeometry<TDrawingContext> Geometry { get; }
+    // /// <summary>
+    // /// Gets the geometry.
+    // /// </summary>
+    // /// <value>
+    // /// The geometry.
+    // /// </value>
+    // ISizedGeometry<TDrawingContext> Geometry { get; }
 
     /// <summary>
     /// Gets the stepline.

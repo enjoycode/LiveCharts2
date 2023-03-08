@@ -1,4 +1,5 @@
-﻿// The MIT License(MIT)
+﻿#if !__WEB__
+// The MIT License(MIT)
 //
 // Copyright(c) 2021 Alberto Rodriguez Orozco & LiveCharts Contributors
 //
@@ -114,3 +115,4 @@ public interface IPathGeometry<TDrawingContext, TPathArgs> : IDrawable<TDrawingC
     /// </summary>
     void ClearCommands();
 }
+#endif

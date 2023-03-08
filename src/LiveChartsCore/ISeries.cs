@@ -33,6 +33,7 @@ namespace LiveChartsCore;
 /// <summary>
 /// Defines a chart series.
 /// </summary>
+[PixUI.TSInterfaceOf]
 public interface ISeries
 {
     /// <summary>
@@ -61,11 +62,12 @@ public interface ISeries
     bool RequiresFindClosestOnPointerDown { get; }
 
     /// <summary>
-    /// Gets or sets the name of the series, the name is normally used by <see cref="IChartTooltip{TDrawingContext}"/> or 
+    /// Gets or sets the name of the series, the name is normally used by <see cref="IChartTooltip{TDrawingContext}"/> or
     /// <see cref="IChartLegend{TDrawingContext}"/>, the default value is set automatically by the library.
     /// </summary>
     string? Name { get; set; }
 
+#if !__WEB__
     /// <summary>
     /// Gets or sets the values.
     /// </summary>
@@ -73,6 +75,7 @@ public interface ISeries
     /// The values.
     /// </value>
     IEnumerable? Values { get; set; }
+#endif
 
     /// <summary>
     /// Gets or sets a value indicating whether this instance is visible.
@@ -140,10 +143,12 @@ public interface ISeries
     /// </value>
     Func<float, float>? EasingFunction { get; set; }
 
+#if !__WEB__
     /// <summary>
     /// Occurs when the series <see cref="IsVisible"/> property changes.
     /// </summary>
     event Action<ISeries>? VisibilityChanged;
+#endif
 
     /// <summary>
     /// Gets the tool tip text for a give chart point.
@@ -167,7 +172,7 @@ public interface ISeries
     IEnumerable<ChartPoint> Fetch(IChart chart);
 
     /// <summary>
-    /// Gets the <see cref="ChartPoint"/> instances which contain the <paramref name="pointerPosition"/>, according 
+    /// Gets the <see cref="ChartPoint"/> instances which contain the <paramref name="pointerPosition"/>, according
     /// to the chart's <see cref="TooltipFindingStrategy"/> property.
     /// </summary>
     /// <param name="chart">the chart.</param>
@@ -204,6 +209,7 @@ public interface ISeries
 /// </summary>
 /// <typeparam name="TModel">The type of the model.</typeparam>
 /// <seealso cref="IDisposable" />
+[PixUI.TSRename("ISeries1")]
 public interface ISeries<TModel> : ISeries
 {
     /// <summary>

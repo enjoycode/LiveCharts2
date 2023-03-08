@@ -40,13 +40,12 @@ public struct LvcColor
         G = green;
         B = blue;
         A = alpha;
-        IsEmpty = false;
     }
 
     /// <summary>
     /// Gets an empty color.
     /// </summary>
-    public static LvcColor Empty => new (255, 255, 255, 0) { IsEmpty = true };
+    public static LvcColor Empty => new (255, 255, 255, 0);
 
     /// <summary>
     /// Gets or sets the red component.
@@ -69,11 +68,6 @@ public struct LvcColor
     public byte A { get; set; }
 
     /// <summary>
-    /// Gets or sets whether this color is empty.
-    /// </summary>
-    private bool IsEmpty { get; set; }
-
-    /// <summary>
     /// Determines whether the instance is equals to the given instance.
     /// </summary>
     /// <param name="obj">The instance to compare to.</param>
@@ -81,7 +75,7 @@ public struct LvcColor
     public override bool Equals(object? obj)
     {
         return obj is LvcColor color &&
-            R == color.R && G == color.G && B == color.B && A == color.A && IsEmpty == color.IsEmpty;
+            R == color.R && G == color.G && B == color.B && A == color.A;
     }
 
     /// <summary>
@@ -104,7 +98,8 @@ public struct LvcColor
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns></returns>
-    public static bool operator ==(LvcColor left, LvcColor right) => left.Equals(right);
+    public static bool operator ==(LvcColor left, LvcColor right) =>
+        left.R == right.R && left.G == right.G && left.B == right.B && left.A == right.A;
 
     /// <summary>
     /// Compares two <see cref="LvcColor"/> instances.
@@ -138,4 +133,8 @@ public struct LvcColor
     {
         return new LvcColor(color.R, color.G, color.B, alpha);
     }
+
+#if __WEB__
+    public LvcColor Clone() => new LvcColor(R, G, B, A);
+#endif
 }

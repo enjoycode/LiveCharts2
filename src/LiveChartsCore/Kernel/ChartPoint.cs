@@ -205,6 +205,7 @@ public class ChartPoint
 /// <typeparam name="TModel">The type of the model.</typeparam>
 /// <typeparam name="TVisual">The type of the visual.</typeparam>
 /// <typeparam name="TLabel">The type of the label.</typeparam>
+[PixUI.TSRename("ChartPoint3")]
 public class ChartPoint<TModel, TVisual, TLabel> : ChartPoint
 {
     /// <summary>

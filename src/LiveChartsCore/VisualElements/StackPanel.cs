@@ -90,7 +90,7 @@ public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDr
     public override LvcSize GetTargetSize()
     {
         var size = Orientation == ContainerOrientation.Horizontal
-            ? Children.Aggregate(new LvcSize(), (current, next) =>
+            ? Children.Aggregate(new LvcSize(0,0), (current, next) =>
             {
                 var size = next.GetTargetSize();
 
@@ -98,7 +98,7 @@ public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDr
                     current.Width + size.Width,
                     size.Height > current.Height ? size.Height : current.Height);
             })
-            : Children.Aggregate(new LvcSize(), (current, next) =>
+            : Children.Aggregate(new LvcSize(0,0), (current, next) =>
             {
                 var size = next.GetTargetSize();
 
@@ -154,7 +154,7 @@ public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDr
             _backgroundGeometry.Width = controlSize.Width;
             _backgroundGeometry.Height = controlSize.Height;
 
-            _ = _backgroundGeometry
+            _backgroundGeometry
                 .TransitionateProperties()
                 .WithAnimation(chart)
                 .CompleteCurrentTransitions();
@@ -181,7 +181,9 @@ public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDr
                 _ = child.Measure(chart, primaryScaler, secondaryScaler);
                 var childSize = child.GetTargetSize();
 
-                child._parent = _backgroundGeometry ?? throw new System.Exception("Background is required.");
+                if (_backgroundGeometry == null)
+                    throw new System.Exception("Background is required.");
+                child._parent = _backgroundGeometry;
 
                 child._xc = _targetPosition.X;
                 child._yc = _targetPosition.Y;
@@ -205,7 +207,9 @@ public class StackPanel<TBackgroundGemetry, TDrawingContext> : VisualElement<TDr
                 _ = child.Measure(chart, primaryScaler, secondaryScaler);
                 var childSize = child.GetTargetSize();
 
-                child._parent = _backgroundGeometry ?? throw new System.Exception("Background is required.");
+                if (_backgroundGeometry == null)
+                    throw new System.Exception("Background is required.");
+                child._parent = _backgroundGeometry;
 
                 child._xc = _targetPosition.X;
                 child._yc = _targetPosition.Y;

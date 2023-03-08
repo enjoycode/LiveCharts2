@@ -71,7 +71,7 @@ public class BezierVisualPoint<TDrawingContext, TVisual> : ICubicBezierVisualCha
     /// </value>
     public IVectorGeometry<CubicBezierSegment, TDrawingContext>? StrokePath { get; set; }
 
-    IGeometry<TDrawingContext>? IVisualChartPoint<TDrawingContext>.MainGeometry => Geometry?.MainGeometry;
+    public IGeometry<TDrawingContext>? MainGeometry => Geometry?.MainGeometry;
 
-    ISizedGeometry<TDrawingContext> ICubicBezierVisualChartPoint<TDrawingContext>.Geometry => Geometry;
+    //ISizedGeometry<TDrawingContext> ICubicBezierVisualChartPoint<TDrawingContext>.Geometry => Geometry;
 }

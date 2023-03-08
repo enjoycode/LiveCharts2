@@ -69,7 +69,7 @@ public class MercatorProjector : MapProjector
         var lon = point[0];
 
         var latRad = lat * Math.PI / 180d;
-        var mercN = Math.Log(Math.Tan(Math.PI / 4d + latRad / 2d), Math.E);
+        var mercN = Math.Log(Math.Tan(Math.PI / 4d + latRad / 2d)/*, Math.E*/);
         var y = _h / 2d - _h * mercN / (2 * Math.PI);
 
         return new[]

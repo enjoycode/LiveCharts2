@@ -40,5 +40,6 @@ public delegate void ChartPointsHandler(IChartView chart, IEnumerable<ChartPoint
 /// <typeparam name="TLabel">The type of the label.</typeparam>
 /// <param name="chart">The sender chart.</param>
 /// <param name="points">The found points.</param>
+[PixUI.TSRename("ChartPointsHandler3")]
 public delegate void ChartPointsHandler<TModel, TVisual, TLabel>(
     IChartView chart, IEnumerable<ChartPoint<TModel, TVisual, TLabel>> points);

@@ -186,7 +186,7 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
 
         var dls = (float)DataLabelsSize;
         var stacker = pieChart.SeriesContext.GetStackPosition(this, GetStackGroup());
-        if (stacker is null) throw new NullReferenceException("Unexpected null stacker");
+        if (stacker is null) throw new Exception("Unexpected null stacker");
 
         var pointsCleanup = ChartPointCleanupContext.For(everFetched);
 
@@ -553,7 +553,11 @@ public abstract class PieSeries<TModel, TVisual, TLabel, TMiniatureGeometry, TDr
     {
         if (IsFillSeries) return;
 
+#if __WEB__
+        var isGauge = (SeriesProperties & SeriesProperties.Gauge) == SeriesProperties.Gauge;
+#else
         var isGauge = SeriesProperties.HasFlag(SeriesProperties.Gauge);
+#endif
 
         var chart = chartPoint.Context.Chart;
 

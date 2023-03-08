@@ -38,6 +38,7 @@ public interface IGeoSeries
 /// <summary>
 /// Defines a geographical data series.
 /// </summary>
+[PixUI.TSRename("IGeoSeries1")]
 public interface IGeoSeries<TDrawingContext> : IGeoSeries
     where TDrawingContext : DrawingContext
 {
@@ -48,7 +49,7 @@ public interface IGeoSeries<TDrawingContext> : IGeoSeries
     void Measure(MapContext<TDrawingContext> context);
 
     /// <summary>
-    /// Deltes the series.
+    /// Delete the series.
     /// </summary>
     /// <param name="context">The map context.</param>
     void Delete(MapContext<TDrawingContext> context);

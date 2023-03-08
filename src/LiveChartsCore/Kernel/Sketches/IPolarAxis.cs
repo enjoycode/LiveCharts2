@@ -79,8 +79,10 @@ public interface IPolarAxis : IPlane
     /// <param name="orientation">The orientation.</param>
     void Initialize(PolarAxisOrientation orientation);
 
+#if !__WEB__
     /// <summary>
     /// Occurs when the axis is initialized.
     /// </summary>
     event Action<IPolarAxis>? Initialized;
+#endif
 }

@@ -40,11 +40,19 @@ public class MapShapeContext<TDrawingContext>
     /// <param name="heatPaint">The heat paint.</param>
     /// <param name="heatStops">The heat stops.</param>
     /// <param name="bounds">The bounds.</param>
+#if __WEB__
+    public MapShapeContext(
+        IGeoMapView<TDrawingContext> chart,
+        IPaint<TDrawingContext> heatPaint,
+        List<ColorStop> heatStops,
+        Bounds bounds)
+#else
     public MapShapeContext(
         IGeoMapView<TDrawingContext> chart,
         IPaint<TDrawingContext> heatPaint,
         List<Tuple<double, LvcColor>> heatStops,
         Bounds bounds)
+#endif
     {
         Chart = chart;
         HeatPaint = heatPaint;
@@ -65,7 +73,11 @@ public class MapShapeContext<TDrawingContext>
     /// <summary>
     /// Gets the heat stops.
     /// </summary>
+#if __WEB__
+    public List<ColorStop> HeatStops { get; }
+#else
     public List<Tuple<double, LvcColor>> HeatStops { get; }
+#endif
 
     /// <summary>
     /// Gets the bounds dictionary.

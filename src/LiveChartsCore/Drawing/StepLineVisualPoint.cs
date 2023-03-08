@@ -77,5 +77,5 @@ public class StepLineVisualPoint<TDrawingContext, TVisual> : IStepLineVisualChar
     /// </summary>
     public IGeometry<TDrawingContext>? MainGeometry => Geometry?.MainGeometry;
 
-    ISizedGeometry<TDrawingContext> IStepLineVisualChartPoint<TDrawingContext>.Geometry => Geometry;
+    //ISizedGeometry<TDrawingContext> IStepLineVisualChartPoint<TDrawingContext>.Geometry => Geometry;
 }
