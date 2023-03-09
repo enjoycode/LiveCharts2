@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.ComponentModel;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel;
@@ -88,8 +89,14 @@ public abstract class DrawMarginFrame<TDrawingContext> : ChartElement<TDrawingCo
 [PixUI.TSRename("DrawMarginFrame2")]
 public abstract class DrawMarginFrame<TSizedGeometry, TDrawingContext> : DrawMarginFrame<TDrawingContext>
     where TDrawingContext : DrawingContext
-    where TSizedGeometry : ISizedGeometry<TDrawingContext>, new()
+    where TSizedGeometry : ISizedGeometry<TDrawingContext>/*, new()*/
 {
+    protected DrawMarginFrame(Func<TSizedGeometry> sizedGeometryFactory)
+    {
+        _sizedGeometryFactory = sizedGeometryFactory;
+    }
+
+    private Func<TSizedGeometry> _sizedGeometryFactory;
     private TSizedGeometry? _fillSizedGeometry;
     private TSizedGeometry? _strokeSizedGeometry;
     private bool _isInitialized = false;
@@ -107,7 +114,7 @@ public abstract class DrawMarginFrame<TSizedGeometry, TDrawingContext> : DrawMar
         {
             Fill.ZIndex = -3;
 
-            _fillSizedGeometry ??= new TSizedGeometry();
+            _fillSizedGeometry ??= _sizedGeometryFactory(); /*new TSizedGeometry();*/
 
             _fillSizedGeometry.X = drawLocation.X;
             _fillSizedGeometry.Y = drawLocation.Y;
@@ -122,7 +129,7 @@ public abstract class DrawMarginFrame<TSizedGeometry, TDrawingContext> : DrawMar
         {
             Stroke.ZIndex = -2;
 
-            _strokeSizedGeometry ??= new TSizedGeometry();
+            _strokeSizedGeometry ??= _sizedGeometryFactory(); /*new TSizedGeometry();*/
 
             _strokeSizedGeometry.X = drawLocation.X;
             _strokeSizedGeometry.Y = drawLocation.Y;

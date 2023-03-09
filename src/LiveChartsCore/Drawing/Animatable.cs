@@ -50,7 +50,7 @@ public abstract class Animatable : IAnimatable
     /// <inheritdoc cref="IAnimatable.SetTransition(Animation?, string[])" />
     public void SetTransition(Animation? animation, params string[]? propertyName)
     {
-        var a = animation?.Duration == 0 ? null : animation;
+        var a = animation?.Duration == 0L ? null : animation;
         if (propertyName is null || propertyName.Length == 0) propertyName = MotionProperties.Keys.ToArray();
 
         foreach (var name in propertyName)
