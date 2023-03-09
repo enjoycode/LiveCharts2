@@ -49,13 +49,8 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
         where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
-#if __WEB__
-    private readonly ObjectMap<List<TPathGeometry>> _fillPathHelperDictionary = new();
-    private readonly ObjectMap<List<TPathGeometry>> _strokePathHelperDictionary = new();
-#else
     private readonly Dictionary<object, List<TPathGeometry>> _fillPathHelperDictionary = new();
     private readonly Dictionary<object, List<TPathGeometry>> _strokePathHelperDictionary = new();
-#endif
     private float _lineSmoothness = 0.65f;
     private float _geometrySize = 14f;
     private bool _enableNullSplitting = true;
@@ -209,21 +204,6 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
         var segmentI = 0;
         var pointsCleanup = ChartPointCleanupContext.For(everFetched);
 
-#if __WEB__
-        var strokePathHelperContainer = _strokePathHelperDictionary.get(chart.Canvas.Sync);
-        if (strokePathHelperContainer == null)
-        {
-            strokePathHelperContainer = new List<TPathGeometry>();
-            _strokePathHelperDictionary.set(chart.Canvas.Sync, strokePathHelperContainer);
-        }
-
-        var fillPathHelperContainer = _fillPathHelperDictionary.get(chart.Canvas.Sync);
-        if (fillPathHelperContainer == null)
-        {
-            fillPathHelperContainer = new List<TPathGeometry>();
-            _fillPathHelperDictionary.set(chart.Canvas.Sync, fillPathHelperContainer);
-        }
-#else
         if (!_strokePathHelperDictionary.TryGetValue(chart.Canvas.Sync, out var strokePathHelperContainer))
         {
             strokePathHelperContainer = new List<TPathGeometry>();
@@ -235,7 +215,6 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
             fillPathHelperContainer = new List<TPathGeometry>();
             _fillPathHelperDictionary[chart.Canvas.Sync] = fillPathHelperContainer;
         }
-#endif
 
         foreach (var item in strokePathHelperContainer) item.ClearCommands();
         foreach (var item in fillPathHelperContainer) item.ClearCommands();
@@ -754,21 +733,6 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
 
         var canvas = ((IPolarChartView<TDrawingContext>)chart).CoreCanvas;
 
-#if __WEB__
-        if (Fill is not null)
-        {
-            foreach (var activeChartContainer in _fillPathHelperDictionary.values())
-            foreach (var pathHelper in activeChartContainer)
-                Fill.RemoveGeometryFromPainTask(canvas, pathHelper);
-        }
-
-        if (Stroke is not null)
-        {
-            foreach (var activeChartContainer in _strokePathHelperDictionary.values())
-            foreach (var pathHelper in activeChartContainer)
-                Stroke.RemoveGeometryFromPainTask(canvas, pathHelper);
-        }
-#else
         if (Fill is not null)
         {
             foreach (var activeChartContainer in _fillPathHelperDictionary/*.ToArray()*/)
@@ -782,7 +746,6 @@ public class PolarLineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeom
                 foreach (var pathHelper in activeChartContainer.Value/*.ToArray()*/)
                     Stroke.RemoveGeometryFromPainTask(canvas, pathHelper);
         }
-#endif
 
         if (GeometryFill is not null) canvas.RemovePaintTask(GeometryFill);
         if (GeometryStroke is not null) canvas.RemovePaintTask(GeometryStroke);

@@ -43,11 +43,7 @@ public class GeoJsonFeature
     /// <value>
     /// The properties.
     /// </value>
-#if __WEB__
-    public System.StringMap<string>? Properties { get; set; }
-#else
     public Dictionary<string, string>? Properties { get; set; }
-#endif
 
     /// <summary>
     /// Gets or sets the geometry.

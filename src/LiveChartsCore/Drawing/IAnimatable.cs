@@ -59,11 +59,7 @@ public interface IAnimatable
     /// <summary>
     /// Gets the motion properties.
     /// </summary>
-#if __WEB__
-    StringMap<IMotionProperty> MotionProperties { get; }
-#else
     Dictionary<string, IMotionProperty> MotionProperties { get; }
-#endif
 
     /// <summary>
     /// Sets a property transition for the specified property or properties.

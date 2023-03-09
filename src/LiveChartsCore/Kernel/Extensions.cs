@@ -438,19 +438,6 @@ public static class Extensions
         }
     }
 
-#if !__WEB__
-    /// <summary>
-    /// Gets the point for the given view.
-    /// </summary>
-    /// <param name="dictionary">The points dictionary.</param>
-    /// <param name="view">The view.</param>
-    /// <returns></returns>
-    public static ChartPoint? GetPointForView(this Dictionary<IChartView, ChartPoint> dictionary, IChartView view)
-    {
-        return dictionary.TryGetValue(view, out var point) ? point : null;
-    }
-#endif
-
     /// <summary>
     /// Splits an enumerable of chartpoints by each null gap.
     /// </summary>

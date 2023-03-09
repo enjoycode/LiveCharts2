@@ -38,14 +38,10 @@ public interface IChartEntity
     /// </summary>
     public int EntityIndex { get; set; }
 
-#if __WEB__
-    public ObjectMap<ChartPoint>? ChartPoints { get; set; }
-#else
     /// <summary>
     /// Gets the chart points dictionary.
     /// </summary>
     public Dictionary<IChartView, ChartPoint>? ChartPoints { get; set; }
-#endif
 
     /// <summary>
     /// Gets the coordinate.

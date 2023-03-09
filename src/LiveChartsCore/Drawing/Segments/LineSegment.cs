@@ -67,15 +67,6 @@ public class LineSegment : Animatable, IConsecutivePathSegment
         CurrentTime = segment.CurrentTime;
         RemoveOnCompleted = segment.RemoveOnCompleted;
 
-#if __WEB__
-        var xProp = segment.MotionProperties.get(nameof(IConsecutivePathSegment.Xj))!;
-        var yProp = segment.MotionProperties.get(nameof(IConsecutivePathSegment.Yj))!;
-
-        MotionProperties.get(nameof(Xi))!.CopyFrom(xProp);
-        MotionProperties.get(nameof(Xj))!.CopyFrom(xProp);
-        MotionProperties.get(nameof(Yi))!.CopyFrom(yProp);
-        MotionProperties.get(nameof(Yj))!.CopyFrom(yProp);
-#else
         var xProp = segment.MotionProperties[nameof(IConsecutivePathSegment.Xj)];
         var yProp = segment.MotionProperties[nameof(IConsecutivePathSegment.Yj)];
 
@@ -83,6 +74,5 @@ public class LineSegment : Animatable, IConsecutivePathSegment
         MotionProperties[nameof(Xj)].CopyFrom(xProp);
         MotionProperties[nameof(Yi)].CopyFrom(yProp);
         MotionProperties[nameof(Yj)].CopyFrom(yProp);
-#endif
     }
 }

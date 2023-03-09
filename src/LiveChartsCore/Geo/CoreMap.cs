@@ -64,11 +64,7 @@ public class CoreMap<TDrawingContext> : IDisposable
     /// <summary>
     /// Gets the map layers dictionary.
     /// </summary>
-#if __WEB__
-    public StringMap<MapLayer<TDrawingContext>> Layers { get; protected set; } = new();
-#else
     public Dictionary<string, MapLayer<TDrawingContext>> Layers { get; protected set; } = new();
-#endif
 
     /// <summary>
     /// Finds a land by short name.
@@ -78,11 +74,7 @@ public class CoreMap<TDrawingContext> : IDisposable
     /// <returns>The land, null if not found.</returns>
     public LandDefinition? FindLand(string shortName, string layerName = "default")
     {
-#if __WEB__
-        return Layers.get(layerName)!.Lands.get(shortName);
-#else
         return Layers[layerName].Lands.TryGetValue(shortName, out var land) ? land : null;
-#endif
     }
 
 #if !__WEB__

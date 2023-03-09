@@ -64,11 +64,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
     /// <summary>
     /// The active separators
     /// </summary>
-#if __WEB__
-    protected readonly ObjectMap<DoubleMap<IVisualSeparator<TDrawingContext>>> activeSeparators = new();
-#else
     protected readonly Dictionary<IChart, Dictionary<double, IVisualSeparator<TDrawingContext>>> activeSeparators = new();
-#endif
 
     internal PolarAxisOrientation _orientation;
     private double _minStep = 0;
@@ -315,20 +311,11 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
 
         var start = Math.Truncate(min / s) * s;
 
-#if __WEB__
-        var separators = activeSeparators.get(polarChart);
-        if (separators == null)
-        {
-            separators = new DoubleMap<IVisualSeparator<TDrawingContext>>();
-            activeSeparators.set(polarChart, separators);
-        }
-#else
         if (!activeSeparators.TryGetValue(polarChart, out var separators))
         {
             separators = new Dictionary<double, IVisualSeparator<TDrawingContext>>();
             activeSeparators[polarChart] = separators;
         }
-#endif
 
         var measured = new HashSet<IVisualSeparator<TDrawingContext>>();
 
@@ -346,12 +333,7 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
             // it seems that the bits storing that number (i) have the negative bit on
             var label = labeler(i - 1d + 1d);
 
-#if __WEB__
-            var visualSeparator = separators.get(i);
-            if (visualSeparator == null)
-#else
             if (!separators.TryGetValue(i, out var visualSeparator))
-#endif
             {
                 visualSeparator = _orientation == PolarAxisOrientation.Angle
                     ? new AxisVisualSeprator<TDrawingContext>() { Value = i }
@@ -529,16 +511,6 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
             if (visualSeparator.Label is not null || visualSeparator.Geometry is not null) _ = measured.Add(visualSeparator);
         }
 
-#if __WEB__
-        foreach (var skey in separators.keys()) //TODO: use entries()
-        {
-            var separator = separators.get(skey)!;
-            if (measured.Contains(separator)) continue;
-
-            SoftDeleteSeparator(polarChart, separator, scaler);
-            _ = separators.delete(skey);
-        }
-#else
         foreach (var separator in separators/*.ToArray()*/)
         {
             if (measured.Contains(separator.Value)) continue;
@@ -546,7 +518,6 @@ public abstract class PolarAxis<TDrawingContext, TTextGeometry, TLineGeometry, T
             SoftDeleteSeparator(polarChart, separator.Value, scaler);
             _ = separators.Remove(separator.Key);
         }
-#endif
     }
 
     /// <inheritdoc cref="IPlane{TDrawingContext}.GetNameLabelSize(Chart{TDrawingContext})"/>

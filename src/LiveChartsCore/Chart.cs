@@ -59,11 +59,7 @@ public abstract class Chart<TDrawingContext> : IChart
     private LvcPoint _pointerPreviousPanningPosition = new(-10, -10);
     private bool _isPanning = false;
     private bool _isPointerIn;
-#if __WEB__
-    private readonly ObjectMap<object> _activePoints = new();
-#else
     private readonly Dictionary<ChartPoint, object> _activePoints = new();
-#endif
     private LvcSize _previousSize;
 
     #endregion
@@ -702,23 +698,13 @@ public abstract class Chart<TDrawingContext> : IChart
                      foreach (var tooltipPoint in points)
                      {
                          tooltipPoint.Context.Series.OnPointerEnter(tooltipPoint);
-#if __WEB__
-                         _activePoints.set(tooltipPoint, o);
-#else
                          _activePoints[tooltipPoint] = o;
-#endif
                      }
 
                      foreach (var point in _activePoints.Keys.ToArray())
                      {
-#if __WEB__
-                         if (_activePoints.get(point) == o) continue;
-                         var cp = (ChartPoint)point;
-                         cp.Context.Series.OnPointerLeft(cp);
-#else
                          if (_activePoints[point] == o) continue;
                          point.Context.Series.OnPointerLeft(point);
-#endif
                          _ = _activePoints.Remove(point);
                      }
 

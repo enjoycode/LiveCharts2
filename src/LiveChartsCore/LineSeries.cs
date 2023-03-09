@@ -49,13 +49,8 @@ public class LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry,
         where TLabel : class, ILabelGeometry<TDrawingContext>/*, new()*/
         where TDrawingContext : DrawingContext
 {
-#if __WEB__
-    internal readonly ObjectMap<List<TPathGeometry>> _fillPathHelperDictionary = new();
-    internal readonly ObjectMap<List<TPathGeometry>> _strokePathHelperDictionary = new();
-#else
     internal readonly Dictionary<object, List<TPathGeometry>> _fillPathHelperDictionary = new();
     internal readonly Dictionary<object, List<TPathGeometry>> _strokePathHelperDictionary = new();
-#endif
     private float _lineSmoothness = 0.65f;
     private float _geometrySize = 14f;
     private bool _enableNullSplitting = true;
@@ -170,21 +165,6 @@ public class LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry,
         var dls = (float)DataLabelsSize;
         var pointsCleanup = ChartPointCleanupContext.For(everFetched);
 
-#if __WEB__
-        var strokePathHelperContainer = _strokePathHelperDictionary.get(chart.Canvas.Sync);
-        if (strokePathHelperContainer == null)
-        {
-            strokePathHelperContainer = new List<TPathGeometry>();
-            _strokePathHelperDictionary.set(chart.Canvas.Sync, strokePathHelperContainer);
-        }
-
-        var fillPathHelperContainer = _fillPathHelperDictionary.get(chart.Canvas.Sync);
-        if (fillPathHelperContainer == null)
-        {
-            fillPathHelperContainer = new List<TPathGeometry>();
-            _fillPathHelperDictionary.set(chart.Canvas.Sync, fillPathHelperContainer);
-        }
-#else
         if (!_strokePathHelperDictionary.TryGetValue(chart.Canvas.Sync, out var strokePathHelperContainer))
         {
             strokePathHelperContainer = new List<TPathGeometry>();
@@ -196,7 +176,6 @@ public class LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry,
             fillPathHelperContainer = new List<TPathGeometry>();
             _fillPathHelperDictionary[chart.Canvas.Sync] = fillPathHelperContainer;
         }
-#endif
 
         var uwx = secondaryScale.MeasureInPixels(secondaryAxis.UnitWidth);
         uwx = uwx < gs ? gs : uwx;
@@ -328,17 +307,10 @@ public class LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry,
                 var x = secondaryScale.ToPixels(data.TargetPoint.SecondaryValue);
                 var y = primaryScale.ToPixels(data.TargetPoint.PrimaryValue + s);
 
-#if __WEB__
-                visual.Geometry.MotionProperties.get(nameof(visual.Geometry.X))!
-                    .CopyFrom(visual.Bezier.MotionProperties.get(nameof(visual.Bezier.Xj))!);
-                visual.Geometry.MotionProperties.get(nameof(visual.Geometry.Y))!
-                    .CopyFrom(visual.Bezier.MotionProperties.get(nameof(visual.Bezier.Yj))!);
-#else
                 visual.Geometry.MotionProperties[nameof(visual.Geometry.X)]
                     .CopyFrom(visual.Bezier.MotionProperties[nameof(visual.Bezier.Xj)]);
                 visual.Geometry.MotionProperties[nameof(visual.Geometry.Y)]
                     .CopyFrom(visual.Bezier.MotionProperties[nameof(visual.Bezier.Yj)]);
-#endif
                 visual.Geometry.TranslateTransform = new LvcPoint(-hgs, -hgs);
 
                 visual.Geometry.Width = gs;
@@ -510,21 +482,6 @@ public class LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry,
         base.SoftDeleteOrDispose(chart);
         var canvas = ((ICartesianChartView<TDrawingContext>)chart).CoreCanvas;
 
-#if __WEB__
-        if (Fill is not null)
-        {
-            foreach (var activeChartContainer in _fillPathHelperDictionary.values())
-            foreach (var pathHelper in activeChartContainer)
-                Fill.RemoveGeometryFromPainTask(canvas, pathHelper);
-        }
-
-        if (Stroke is not null)
-        {
-            foreach (var activeChartContainer in _strokePathHelperDictionary.values())
-            foreach (var pathHelper in activeChartContainer)
-                Stroke.RemoveGeometryFromPainTask(canvas, pathHelper);
-        }
-#else
         if (Fill is not null)
         {
             foreach (var activeChartContainer in _fillPathHelperDictionary/*.ToArray()*/)
@@ -538,7 +495,6 @@ public class LineSeries<TModel, TVisual, TLabel, TDrawingContext, TPathGeometry,
                 foreach (var pathHelper in activeChartContainer.Value/*.ToArray()*/)
                     Stroke.RemoveGeometryFromPainTask(canvas, pathHelper);
         }
-#endif
 
         if (GeometryFill is not null) canvas.RemovePaintTask(GeometryFill);
         if (GeometryStroke is not null) canvas.RemovePaintTask(GeometryStroke);

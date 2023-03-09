@@ -200,13 +200,8 @@ public abstract class VisualElement<TDrawingContext> : ChartElement<TDrawingCont
 
         if (_parent is not null)
         {
-#if __WEB__
-            var xProperty = (FloatMotionProperty)_parent.MotionProperties.get(nameof(_parent.X))!;
-            var yProperty = (FloatMotionProperty)_parent.MotionProperties.get(nameof(_parent.Y))!;
-#else
             var xProperty = (FloatMotionProperty)_parent.MotionProperties[nameof(_parent.X)];
             var yProperty = (FloatMotionProperty)_parent.MotionProperties[nameof(_parent.Y)];
-#endif
             parentX = xProperty.GetCurrentValue((Animatable)_parent);
             parentY = yProperty.GetCurrentValue((Animatable)_parent);
         }

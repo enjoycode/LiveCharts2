@@ -87,11 +87,7 @@ public class MapLayer<TDrawingContext>
     /// <summary>
     /// Gets the lands.
     /// </summary>
-#if __WEB__
-    public StringMap<LandDefinition> Lands { get; private set; } = new();
-#else
     public Dictionary<string, LandDefinition> Lands { get; private set; } = new();
-#endif
 
     /// <summary>
     /// Gets or sets the land condition, it must return true if the land is required.

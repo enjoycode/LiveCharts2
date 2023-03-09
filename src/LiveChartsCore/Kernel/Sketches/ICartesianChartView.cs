@@ -32,6 +32,7 @@ namespace LiveChartsCore.Kernel.Sketches;
 /// </summary>
 /// <typeparam name="TDrawingContext">The type of the drawing context.</typeparam>
 /// <seealso cref="IChartView{TDrawingContext}" />
+[PixUI.TSInterfaceOf]
 public interface ICartesianChartView<TDrawingContext> : IChartView<TDrawingContext>
     where TDrawingContext : DrawingContext
 {

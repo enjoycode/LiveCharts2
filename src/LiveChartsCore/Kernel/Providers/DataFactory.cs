@@ -42,13 +42,12 @@ public sealed class DataFactory<TModel, TDrawingContext>
 
 #if __WEB__
     private bool _isTModelChartEntity = false;
-    private readonly ObjectMap<ObjectMap<MappedChartEntity>> _chartRefEntityMap = new();
 #else
     private readonly bool _isTModelChartEntity = false;
     private readonly bool _isValueType = false;
     private readonly Dictionary<object, Dictionary<int, MappedChartEntity>> _chartIndexEntityMap = new();
-    private readonly Dictionary<object, Dictionary<TModel, MappedChartEntity>> _chartRefEntityMap = new();
 #endif
+    private readonly Dictionary<object, Dictionary<TModel, MappedChartEntity>> _chartRefEntityMap = new();
     private ISeries? _series;
 
     /// <summary>
@@ -91,11 +90,11 @@ public sealed class DataFactory<TModel, TDrawingContext>
                 continue;
             }
 
-#if __WEB__
-            yield return value.ChartPoints?.get(chart.View) ?? ChartPoint.Empty;
-#else
-            yield return value.ChartPoints?.GetPointForView(chart.View) ?? ChartPoint.Empty;
-#endif
+            if (value.ChartPoints != null && value.ChartPoints!.TryGetValue(chart.View, out var point))
+                yield return point;
+            else
+                yield return ChartPoint.Empty;
+            //yield return value.ChartPoints?.GetPointForView(chart.View) ?? ChartPoint.Empty;
         }
     }
 
@@ -110,14 +109,7 @@ public sealed class DataFactory<TModel, TDrawingContext>
 
         var canvas = (MotionCanvas<TDrawingContext>)point.Context.Chart.CoreChart.Canvas;
 
-#if __WEB__
-        var d = _chartRefEntityMap.get(canvas.Sync);
-        var map = d;
-        if (map == null) return;
-        var src = (TModel?)point.Context.DataSource;
-        if (src == null) return;
-        map.Remove(src);
-#else
+#if !__WEB__
         if (_isValueType)
         {
             _ = _chartIndexEntityMap.TryGetValue(canvas.Sync, out var d);
@@ -127,12 +119,14 @@ public sealed class DataFactory<TModel, TDrawingContext>
         }
         else
         {
+#endif
             _ = _chartRefEntityMap.TryGetValue(canvas.Sync, out var d);
             var map = d;
             if (map is null) return;
             var src = (TModel?)point.Context.DataSource;
             if (src is null) return;
             _ = map.Remove(src);
+#if !__WEB__
         }
 #endif
     }
@@ -407,23 +401,12 @@ public sealed class DataFactory<TModel, TDrawingContext>
                 continue;
             }
 
-#if __WEB__
-            entity.ChartPoints ??= new ObjectMap<ChartPoint>();
-            var point = entity.ChartPoints.get(chart.View);
-            if (point == null)
-            {
-                point = new ChartPoint(chart.View, series, entity);
-                entity.ChartPoints.set(chart.View, point);
-            }
-#else
             entity.ChartPoints ??= new Dictionary<IChartView, ChartPoint>();
             if (!entity.ChartPoints.TryGetValue(chart.View, out var point))
             {
                 point = new ChartPoint(chart.View, series, entity);
                 entity.ChartPoints[chart.View] = point;
             }
-#endif
-
 
             point.Context.DataSource = entity;
             entity.EntityIndex = index++;
@@ -496,21 +479,12 @@ public sealed class DataFactory<TModel, TDrawingContext>
 #endif
         var index = 0;
 
-#if __WEB__
-        var d = _chartRefEntityMap.get(canvas.Sync);
-        if (d == null)
-        {
-            d = new ObjectMap<MappedChartEntity>();
-            _chartRefEntityMap.set(canvas.Sync, d);
-        }
-#else
-        _ = _chartRefEntityMap.TryGetValue(canvas.Sync, out var d);
-        if (d is null)
+        if (! _chartRefEntityMap.TryGetValue(canvas.Sync, out var d))
         {
             d = new Dictionary<TModel, MappedChartEntity>();
             _chartRefEntityMap[canvas.Sync] = d;
         }
-#endif
+
         var IndexEntityMap = d;
 
         foreach (var item in series.Values)
@@ -522,21 +496,6 @@ public sealed class DataFactory<TModel, TDrawingContext>
                 continue;
             }
 
-#if __WEB__
-            var entity = IndexEntityMap.get(item);
-            if (entity == null)
-            {
-                entity = new MappedChartEntity() { ChartPoints = new ObjectMap<ChartPoint>() };
-                IndexEntityMap.set(item, entity);
-            }
-
-            var point = entity.ChartPoints.get(chart.View);
-            if (point == null)
-            {
-                point = new ChartPoint(chart.View, series, entity);
-                entity.ChartPoints.set(chart.View, point);
-            }
-#else
             if (!IndexEntityMap.TryGetValue(item, out var entity))
             {
                 IndexEntityMap[item] = entity = new MappedChartEntity
@@ -550,7 +509,6 @@ public sealed class DataFactory<TModel, TDrawingContext>
                 point = new ChartPoint(chart.View, series, entity);
                 entity.ChartPoints[chart.View] = point;
             }
-#endif
 
             point.Context.DataSource = item;
             entity.EntityIndex = index++;
