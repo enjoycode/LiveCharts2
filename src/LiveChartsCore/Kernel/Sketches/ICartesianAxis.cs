@@ -30,6 +30,7 @@ namespace LiveChartsCore.Kernel.Sketches;
 /// <summary>
 /// Defines an Axis in a Cartesian chart.
 /// </summary>
+[PixUI.TSInterfaceOf]
 public interface ICartesianAxis : IPlane, INotifyPropertyChanged
 {
     /// <summary>
@@ -136,6 +137,7 @@ public interface ICartesianAxis : IPlane, INotifyPropertyChanged
 /// </summary>
 /// <typeparam name="TDrawingContext"></typeparam>
 [PixUI.TSRename("ICartesianAxis1")]
+[PixUI.TSInterfaceOf]
 public interface ICartesianAxis<TDrawingContext> : ICartesianAxis
     where TDrawingContext : DrawingContext
 {

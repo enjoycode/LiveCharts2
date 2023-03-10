@@ -34,7 +34,7 @@ public interface ICartesianSeries<TDrawingContext> : IChartSeries<TDrawingContex
     where TDrawingContext : DrawingContext
 {
     /// <summary>
-    /// Gets or sets the axis index where the series is scaled in the X plane, the index must exist 
+    /// Gets or sets the axis index where the series is scaled in the X plane, the index must exist
     /// in the <see cref="ICartesianChartView{TDrawingContext}.XAxes"/> collection.
     /// </summary>
     /// <value>
@@ -43,7 +43,7 @@ public interface ICartesianSeries<TDrawingContext> : IChartSeries<TDrawingContex
     int ScalesXAt { get; set; }
 
     /// <summary>
-    /// Gets or sets the axis index where the series is scaled in the Y plane, the index must exist 
+    /// Gets or sets the axis index where the series is scaled in the Y plane, the index must exist
     /// in the <see cref="ICartesianChartView{TDrawingContext}.YAxes"/> collection.
     /// </summary>
     /// <value>

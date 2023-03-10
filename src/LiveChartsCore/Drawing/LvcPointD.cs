@@ -32,7 +32,7 @@ public struct LvcPointD
     /// </summary>
     /// <param name="x">The x coordinate.</param>
     /// <param name="y">The y coordinate.</param>
-    public LvcPointD(double x, double y)
+    public LvcPointD(double x = 0, double y = 0)
     {
         X = x;
         Y = y;
@@ -87,4 +87,10 @@ public struct LvcPointD
     /// <param name="r"></param>
     /// <returns></returns>
     public static bool operator !=(LvcPointD l, LvcPointD r) => !(l == r);
+
+#if __WEB__
+    public static readonly LvcPointD Empty = new (0, 0);
+
+    public LvcPointD Clone() => new (X, Y);
+#endif
 }

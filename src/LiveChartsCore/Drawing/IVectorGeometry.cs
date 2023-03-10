@@ -89,11 +89,11 @@ public interface IVectorGeometry<TSegment, TDrawingContext> : IDrawable<TDrawing
     /// <returns>The linked node.</returns>
     LinkedListNode<TSegment> AddBefore(LinkedListNode<TSegment> node, TSegment command);
 
-    /// <summary>
-    /// Removes a path command.
-    /// </summary>
-    /// <param name="command">The command.</param>
-    bool RemoveCommand(TSegment command);
+    // /// <summary>
+    // /// Removes a path command.
+    // /// </summary>
+    // /// <param name="command">The command.</param>
+    // bool RemoveCommand(TSegment command);
 
     /// <summary>
     /// Removes the specified node.
