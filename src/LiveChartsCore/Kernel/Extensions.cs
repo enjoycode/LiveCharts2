@@ -59,9 +59,17 @@ public static class Extensions
     {
         LvcPoint? location = null;
 
+#if __WEB__
+        //前端esbuild暂不支持 (obj instanceof xxx || obj instanceof yyy)
+        if (chart is CartesianChart<TDrawingContext>)
+            location = _getCartesianTooltipLocation(foundPoints, chart.TooltipPosition, tooltipSize, chart.DrawMarginSize);
+        else if (chart is PolarChart<TDrawingContext>)
+            location = _getCartesianTooltipLocation(foundPoints, chart.TooltipPosition, tooltipSize, chart.DrawMarginSize);
+#else
         if (chart is CartesianChart<TDrawingContext> || chart is PolarChart<TDrawingContext>)
             location = _getCartesianTooltipLocation(foundPoints, chart.TooltipPosition, tooltipSize, chart.DrawMarginSize);
-        if (chart is PieChart<TDrawingContext>)
+#endif
+        else if (chart is PieChart<TDrawingContext>)
             location = _getPieTooltipLocation(foundPoints, tooltipSize);
 
         if (location is null) throw new Exception("location not supported");
