@@ -45,9 +45,9 @@ public sealed class DataFactory<TModel, TDrawingContext>
 #else
     private readonly bool _isTModelChartEntity = false;
     private readonly bool _isValueType = false;
-    private readonly Dictionary<object, Dictionary<int, MappedChartEntity>> _chartIndexEntityMap = new();
-#endif
     private readonly Dictionary<object, Dictionary<TModel, MappedChartEntity>> _chartRefEntityMap = new();
+#endif
+    private readonly Dictionary<object, Dictionary<int, MappedChartEntity>> _chartIndexEntityMap = new();
     private ISeries? _series;
 
     /// <summary>
@@ -112,21 +112,21 @@ public sealed class DataFactory<TModel, TDrawingContext>
 #if !__WEB__
         if (_isValueType)
         {
+#endif
             _ = _chartIndexEntityMap.TryGetValue(canvas.Sync, out var d);
             var map = d;
             if (map is null) return;
             _ = map.Remove(point.Context.Entity.EntityIndex);
+#if !__WEB__
         }
         else
         {
-#endif
             _ = _chartRefEntityMap.TryGetValue(canvas.Sync, out var d);
             var map = d;
             if (map is null) return;
             var src = (TModel?)point.Context.DataSource;
             if (src is null) return;
             _ = map.Remove(src);
-#if !__WEB__
         }
 #endif
     }
@@ -142,7 +142,7 @@ public sealed class DataFactory<TModel, TDrawingContext>
 
 #if __WEB__
         var canvas = (MotionCanvas<TDrawingContext>)chart.Canvas;
-        _chartRefEntityMap.Remove(canvas.Sync);
+        _chartIndexEntityMap.Remove(canvas.Sync);
 #else
         if (_isValueType)
         {
@@ -376,7 +376,7 @@ public sealed class DataFactory<TModel, TDrawingContext>
         _isTModelChartEntity = series.Values!.First(t => t != null) is IChartEntity;
         return _isTModelChartEntity
             ? EnumerateChartEntities(series, chart)
-            : EnumerateByRefEntities(series, chart);
+            : EnumerateByValEntities(series, chart);
 #else
         return _isTModelChartEntity
             ? EnumerateChartEntities(series, chart)
@@ -415,13 +415,18 @@ public sealed class DataFactory<TModel, TDrawingContext>
         }
     }
 
-#if !__WEB__
     private IEnumerable<IChartEntity?> EnumerateByValEntities(ISeries<TModel> series, IChart chart)
     {
         if (series.Values is null) yield break;
 
         var canvas = (MotionCanvas<TDrawingContext>)chart.Canvas;
+#if __WEB__
+        TrySetMapperForNumberSeries(series);
+        var mapper = series.Mapping;
+        if (mapper == null) throw new Exception("series has no mapper");
+#else
         var mapper = series.Mapping ?? LiveCharts.DefaultSettings.GetMap<TModel>();
+#endif
         var index = 0;
 
         _ = _chartIndexEntityMap.TryGetValue(canvas.Sync, out var d);
@@ -464,19 +469,14 @@ public sealed class DataFactory<TModel, TDrawingContext>
             yield return entity;
         }
     }
-#endif
 
+#if !__WEB__
     private IEnumerable<IChartEntity?> EnumerateByRefEntities(ISeries<TModel> series, IChart chart)
     {
         if (series.Values is null) yield break;
 
         var canvas = (MotionCanvas<TDrawingContext>)chart.Canvas;
-#if __WEB__
-        var mapper = series.Mapping;
-        if (mapper == null) throw new Exception("series has no mapper");
-#else
         var mapper = series.Mapping ?? LiveCharts.DefaultSettings.GetMap<TModel>();
-#endif
         var index = 0;
 
         if (! _chartRefEntityMap.TryGetValue(canvas.Sync, out var d))
@@ -519,4 +519,22 @@ public sealed class DataFactory<TModel, TDrawingContext>
             yield return entity;
         }
     }
+#endif
+
+#if __WEB__
+    [PixUI.TSRawScript(@"
+    private static TrySetMapperForNumberSeries(series: any) {
+        if (series.Mapping != null) return;
+
+        let first = series.Values.First(t => t != null);
+        if (typeof first === 'number') {
+            series.Mapping = (n, p) => {
+                p.PrimaryValue = n == null ? 0 : n;
+                p.SecondaryValue = p.Context.Entity.EntityIndex;
+            }
+        }
+    }
+")]
+    private static void TrySetMapperForNumberSeries(ISeries<TModel> series) {}
+#endif
 }
