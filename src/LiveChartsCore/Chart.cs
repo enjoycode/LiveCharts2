@@ -337,6 +337,8 @@ public abstract class Chart<TDrawingContext> : IChart
 
     public void ClearTooltipData()
     {
+        if (_activePoints.Count == 0) return; //***Rick***
+
         foreach (var point in _activePoints.Keys.ToArray())
         {
 #if __WEB__
