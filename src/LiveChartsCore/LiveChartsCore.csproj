@@ -54,7 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\PixUI\PixUI.TSAttributes\PixUI.TSAttributes.csproj" />
+    <ProjectReference Include="..\..\..\..\src\PixUI.TSAttributes\PixUI.TSAttributes.csproj" />
   </ItemGroup>
 
 </Project>
