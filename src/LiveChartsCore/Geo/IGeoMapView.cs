@@ -78,11 +78,11 @@ public interface IGeoMapView<TDrawingContext>
     /// </summary>
     bool DesignerMode { get; }
 
-    /// <summary>
-    /// Gets or sets the Synchronization Context, use this property to
-    /// use an external object to handle multi threading synchronization.
-    /// </summary>
-    object SyncContext { get; set; }
+    // /// <summary>
+    // /// Gets or sets the Synchronization Context, use this property to
+    // /// use an external object to handle multi threading synchronization.
+    // /// </summary>
+    // object SyncContext { get; set; }
 
     /// <summary>
     /// Gets or sets the view command.

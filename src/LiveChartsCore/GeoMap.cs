@@ -137,27 +137,27 @@ public class GeoMap<TDrawingContext>
         View.Canvas.Dispose();
     }
 
-    internal void InvokePointerDown(LvcPoint point)
+    public void InvokePointerDown(LvcPoint point)
     {
         PointerDown?.Invoke(point);
     }
 
-    internal void InvokePointerMove(LvcPoint point)
+    public void InvokePointerMove(LvcPoint point)
     {
         PointerMove?.Invoke(point);
     }
 
-    internal void InvokePointerUp(LvcPoint point)
+    public void InvokePointerUp(LvcPoint point)
     {
         PointerUp?.Invoke(point);
     }
 
-    internal void InvokePointerLeft()
+    public void InvokePointerLeft()
     {
         PointerLeft?.Invoke();
     }
 
-    internal void InvokePanGestrue(PanGestureEventArgs eventArgs)
+    public void InvokePanGestrue(PanGestureEventArgs eventArgs)
     {
         PanGesture?.Invoke(eventArgs);
     }
