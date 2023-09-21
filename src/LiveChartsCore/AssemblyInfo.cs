@@ -22,6 +22,8 @@
 
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("PixUI.LiveCharts")]
+
 #if !DEBUG
 using System.Reflection;
 
