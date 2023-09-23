@@ -109,9 +109,16 @@ public class MapLayer<TDrawingContext>
         {
             if (feature.Geometry is null || feature.Geometry.Coordinates is null) continue;
 
-            var name = (feature.Properties?["name"] ?? "?").ToLowerInvariant();
-            var shortName = (feature.Properties?["shortName"] ?? "?").ToLowerInvariant();
-            var setOf = (feature.Properties?["setOf"] ?? "?").ToLowerInvariant();
+            var name = (feature.Properties?["name"].ToString() ?? "?").ToLowerInvariant();
+            var shortName = name;
+            if (feature.Properties != null && feature.Properties.TryGetValue("shortName", out var sName))
+                shortName = sName.ToString()!.ToLowerInvariant();
+            var setOf = "?";
+            if (feature.Properties != null && feature.Properties.TryGetValue("setOf", out var sOf))
+                setOf = sOf.ToString()!.ToLowerInvariant();
+
+            //var shortName = (feature.Properties?["shortName"]?.ToString() ?? "?").ToLowerInvariant();
+            //var setOf = (feature.Properties?["setOf"]?.ToString() ?? "?").ToLowerInvariant();
 
             var definition = new LandDefinition(shortName, name, setOf);
 
