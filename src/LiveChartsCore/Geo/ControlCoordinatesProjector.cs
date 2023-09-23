@@ -20,6 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using LiveChartsCore.Drawing;
+
 namespace LiveChartsCore.Geo;
 
 /// <summary>
@@ -60,17 +62,17 @@ public class ControlCoordinatesProjector : MapProjector
     /// </value>
     public static float[] PreferredRatio => new[] { 2f, 1f };
 
-    /// <inheritdoc cref="MapProjector.ToMap(double[])"/>
-    public override float[] ToMap(double[] point)
+    /// <inheritdoc cref="MapProjector.ToMap(LvcPointD)"/>
+    public override LvcPoint ToMap(LvcPointD point)
     {
         // simplified formula
-        return new[]
+        return new LvcPoint
         {
                 // x' =
-                (float)(_ox + (point[0] + 180) / 360d * _w),
+                X = (float)(_ox + (point.X + 180) / 360d * _w),
 
                 // y' =
-                (float)(_oy + (90 - point[1]) / 180d * _h)
+                Y = (float)(_oy + (90 - point.Y) / 180d * _h)
             };
 
         // the following code explains the formula better:

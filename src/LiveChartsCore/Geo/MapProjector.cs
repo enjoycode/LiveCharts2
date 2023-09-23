@@ -20,6 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using LiveChartsCore.Drawing;
+
 namespace LiveChartsCore.Geo;
 
 /// <summary>
@@ -52,5 +54,5 @@ public abstract class MapProjector
     /// </summary>
     /// <param name="point">The point.</param>
     /// <returns></returns>
-    public abstract float[] ToMap(double[] point);
+    public abstract LvcPoint ToMap(LvcPointD point);
 }
