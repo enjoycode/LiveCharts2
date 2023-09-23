@@ -43,7 +43,7 @@ public class GeoJsonFeature
     /// <value>
     /// The properties.
     /// </value>
-    public Dictionary<string, string>? Properties { get; set; }
+    public Dictionary<string, object>? Properties { get; set; }
 
     /// <summary>
     /// Gets or sets the geometry.
